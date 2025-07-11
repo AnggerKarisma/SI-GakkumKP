@@ -1,22 +1,18 @@
 import React from "react";
 import {Mail, LockKeyhole} from 'lucide-react';
 
-const Login = () =>{
+const Register = () =>{
   return (
     <>
       <section className="min-h-screen flex items-center justify-center font-sans bg-gradient-to-b from-[#B9FF9B] to-[#E6F6DE] p-4
       ">
         <div className="flex flex-col md:flex-row shadow-2xl rounded-2xl overflow-hidden sm: max-w-sm md:max-w-2xl w-full bg-[#d6efcb]">
-          <div className="hidden md:flex md:flex-col w-full md:w-1/2 p-10 items-center justify-center">
-            <img src="https://www.kehutanan.go.id/s/uploads/medium_GAKKUM_1ba55b0808.png" alt="" className="max-h-50"/>
-            <p className="md:text-2xl pt-2 text-center font-bold">LPPTD GAKKUMHUT KALIMANTAN</p>
-          </div>
           <div className="p-10 bg-[#d6efcb] rounded-2xl">
             <div className="flex flex-col gap-2 items-baseline text-center rounded-2xl">
               <div className="flex md:hidden w-full justify-center">
                 <img src="https://www.kehutanan.go.id/s/uploads/medium_GAKKUM_1ba55b0808.png" alt="" className="max-h-25" />
               </div>
-              <h1 className="text-3xl font-semibold">Selamat Datang</h1>
+              <h1 className="text-3xl font-semibold">Silakan Isi Data</h1>
 
               <div className="flex w-full flex-col text-md text-left gap-1.5">
                 <span>Email</span>
@@ -42,8 +38,12 @@ const Login = () =>{
               bg-green-500 hover:bg-green-700 hover:cursor-pointer
               text-white">Login</button>
 
-              <p className="font-normal text-sm">Belum punya akun? <a href="/register" className="text-blue-400 hover:underline">Daftar disini</a></p>
+              <p className="font-normal text-sm">Belum punya akun? <a href="#" className="text-blue-400 hover:underline">Daftar disini</a></p>
             </div>
+          </div>
+          <div className="hidden md:flex md:flex-col w-full md:w-1/2 p-10 items-center justify-center">
+            <img src="https://www.kehutanan.go.id/s/uploads/medium_GAKKUM_1ba55b0808.png" alt="" className="max-h-50"/>
+            <p className="md:text-2xl pt-2 text-center font-bold">LPPTD GAKKUMHUT KALIMANTAN</p>
           </div>
         </div>
       </section>
@@ -51,4 +51,4 @@ const Login = () =>{
   )
 }
 
-export default Login
+export default Register
