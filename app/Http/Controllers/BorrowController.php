@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 
-class PinjamController extends Controller
+class BorrowController extends Controller
 {
     public function index(Request $request): JsonResponse
     {

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 
-class PajakController extends Controller
+class TaxController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
