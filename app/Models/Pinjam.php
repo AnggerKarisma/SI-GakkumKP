@@ -37,14 +37,16 @@ class Pinjam extends Model
 
     public function isActive()
     {
-        return $this -> tglPinjam <= now() &&
-            ($this -> tglKembali !== null || $this ->tglKembali>=now());
+        return $this->tglPinjam <= now() &&
+            ($this->tglKembali === null || $this->tglKembali >= now());
     }
 
     public function isOverdue()
     {
-        return $this -> tglKembali !== null && $this->tglKembali < now() && $this ->isActive();
-    }
+        return $this->tglKembali !== null && 
+           $this->tglKembali < now() && 
+           !$this->isReturned();
+    }   
 
     public function isReturned()
     {

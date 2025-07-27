@@ -48,11 +48,11 @@ class Pajak extends Model
     }
 
     public function isPtExpiringSoon($days=30)
-    {
-        return $this->activePT !== null && 
-            $this->activePT ->diffInDays(now()) <= $days &&
-            $this->activePT ->now();
-    }
+{
+    return $this->activePT !== null && 
+        $this->activePT->diffInDays(now()) <= $days &&
+        $this->activePT >= now(); 
+}
 
     public function getDaysUntilStnkExpires()
     {
