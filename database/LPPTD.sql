@@ -64,7 +64,16 @@ create or replace table pajak(
 show tables;
 drop database LPPTD
 
+insert into user (nama,NIP ,email,password ,jabatan,unitKerja,role)
+values ("SuperAdmin1","000000001","superdminsatu@gmail.com","12345678","Kepala Balai", "Balai", "Super Admin");
 
+insert into user (nama,NIP ,email,password ,jabatan,unitKerja,role)
+values ("SuperAdmin2","000000002","superdmindua@gmail.com","12345678","Staff Balai", "Balai", "Super Admin");
+
+insert into user (nama,NIP ,email,password ,jabatan,unitKerja,role)
+values ("SuperAdmin3","000000003","superdmintiga@gmail.com","12345678","Staff Balai", "Balai", "Super Admin");
+
+select * from `user` ;
 #Procedure account
 
 create or replace procedure regist(

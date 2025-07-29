@@ -80,6 +80,74 @@ class UserController extends Controller
         }
     }
 
+    public function registerSA(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|max:255',
+            'NIP' => 'required|string|max:255|unique:users,NIP',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:6',
+            'jabatan' => 'required|string|max:255',
+            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka raya,Sekwil II / Samarinda,Sekwil III / Pontianak'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Semua kolom harus diisi.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $requiredFields = ['nama', 'NIP', 'email', 'password', 'jabatan', 'unitKerja'];
+            foreach ($requiredFields as $field) {
+                if (empty($request->$field)) {
+                    DB::rollback();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Semua kolom harus diisi.'
+                    ], 400);
+                }
+            }
+
+            $user = User::create([
+                'nama' => $request->nama,
+                'NIP' => $request->NIP,
+                'email' => $request->email,
+                'password' => Hash::make($request->password), 
+                'jabatan' => $request->jabatan,
+                'unitKerja' => $request->unitKerja,
+                'role' => 'Super Admin' 
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Super Admin berhasil didaftarkan',
+                'data' => [
+                    'userID' => $user->userID,
+                    'nama' => $user->nama,
+                    'NIP' => $user->NIP,
+                    'email' => $user->email,
+                    'jabatan' => $user->jabatan,
+                    'unitKerja' => $user->unitKerja,
+                    'role' => $user->role
+                ]
+            ], 201);
+
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mendaftarkan user: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function login(Request $request)
     {
         if (empty($request->NIP)) {
@@ -108,7 +176,7 @@ class UserController extends Controller
 
             Auth::login($user);
             
-            $token = $user->createToken('auth-token')->plainTextToken;
+            $token = $user->createToken('auth-token', [$user->getAttribute('role')])->plainTextToken;
 
             return response()->json([
                 'success' => true,
@@ -312,7 +380,6 @@ class UserController extends Controller
         }
 
         try {
-            // Logic dari procedure: tidak dapat mengelola akun sendiri
             if ($currentUser->userID == $targetUser->userID) {
                 return response()->json([
                     'success' => false,
@@ -320,7 +387,6 @@ class UserController extends Controller
                 ], 403);
             }
 
-            // Logic dari procedure: Admin tidak dapat mengelola Admin atau Super Admin lain
             if ($currentUser->isAdmin() && ($targetUser->isAdmin() || $targetUser->isSuperAdmin())) {
                 return response()->json([
                     'success' => false,
@@ -328,7 +394,6 @@ class UserController extends Controller
                 ], 403);
             }
 
-            // Hanya Admin dan Super Admin yang bisa mengelola akun
             if (!$currentUser->isSuperAdmin() && !$currentUser->isAdmin()) {
                 return response()->json([
                     'success' => false,

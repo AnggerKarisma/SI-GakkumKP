@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use app\Models\Kendaraan;
-use app\Models\User;
+use App\Models\Kendaraan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
