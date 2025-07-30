@@ -8,15 +8,20 @@ const menuItems = [
   { path: "/motor", icon: "ri-motorbike-line", text: "Motor" },
   { path: "/pajak", icon: "ri-file-text-line", text: "Pajak" },
   { path: "/laporan", icon: "ri-file-chart-line", text: "Laporan" },
-  { path: "/pengaturan-akun", icon: "ri-user-settings-line", text: "Pengaturan Akun",}
+  {
+    path: "/pengaturan-akun",
+    icon: "ri-user-settings-line",
+    text: "Pengaturan Akun",
+  },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({isOpen, role}) => {
   const location = useLocation();
-
   return (
     // Kontainer utama sidebar dengan lebar tetap
-    <div className="fixed top-0 left-0 flex flex-col gap-3 h-full bg-[#242424] text-white w-64 p-5 z-10">
+    <div
+      className={`fixed flex flex-col gap-3 h-full bg-[#171717] text-white w-64  p-4 z-10 transition-transform duration-300 ${isOpen? 'translate-x-0' : '-translate-x-full'}`}
+    >
       {/* Bagian Header Judul */}
       <div className="text-center">
         <h1 className="text-2xl font-bold tracking-wider">STATE ASSETS</h1>

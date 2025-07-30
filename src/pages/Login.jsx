@@ -41,6 +41,7 @@ const Login = () => {
                 <div className="flex items-center border-1 border-white py-1 px-2 outline-none rounded-lg">
                   <Mail className="text-white" />
                   <input
+                    required
                     type="email"
                     placeholder="Email"
                     className="text-sm text-white px-2 w-full outline-none bg-transparent"
@@ -50,6 +51,7 @@ const Login = () => {
                 <div className="flex items-center border-1 border-white py-1 px-2 outline-none rounded-lg">
                   <LockKeyhole className="text-white" />
                   <input
+                    required
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     className="text-sm text-white px-2 w-full outline-none bg-transparent"

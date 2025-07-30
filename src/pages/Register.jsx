@@ -60,6 +60,7 @@ const Register = () => {
                 <div className="flex border-1 border-white px-2 py-1 outline-none w-full rounded-md ">
                   <UserPen className="text-white flex-shrink-0" />
                   <input
+                    required
                     type="text"
                     placeholder="Nama Lengkap"
                     className="text-sm text-white px-2 w-full outline-none"
@@ -69,6 +70,7 @@ const Register = () => {
                 <div className="flex border-1 border-white px-2 py-1 outline-none w-full rounded-md">
                   <Mail className="text-white flex-shrink-0" />
                   <input
+                  required
                     type="email"
                     placeholder="Email"
                     className="text-sm text-white px-2 w-full outline-none "
@@ -78,6 +80,7 @@ const Register = () => {
                 <div className="flex border-1 border-white px-2 py-1 outline-none w-full rounded-md">
                   <UsersRound className="text-white flex-shrink-0" />
                   <select
+                    required
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     className={`text-sm px-2 w-full outline-none bg-transparent ${role === "" ? "text-gray-400" : "text-white"}`}
@@ -97,6 +100,7 @@ const Register = () => {
                 <div className="flex border-1 border-white p-1.5 outline-none w-full rounded-md">
                   <MapPinHouse className="text-white flex-shrink-0" />
                   <select
+                    required
                     value={wilayah}
                     onChange={(e) => setWilayah(e.target.value)}
                     className={`text-sm px-2 w-full outline-none bg-transparent ${wilayah === "" ? "text-gray-400" : "text-white"}`}
@@ -119,6 +123,7 @@ const Register = () => {
                 <div className="flex items-center border-1 border-white px-2 py-1 outline-none rounded-lg ">
                   <LockKeyhole className="text-white flex-shrink-0" />
                   <input
+                    required
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     className="text-sm text-white px-2 w-full outline-none bg-transparent"
@@ -138,6 +143,7 @@ const Register = () => {
                 <div className="flex items-center border-1 border-white px-2 py-1 outline-none rounded-lg  ">
                   <LockKeyhole className="text-white flex-shrink-0" />
                   <input
+                    required
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Konfirmasi Password"
                     className="text-sm text-white px-2 w-full outline-none bg-transparent"

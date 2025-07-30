@@ -1,6 +1,6 @@
 import Button from "../components/Button";
 
-const TambahMobil = ({ isSidebarOpen }) => {
+const TambahMotor = ({ isSidebarOpen }) => {
   return (
     <div className="transition-all flex duration-300">
       <div
@@ -8,11 +8,11 @@ const TambahMobil = ({ isSidebarOpen }) => {
       >
         <div className="flex flex-col px-3 py-2 h-full">
           <header>
-            <p className="text-white font-semibold text-2xl">Manajemen Mobil</p>
+            <p className="text-white font-semibold text-2xl">Manajemen Motor</p>
           </header>
           <form className="flex flex-col gap-3 h-fit p-5 mt-3 bg-[#171717] rounded-lg md:rounded-2xl">
             <div className="flex justify-between">
-              <p className="text-white font-semibold text-xl">Tambah Mobil</p>
+              <p className="text-white font-semibold text-xl">Tambah Motor</p>
               <div className="flex gap-2">
                 <Button
                   text={"Reset"}
@@ -33,11 +33,11 @@ const TambahMobil = ({ isSidebarOpen }) => {
             <div className="flex flex-col gap-5 h-full">
               <div className="flex flex-col gap-2 px-4 py-2 border-2 border-gray-400 rounded-xl h-1/2">
                 <div>
-                  <p className="text-xs text-gray-400">Data Mobil</p>
+                  <p className="text-xs text-gray-400">Data Motor</p>
                 </div>
                 <div className="flex gap-5 justify-between mb-3">
                   <div className="flex flex-col gap-3.5 text-md text-white w-1/6">
-                    <label htmlFor="nama_mobil">Nama Mobil </label>
+                    <label htmlFor="nama_motor">Nama Motor </label>
                     <label htmlFor="plat">Plat </label>
                     <label htmlFor="nama_pemilik">Nama Pemilik </label>
                     <label htmlFor="merk_tipe">Merk / Tipe </label>
@@ -46,7 +46,7 @@ const TambahMobil = ({ isSidebarOpen }) => {
                   <div className="flex flex-col gap-3 text-xs text-white w-1/3">
                     <input
                       type="text"
-                      id="nama_mobil"
+                      id="nama_motor"
                       className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
                     />
                     <input
@@ -122,7 +122,7 @@ const TambahMobil = ({ isSidebarOpen }) => {
                   <div className="flex flex-col gap-3 text-xs text-white w-1/3">
                     <input
                       type="text"
-                      id="nama_mobil"
+                      id="nama_motor"
                       className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
                     />
                     <input
@@ -201,4 +201,4 @@ const TambahMobil = ({ isSidebarOpen }) => {
   );
 };
 
-export default TambahMobil;
+export default TambahMotor;
