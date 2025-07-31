@@ -21,7 +21,7 @@ const NavbarDashboard = ({ toggleSidebar, isSidebarOpen }) => {
           <span className="text-white text-xs">Wilayah Kalimantan</span>
         </div>
         <img
-          src="Logo_Kehutanan_white.png"
+          src="/Logo_Kehutanan_white.png"
           alt="GAKKUMHUT"
           className={`w-10 h-10 rounded-full transition-opacity duration-300 ${isSidebarOpen ? "opacity-0 md:opacity-100" : "opacity-100"}`}
           onError={(e) => {

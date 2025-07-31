@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+/* Memberi gaya pada scrollbar untuk browser berbasis WebKit (Chrome, Safari, Edge) */
+
+/* Menentukan lebar atau tinggi scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 10px; /* Tinggi untuk scrollbar horizontal */
+  width: 10px;  /* Lebar untuk scrollbar vertikal */
+}
+
+/* Memberi gaya pada 'track' atau latar belakang scrollbar */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #171717; /* Warna yang sama dengan latar tabel */
+  border-radius: 5px;
+}
+
+/* Memberi gaya pada 'thumb' atau bagian yang bisa digeser */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #1f4f27; /* Warna hijau yang sama dengan header tabel */
+  border-radius: 5px;
+  border: 2px solid #171717; /* Memberi sedikit jarak dari track */
+}
+
+/* Memberi gaya pada 'thumb' saat kursor diarahkan ke atasnya */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #2a6b35; /* Warna hijau yang sedikit lebih terang */
+}
+
+/* Untuk kompatibilitas dengan Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1f4f27 #171717; /* Warna thumb dan track */
+}

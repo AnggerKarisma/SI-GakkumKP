@@ -1,16 +1,82 @@
+import React, { useState } from "react";
 import Button from "../components/Button";
+import FormKendaraan from "../components/FormKendaraan";
+
+// Data untuk field formulir "Data Motor"
+const dataMotorFields = [
+  // Kolom kiri
+  [
+    { id: "nama_motor", label: "Nama Motor" },
+    { id: "plat", label: "Plat" },
+    { id: "nama_pemilik", label: "Nama Pemilik" },
+    { id: "merk_tipe", label: "Merk / Tipe" },
+    { id: "jenis_model", label: "Jenis / Model" },
+  ],
+  // Kolom kanan
+  [
+    { id: "kondisi", label: "Kondisi" },
+    { id: "penanggungjawab", label: "Penanggungjawab" },
+    { id: "unit_kerja", label: "Unit Kerja" },
+    { id: "nup", label: "NUP" },
+    { id: "lokasi_barang", label: "Lokasi Barang" },
+  ],
+];
+
+// Data untuk field formulir "Data STNK"
+const dataStnkFields = [
+  // Kolom kiri
+  [
+    { id: "alamat_stnk", label: "Alamat STNK" },
+    { id: "tahun_pembuatan", label: "Tahun Pembuatan" },
+    { id: "isi_silinder", label: "Isi Silinder" },
+    { id: "warna_kb", label: "Warna KB" },
+    { id: "bahan_bakar", label: "Bahan Bakar" },
+    { id: "tahun_registrasi", label: "Tahun Registrasi" },
+  ],
+  // Kolom kanan
+  [
+    { id: "no_rangka", label: "Nomor Rangka" },
+    { id: "no_mesin", label: "Nomor Mesin" },
+    { id: "no_bpkb", label: "Nomor BPKB" },
+    { id: "warna_tnkb", label: "Warna TNKB" },
+    { id: "berlaku_sampai", label: "Berlaku Sampai" },
+    { id: "biaya_pajak", label: "Biaya Pajak" },
+  ],
+];
 
 const TambahMotor = ({ isSidebarOpen }) => {
+  const [formData, setFormData] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleReset = () => {
+    setFormData({});
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Data yang disimpan:", formData);
+  };
+
   return (
     <div className="transition-all flex duration-300">
       <div
-        className={`bg-[#242424] mt-16 p-2 w-full transition-all duration-300 ${isSidebarOpen ? "ml-0 z-2 md:ml-64" : "ml-0"}`}
+        className={`bg-[#242424] mt-16 p-2 w-full min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-0 z-2 md:ml-64" : "ml-0"}`}
       >
         <div className="flex flex-col px-3 py-2 h-full">
           <header>
             <p className="text-white font-semibold text-2xl">Manajemen Motor</p>
           </header>
-          <form className="flex flex-col gap-3 h-fit p-5 mt-3 bg-[#171717] rounded-lg md:rounded-2xl">
+          <form
+            className="flex flex-col gap-3 h-fit p-5 mt-3 bg-[#171717] rounded-lg md:rounded-2xl"
+            onSubmit={handleSubmit}
+          >
             <div className="flex justify-between">
               <p className="text-white font-semibold text-xl">Tambah Motor</p>
               <div className="flex gap-2">
@@ -18,181 +84,30 @@ const TambahMotor = ({ isSidebarOpen }) => {
                   text={"Reset"}
                   bgColor={"bg-red-800"}
                   customWidth={"w-30"}
-                  disabled={false}
-                  type={"reset"}
+                  onClick={handleReset}
+                  type={"button"}
                 />
                 <Button
                   text={"Simpan"}
                   bgColor={"bg-[#1f4f27]"}
                   customWidth={"w-30"}
-                  disabled={false}
                   type={"submit"}
                 />
               </div>
             </div>
             <div className="flex flex-col gap-5 h-full">
-              <div className="flex flex-col gap-2 px-4 py-2 border-2 border-gray-400 rounded-xl h-1/2">
-                <div>
-                  <p className="text-xs text-gray-400">Data Motor</p>
-                </div>
-                <div className="flex gap-5 justify-between mb-3">
-                  <div className="flex flex-col gap-3.5 text-md text-white w-1/6">
-                    <label htmlFor="nama_motor">Nama Motor </label>
-                    <label htmlFor="plat">Plat </label>
-                    <label htmlFor="nama_pemilik">Nama Pemilik </label>
-                    <label htmlFor="merk_tipe">Merk / Tipe </label>
-                    <label htmlFor="jenis_model">Jenis / Model </label>
-                  </div>
-                  <div className="flex flex-col gap-3 text-xs text-white w-1/3">
-                    <input
-                      type="text"
-                      id="nama_motor"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="plat"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="nama_pemilik"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="merk_tipe"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="jenis_model"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3.5 text-md text-white w-1/6">
-                    <label htmlFor="kondisi">Kondisi </label>
-                    <label htmlFor="penanggungjawab">Penanggungjawab </label>
-                    <label htmlFor="unit_kerja">Unit Kerja </label>
-                    <label htmlFor="nup">NUP </label>
-                    <label htmlFor="lokasi_barang">Lokasi Barang </label>
-                  </div>
-                  <div className="flex flex-col gap-3 text-xs text-white w-1/3">
-                    <input
-                      type="text"
-                      id="kondisi"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="penanggungjawab"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="unit_kerja"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="nup"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="lokasi_barang"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2 px-4 py-2 border-2 border-gray-400 rounded-xl h-1/2">
-                <div>
-                  <p className="text-xs text-gray-400">Data STNK</p>
-                </div>
-                <div className="flex gap-5 justify-between mb-3">
-                  <div className="flex flex-col gap-3.5 text-md text-white w-1/6">
-                    <label htmlFor="alamat_stnk">Alamat STNK </label>
-                    <label htmlFor="tahun_pembuatan">Tahun Pembuatan </label>
-                    <label htmlFor="isi_silinder">Isi Silinder </label>
-                    <label htmlFor="warna_kb">Warna KB</label>
-                    <label htmlFor="bahan_bakar">Bahan Bakar </label>
-                    <label htmlFor="tahun_registrasi">Tahun Registrasi </label>
-                  </div>
-                  <div className="flex flex-col gap-3 text-xs text-white w-1/3">
-                    <input
-                      type="text"
-                      id="nama_motor"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="plat"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="nama_pemilik"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="merk_tipe"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="jenis_model"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="jenis_model"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3.5 text-md text-white w-1/6">
-                    <label htmlFor="no_rangka">Nomor Rangka </label>
-                    <label htmlFor="no_mesin">Nomor Mesin </label>
-                    <label htmlFor="no_bpkb">Nomor BPKB </label>
-                    <label htmlFor="warna_tnkb">Warna TNKB </label>
-                    <label htmlFor="berlaku_sampai">Berlaku Sampai </label>
-                    <label htmlFor="biaya_pajak">Biaya Pajak </label>
-                  </div>
-                  <div className="flex flex-col gap-3 text-xs text-white w-1/3">
-                    <input
-                      type="text"
-                      id="kondisi"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="penanggungjawab"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="unit_kerja"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="null"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="null"
-                      className="text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-                    />
-                    <input
-                      type="text"
-                      id="jenis_model"
-                      className="text-white border-1 px-2 py-1 border-gray-400  rounded-md w-full"
-                    />
-                  </div>
-                </div>
-              </div>
+              <FormKendaraan
+                title="Data Motor"
+                fields={dataMotorFields}
+                formData={formData}
+                handleChange={handleChange}
+              />
+              <FormKendaraan
+                title="Data STNK"
+                fields={dataStnkFields}
+                formData={formData}
+                handleChange={handleChange}
+              />
             </div>
           </form>
         </div>

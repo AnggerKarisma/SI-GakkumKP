@@ -7,6 +7,7 @@ import TambahMotor from "./pages/TambahMotor";
 
 import NavbarDashboard from "./components/NavbarDashboard";
 import Sidebar from "./components/Sidebar";
+import DaftarMobil from "./pages/DaftarMobil";
 
 const App = () => {
   const location = useLocation();
@@ -51,8 +52,9 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/tambah_mobil" element={<TambahMobil isSidebarOpen={isSidebarOpen}/>} />
-          <Route path="/tambah_motor" element={<TambahMotor isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/mobil" element={<DaftarMobil isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/mobil/tambah_mobil" element={<TambahMobil isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/motor/tambah_motor" element={<TambahMotor isSidebarOpen={isSidebarOpen}/>} />
         </Routes>
       </div>
     );
