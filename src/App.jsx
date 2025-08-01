@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import TambahMobil from "./pages/TambahMobil";
-import TambahMotor from "./pages/TambahMotor";
 
 import NavbarDashboard from "./components/NavbarDashboard";
 import Sidebar from "./components/Sidebar";
 import DaftarMobil from "./pages/DaftarMobil";
+import DaftarMotor from "./pages/DaftarMotor";
+import TambahMobil from "./pages/TambahMobil";
+import TambahMotor from "./pages/TambahMotor";
 
 const App = () => {
   const location = useLocation();
@@ -53,6 +54,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/register" element={<Register />} />
           <Route path="/mobil" element={<DaftarMobil isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/motor" element={<DaftarMotor isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/mobil/tambah_mobil" element={<TambahMobil isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/motor/tambah_motor" element={<TambahMotor isSidebarOpen={isSidebarOpen}/>} />
         </Routes>

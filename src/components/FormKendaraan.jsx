@@ -1,37 +1,39 @@
-// Komponen Reusable untuk satu bagian formulir (misalnya, "Data Mobil" atau "Data STNK")
+const FormField = ({ id, label, value, onChange }) => (
+  // Di layar kecil (mobile), item akan tersusun vertikal (flex-col)
+  // Di layar medium ke atas, item akan tersusun horizontal (md:flex-row)
+  <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
+    <label htmlFor={id} className="text-sm text-gray-300 md:w-2/5">
+      {label}
+    </label>
+    <input
+      type="text"
+      id={id}
+      name={id}
+      value={value || ""}
+      onChange={onChange}
+      className="bg-transparent text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full md:w-3/5"
+    />
+  </div>
+);
+
+// Komponen Reusable untuk satu bagian formulir (misalnya, "Data Mobil")
 const FormKendaraan = ({ title, fields, formData, handleChange }) => (
-  <div className="flex flex-col gap-2 px-4 py-2 border-2 border-gray-400 rounded-xl">
-    <div>
-      <p className="text-xs text-gray-400">{title}</p>
-    </div>
-    <div className="flex flex-col md:flex-row gap-5 justify-between mb-3">
-      {/* Loop melalui setiap kolom data (kiri dan kanan) */}
-      {fields.map((column, colIndex) => (
-        <div key={colIndex} className="flex gap-5 w-full md:w-1/2">
-          {/* Kolom untuk semua Label */}
-          <div className="flex flex-col gap-3.5 text-md text-white w-2/5">
-            {column.map(field => (
-              <label key={field.id} htmlFor={field.id}>{field.label}</label>
-            ))}
-          </div>
-          {/* Kolom untuk semua Input */}
-          <div className="flex flex-col gap-3 text-xs text-white w-3/5">
-            {column.map(field => (
-              <input
-                key={field.id}
-                type="text"
-                id={field.id}
-                name={field.id}
-                value={formData[field.id] || ''}
-                onChange={handleChange}
-                className="bg-transparent text-white border-1 px-2 py-1 border-gray-400 rounded-md w-full"
-              />
-            ))}
-          </div>
-        </div>
+  <div className="flex flex-col gap-4 px-4 py-4 border-2 border-gray-600 rounded-xl">
+    <p className="text-lg font-semibold text-white">{title}</p>
+    {/* Menggunakan CSS Grid untuk layout 2 kolom di desktop */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+      {fields.map((field) => (
+        <FormField
+          key={field.id}
+          id={field.id}
+          label={field.label}
+          value={formData[field.id]}
+          onChange={handleChange}
+        />
       ))}
     </div>
   </div>
 );
+
 
 export default FormKendaraan;

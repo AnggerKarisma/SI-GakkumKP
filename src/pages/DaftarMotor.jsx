@@ -8,18 +8,18 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import Button from "../components/Button";
+import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
 
 // --- DATA CONTOH ---
-// Setiap item sekarang memiliki 'id' unik dan properti 'no' dihilangkan
+// Data diperbanyak menjadi 10 item
 const mockData = [
   {
-    id: "car-001",
+    no: 1,
     plat: "KT 4532 XC",
     merk: "Toyota Fortuner",
-    jenis: "Mobil PPLH",
+    jenis: "Motor PPLH",
     penanggung_jawab: "Adi",
     lokasi: "Balikpapan",
     kondisi: "Baik",
@@ -27,10 +27,10 @@ const mockData = [
     status: "Ready",
   },
   {
-    id: "car-002",
+    no: 2,
     plat: "KT 3210 CB",
     merk: "Toyota AE86",
-    jenis: "Mobil PPLH",
+    jenis: "Motor PPLH",
     penanggung_jawab: "Eri",
     lokasi: "Samarinda",
     kondisi: "Rusak",
@@ -38,10 +38,10 @@ const mockData = [
     status: "Used",
   },
   {
-    id: "car-003",
+    no: 3,
     plat: "KT 9052 BV",
     merk: "Nissan GTR",
-    jenis: "Mobil PPLH",
+    jenis: "Motor PPLH",
     penanggung_jawab: "Kano",
     lokasi: "PPU",
     kondisi: "Baik",
@@ -49,7 +49,7 @@ const mockData = [
     status: "Unready",
   },
   {
-    id: "car-004",
+    no: 4,
     plat: "KT 1111 AA",
     merk: "Honda Civic",
     jenis: "Sedan",
@@ -60,7 +60,7 @@ const mockData = [
     status: "Ready",
   },
   {
-    id: "car-005",
+    no: 5,
     plat: "KT 2222 BB",
     merk: "Mitsubishi Pajero",
     jenis: "SUV",
@@ -71,7 +71,7 @@ const mockData = [
     status: "Used",
   },
   {
-    id: "car-006",
+    no: 6,
     plat: "KT 3333 CC",
     merk: "Suzuki Ertiga",
     jenis: "MPV",
@@ -82,7 +82,7 @@ const mockData = [
     status: "Ready",
   },
   {
-    id: "car-007",
+    no: 7,
     plat: "KT 4444 DD",
     merk: "Daihatsu Terios",
     jenis: "SUV",
@@ -93,7 +93,7 @@ const mockData = [
     status: "Unready",
   },
   {
-    id: "car-008",
+    no: 8,
     plat: "KT 5555 EE",
     merk: "Wuling Almaz",
     jenis: "SUV",
@@ -104,7 +104,7 @@ const mockData = [
     status: "Ready",
   },
   {
-    id: "car-009",
+    no: 9,
     plat: "KT 6666 FF",
     merk: "Hyundai Creta",
     jenis: "SUV",
@@ -115,7 +115,7 @@ const mockData = [
     status: "Used",
   },
   {
-    id: "car-010",
+    no: 10,
     plat: "KT 7777 GG",
     merk: "Mazda CX-5",
     jenis: "SUV",
@@ -128,13 +128,13 @@ const mockData = [
 ];
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMobil = ({ isSidebarOpen }) => {
+const DaftarMotor = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
-  const [mobilData] = useState(mockData);
+  const [motorData] = useState(mockData);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const handleTambahMobil = () => navigate("/mobil/tambah_mobil");
+  const handleTambahMotor = () => navigate("/motor/tambah_motor");
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
@@ -145,24 +145,19 @@ const DaftarMobil = ({ isSidebarOpen }) => {
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * itemsPerPage;
     const lastPageIndex = firstPageIndex + itemsPerPage;
-    return mobilData.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, itemsPerPage, mobilData]);
+    return motorData.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, itemsPerPage, motorData]);
 
   const columns = [
-    {
-      header: "NO",
-      accessor: "nomor", // Accessor bisa apa saja, karena kita akan render custom
-      sortable: false,
-      // FIX: Gunakan 'cell' untuk merender nomor urut secara dinamis
-      cell: (row, index) => {
-        // Hitung nomor urut berdasarkan halaman saat ini dan indeks baris
-        return (currentPage - 1) * itemsPerPage + index + 1;
-      },
-    },
+    { header: "NO", accessor: "no", sortable: false },
     { header: "Plat", accessor: "plat", sortable: true },
     { header: "Merk", accessor: "merk", sortable: true },
     { header: "Jenis", accessor: "jenis", sortable: true },
-    { header: "Penanggung Jawab", accessor: "penanggung_jawab",sortable: false },
+    {
+      header: "Penanggung Jawab",
+      accessor: "penanggung_jawab",
+      sortable: false,
+    },
     { header: "Lokasi", accessor: "lokasi", sortable: true },
     { header: "Kondisi", accessor: "kondisi", sortable: true },
     { header: "NUP", accessor: "nup", sortable: true },
@@ -173,9 +168,7 @@ const DaftarMobil = ({ isSidebarOpen }) => {
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="text-blue-400 hover:underline cursor-pointer">
-            Detail
-          </button>
+          <button className="text-blue-400 cursor-pointer hover:underline">Detail</button>
           <button
             disabled={row.status !== "Ready"}
             className="text-green-400 hover:underline disabled:text-gray-500 cursor-pointer disabled:cursor-not-allowed disabled:no-underline"
@@ -194,7 +187,7 @@ const DaftarMobil = ({ isSidebarOpen }) => {
       >
         <div className="flex flex-col gap-4 p-4">
           <header>
-            <h1 className="text-white font-semibold text-3xl">Daftar Mobil</h1>
+            <h1 className="text-white font-semibold text-3xl">Daftar Motor</h1>
           </header>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Button
@@ -212,19 +205,19 @@ const DaftarMobil = ({ isSidebarOpen }) => {
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
               <Button
-                text="Mobil"
+                text="Motor"
                 icon={<Plus className="w-4 h-4" />}
                 bgColor="bg-[#1f4f27]"
-                onClick={handleTambahMobil}
+                onClick={handleTambahMotor}
               />
             </div>
           </div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
-            {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
           </div>
+          {/* Paginasi baru digunakan di sini */}
           <Pagination
-            totalItems={mobilData.length}
+            totalItems={motorData.length}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}
@@ -236,4 +229,4 @@ const DaftarMobil = ({ isSidebarOpen }) => {
   );
 };
 
-export default DaftarMobil;
+export default DaftarMotor;
