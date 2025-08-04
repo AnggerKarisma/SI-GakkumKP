@@ -8,7 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import Button from "../components/Button";
+import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
 
@@ -16,125 +16,124 @@ import Pagination from "../components/Pagination.jsx";
 // Setiap item sekarang memiliki 'id' unik dan properti 'no' dihilangkan
 const mockData = [
   {
-    id: "car-001",
+    id: "pajak-001",
     plat: "KT 4532 XC",
     merk: "Toyota Fortuner",
     jenis: "Mobil PPLH",
     penanggung_jawab: "Adi",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "343432",
-    status: "Ready",
+    tahun_registrasi: "2020",
+    berlaku_sampai: "25-08-2025",
+    biaya: "Rp 4.500.000",  
+    status_pembayaran: "Lunas",
   },
   {
-    id: "car-002",
+    id: "pajak-002",
     plat: "KT 3210 CB",
     merk: "Toyota AE86",
     jenis: "Mobil PPLH",
     penanggung_jawab: "Eri",
-    lokasi: "Samarinda",
-    kondisi: "Rusak",
-    nup: "23232",
-    status: "Used",
+    tahun_registrasi: "2018",
+    berlaku_sampai: "10-03-2024",
+    biaya: "Rp 3.200.000",
+    status_pembayaran: "Belum Lunas",
   },
   {
-    id: "car-003",
+    id: "pajak-003",
     plat: "KT 9052 BV",
     merk: "Nissan GTR",
     jenis: "Mobil PPLH",
     penanggung_jawab: "Kano",
-    lokasi: "PPU",
-    kondisi: "Baik",
-    nup: "32323",
-    status: "Unready",
+    tahun_registrasi: "2022",
+    berlaku_sampai: "15-11-2026",
+    biaya: "Rp 15.000.000",
+    status_pembayaran: "Lunas",
   },
   {
-    id: "car-004",
+    id: "pajak-004",
     plat: "KT 1111 AA",
     merk: "Honda Civic",
     jenis: "Sedan",
     penanggung_jawab: "Budi",
-    lokasi: "Banjarmasin",
-    kondisi: "Baik",
-    nup: "454545",
-    status: "Ready",
+    tahun_registrasi: "2021",
+    berlaku_sampai: "01-01-2026",
+    biaya: "Rp 3.800.000",
+    status_pembayaran: "Lunas",
   },
   {
-    id: "car-005",
+    id: "pajak-005",
     plat: "KT 2222 BB",
     merk: "Mitsubishi Pajero",
     jenis: "SUV",
     penanggung_jawab: "Citra",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "565656",
-    status: "Used",
+    tahun_registrasi: "2019",
+    berlaku_sampai: "20-07-2024",
+    biaya: "Rp 5.500.000",
+    status_pembayaran: "Belum Lunas",
   },
   {
-    id: "car-006",
+    id: "pajak-006",
     plat: "KT 3333 CC",
     merk: "Suzuki Ertiga",
     jenis: "MPV",
     penanggung_jawab: "Dedi",
-    lokasi: "Samarinda",
-    kondisi: "Baik",
-    nup: "676767",
-    status: "Ready",
+    tahun_registrasi: "2023",
+    berlaku_sampai: "05-05-2028",
+    biaya: "Rp 2.800.000",
+    status_pembayaran: "Lunas",
   },
   {
-    id: "car-007",
+    id: "pajak-007",
     plat: "KT 4444 DD",
     merk: "Daihatsu Terios",
     jenis: "SUV",
     penanggung_jawab: "Fani",
-    lokasi: "PPU",
-    kondisi: "Rusak",
-    nup: "787878",
-    status: "Unready",
+    tahun_registrasi: "2020",
+    berlaku_sampai: "12-09-2025",
+    biaya: "Rp 3.100.000",
+    status_pembayaran: "Lunas",
   },
   {
-    id: "car-008",
+    id: "pajak-008",
     plat: "KT 5555 EE",
     merk: "Wuling Almaz",
     jenis: "SUV",
     penanggung_jawab: "Gita",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "898989",
-    status: "Ready",
+    tahun_registrasi: "2022",
+    berlaku_sampai: "30-06-2027",
+    biaya: "Rp 4.200.000",
+    status_pembayaran: "Lunas",
   },
   {
-    id: "car-009",
+    id: "pajak-009",
     plat: "KT 6666 FF",
     merk: "Hyundai Creta",
     jenis: "SUV",
     penanggung_jawab: "Hadi",
-    lokasi: "Banjarmasin",
-    kondisi: "Baik",
-    nup: "909090",
-    status: "Used",
+    tahun_registrasi: "2023",
+    berlaku_sampai: "18-02-2028",
+    biaya: "Rp 4.000.000",
+    status_pembayaran: "Lunas",
   },
   {
-    id: "car-010",
+    id: "pajak-010",
     plat: "KT 7777 GG",
     merk: "Mazda CX-5",
     jenis: "SUV",
     penanggung_jawab: "Ina",
-    lokasi: "Samarinda",
-    kondisi: "Baik",
-    nup: "121212",
-    status: "Ready",
+    tahun_registrasi: "2021",
+    berlaku_sampai: "22-10-2026",
+    biaya: "Rp 6.000.000",
+    status_pembayaran: "Lunas",
   },
 ];
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMobil = ({ isSidebarOpen=false }) => {
+const DaftarPajak = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
-  const [mobilData] = useState(mockData);
+  const [pajakData] = useState(mockData);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const handleTambahMobil = () => navigate("/mobil/tambah_mobil");
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
@@ -145,17 +144,15 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * itemsPerPage;
     const lastPageIndex = firstPageIndex + itemsPerPage;
-    return mobilData.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, itemsPerPage, mobilData]);
+    return pajakData.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, itemsPerPage, pajakData]);
 
   const columns = [
     {
       header: "NO",
-      accessor: "nomor", // Accessor bisa apa saja, karena kita akan render custom
+      accessor: "nomor",
       sortable: false,
-      // FIX: Gunakan 'cell' untuk merender nomor urut secara dinamis
       cell: (row, index) => {
-        // Hitung nomor urut berdasarkan halaman saat ini dan indeks baris
         return (currentPage - 1) * itemsPerPage + index + 1;
       },
     },
@@ -167,24 +164,24 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
       accessor: "penanggung_jawab",
       sortable: false,
     },
-    { header: "Lokasi", accessor: "lokasi", sortable: true },
-    { header: "Kondisi", accessor: "kondisi", sortable: true },
-    { header: "NUP", accessor: "nup", sortable: true },
-    { header: "Status", accessor: "status", sortable: true },
+    {
+      header: "Tahun Registrasi",
+      accessor: "tahun_registrasi",
+      sortable: true,
+    },
+    { header: "Berlaku Sampai", accessor: "berlaku_sampai", sortable: true },
+    { header: "Biaya", accessor: "biaya", sortable: true },
     {
       header: "Action",
       accessor: "action",
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="text-blue-400 hover:underline cursor-pointer">
+          {/* <button className="text-blue-400 hover:underline cursor-pointer">
             Detail
-          </button>
-          <button
-            disabled={row.status !== "Ready"}
-            className="text-green-400 hover:underline disabled:text-gray-500 cursor-pointer disabled:cursor-not-allowed disabled:no-underline"
-          >
-            Pinjam
+          </button> */}
+          <button className="text-green-400 hover:underline disabled:text-gray-500 cursor-pointer disabled:cursor-not-allowed disabled:no-underline">
+            Proses
           </button>
         </div>
       ),
@@ -198,7 +195,7 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
       >
         <div className="flex flex-col gap-4 p-4">
           <header>
-            <h1 className="text-white font-semibold text-3xl">Daftar Mobil</h1>
+            <h1 className="text-white font-semibold text-3xl">Daftar Pajak</h1>
           </header>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Button
@@ -215,12 +212,6 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
                 />
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
-              <Button
-                text="Mobil"
-                icon={<Plus className="w-4 h-4" />}
-                bgColor="bg-[#1f4f27]"
-                onClick={handleTambahMobil}
-              />
             </div>
           </div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
@@ -228,7 +219,7 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
             <DataTable columns={columns} data={currentTableData} />
           </div>
           <Pagination
-            totalItems={mobilData.length}
+            totalItems={pajakData.length}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}
@@ -240,4 +231,4 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   );
 };
 
-export default DaftarMobil;
+export default DaftarPajak;

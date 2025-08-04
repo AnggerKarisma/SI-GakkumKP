@@ -9,20 +9,23 @@ import DaftarMobil from "./pages/DaftarMobil";
 import DaftarMotor from "./pages/DaftarMotor";
 import TambahMobil from "./pages/TambahMobil";
 import TambahMotor from "./pages/TambahMotor";
+import DaftarPajak from "./pages/DaftarPajak";
+import DaftarPeminjaman from "./pages/DaftarPeminjaman";
 
 const App = () => {
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+  // let role = null;
+  let role = "admin";
   
   const excludedRoutes = ["/", "/login", "/register"];
   const showNavbar = !excludedRoutes.includes(location.pathname);
   const showFooter = showNavbar;
 
-  let role = "admin";
 
   if (location.pathname.match)
     return (
@@ -37,24 +40,14 @@ const App = () => {
             isSidebarOpen={isSidebarOpen}
           />
         )}
-        {/* {role === "mitra-hotel" && (
-          <NavbarDashboard
-            toggleSidebar={toggleSidebar}
-            isSidebarOpen={isSidebarOpen}
-          />
-        )}
-        {role === "mitra-pesawat" && (
-          <NavbarMitraPenerbangan
-            toggleSidebar={toggleSidebar}
-            isSidebarOpen={isSidebarOpen}
-          />
-        )} */}
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/peminjaman" element={<DaftarPeminjaman isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/mobil" element={<DaftarMobil isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/motor" element={<DaftarMotor isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/pajak" element={<DaftarPajak isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/mobil/tambah_mobil" element={<TambahMobil isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/motor/tambah_motor" element={<TambahMotor isSidebarOpen={isSidebarOpen}/>} />
         </Routes>

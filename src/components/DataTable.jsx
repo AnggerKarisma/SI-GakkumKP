@@ -5,8 +5,11 @@ const DataTable = ({ columns, data }) => {
   const StatusBadge = ({ status }) => {
     const statusStyle = {
       Ready: "text-green-500",
+      Dikembalikan: "text-green-500",
       Used: "text-yellow-500",
+      Dipinjam: "text-yellow-500",
       Unready: "text-red-500",
+      Terlambat: "text-red-500",
     };
     return (
       <span className={`font-semibold ${statusStyle[status] || "text-white"}`}>
@@ -68,8 +71,5 @@ const DataTable = ({ columns, data }) => {
     </table>
   );
 };
-// Catatan: Saya menyertakan versi DataTable yang diperbarui di sini untuk kejelasan.
-// Di proyek nyata, Anda akan memperbarui file DataTable.jsx secara langsung.
-// Untuk tujuan demonstrasi ini, saya akan menggunakan UpdatedDataTable.
-// Ganti <DataTable ... /> dengan <UpdatedDataTable ... /> di atas.
+
 export default DataTable;

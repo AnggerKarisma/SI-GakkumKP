@@ -5,6 +5,7 @@ import {
   Users,
   FileChartLine,
   Home,
+  BookUser,
 } from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -12,6 +13,7 @@ import { Link, useLocation } from "react-router-dom";
 // Daftar menu dipisahkan untuk kemudahan pengelolaan di masa depan
 const menuItems = [
   { path: "/dashboard", icon: <Home />, text: "Dashboard" },
+  { path: "/peminjaman", icon: <BookUser/>, text: "Data Peminjaman" },
   { path: "/mobil", icon: <CarFront />, text: "Mobil" },
   { path: "/motor", icon: <Bike />, text: "Motor" },
   { path: "/pajak", icon: <ReceiptText />, text: "Pajak" },

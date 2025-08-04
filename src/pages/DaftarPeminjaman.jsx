@@ -8,7 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import Button from "../components/Button";
+import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
 
@@ -16,125 +16,114 @@ import Pagination from "../components/Pagination.jsx";
 // Setiap item sekarang memiliki 'id' unik dan properti 'no' dihilangkan
 const mockData = [
   {
-    id: "car-001",
+    id: "pinjam-001",
     plat: "KT 4532 XC",
     merk: "Toyota Fortuner",
-    jenis: "Mobil PPLH",
-    penanggung_jawab: "Adi",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "343432",
-    status: "Ready",
+    tgl_pinjam: "01-08-2025",
+    rencana_kembali: "08-08-2025",
+    tgl_kembali: null, // Masih dipinjam
+    peminjam: "Dodi",
+    status: "Dipinjam",
   },
   {
-    id: "car-002",
+    id: "pinjam-002",
     plat: "KT 3210 CB",
     merk: "Toyota AE86",
-    jenis: "Mobil PPLH",
-    penanggung_jawab: "Eri",
-    lokasi: "Samarinda",
-    kondisi: "Rusak",
-    nup: "23232",
-    status: "Used",
+    tgl_pinjam: "15-07-2025",
+    rencana_kembali: "20-07-2025",
+    tgl_kembali: "20-07-2025",
+    peminjam: "Bob",
+    status: "Dikembalikan",
   },
   {
-    id: "car-003",
+    id: "pinjam-003",
     plat: "KT 9052 BV",
     merk: "Nissan GTR",
-    jenis: "Mobil PPLH",
-    penanggung_jawab: "Kano",
-    lokasi: "PPU",
-    kondisi: "Baik",
-    nup: "32323",
-    status: "Unready",
+    tgl_pinjam: "25-07-2025",
+    rencana_kembali: "28-07-2025",
+    tgl_kembali: null,
+    peminjam: "Deni",
+    status: "Terlambat",
   },
   {
-    id: "car-004",
+    id: "pinjam-004",
     plat: "KT 1111 AA",
     merk: "Honda Civic",
-    jenis: "Sedan",
-    penanggung_jawab: "Budi",
-    lokasi: "Banjarmasin",
-    kondisi: "Baik",
-    nup: "454545",
-    status: "Ready",
+    tgl_pinjam: "02-08-2025",
+    rencana_kembali: "05-08-2025",
+    tgl_kembali: null,
+    peminjam: "Toni",
+    status: "Dipinjam",
   },
   {
-    id: "car-005",
+    id: "pinjam-005",
     plat: "KT 2222 BB",
     merk: "Mitsubishi Pajero",
-    jenis: "SUV",
-    penanggung_jawab: "Citra",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "565656",
-    status: "Used",
+    tgl_pinjam: "10-06-2025",
+    rencana_kembali: "15-06-2025",
+    tgl_kembali: "15-06-2025",
+    peminjam: "Bob",
+    status: "Dikembalikan",
   },
   {
-    id: "car-006",
+    id: "pinjam-006",
     plat: "KT 3333 CC",
     merk: "Suzuki Ertiga",
-    jenis: "MPV",
-    penanggung_jawab: "Dedi",
-    lokasi: "Samarinda",
-    kondisi: "Baik",
-    nup: "676767",
-    status: "Ready",
+    tgl_pinjam: "20-07-2025",
+    rencana_kembali: "25-07-2025",
+    tgl_kembali: "25-07-2025",
+    peminjam: "Deni",
+    status: "Dikembalikan",
   },
   {
-    id: "car-007",
+    id: "pinjam-007",
     plat: "KT 4444 DD",
     merk: "Daihatsu Terios",
-    jenis: "SUV",
-    penanggung_jawab: "Fani",
-    lokasi: "PPU",
-    kondisi: "Rusak",
-    nup: "787878",
-    status: "Unready",
+    tgl_pinjam: "28-07-2025",
+    rencana_kembali: "01-08-2025",
+    tgl_kembali: null,
+    peminjam: "Joko",
+    status: "Terlambat",
   },
   {
-    id: "car-008",
+    id: "pinjam-008",
     plat: "KT 5555 EE",
     merk: "Wuling Almaz",
-    jenis: "SUV",
-    penanggung_jawab: "Gita",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "898989",
-    status: "Ready",
+    tgl_pinjam: "03-08-2025",
+    rencana_kembali: "10-08-2025",
+    tgl_kembali: null,
+    peminjam: "Yoga",
+    status: "Dipinjam",
   },
   {
-    id: "car-009",
+    id: "pinjam-009",
     plat: "KT 6666 FF",
     merk: "Hyundai Creta",
-    jenis: "SUV",
-    penanggung_jawab: "Hadi",
-    lokasi: "Banjarmasin",
-    kondisi: "Baik",
-    nup: "909090",
-    status: "Used",
+    tgl_pinjam: "11-07-2025",
+    rencana_kembali: "14-07-2025",
+    tgl_kembali: "14-07-2025",
+    peminjam: "Toni",
+    status: "Dikembalikan",
   },
   {
-    id: "car-010",
+    id: "pinjam-010",
     plat: "KT 7777 GG",
     merk: "Mazda CX-5",
-    jenis: "SUV",
-    penanggung_jawab: "Ina",
-    lokasi: "Samarinda",
-    kondisi: "Baik",
-    nup: "121212",
-    status: "Ready",
+    tgl_pinjam: "01-08-2025",
+    rencana_kembali: "07-08-2025",
+    tgl_kembali: null,
+    peminjam: "Yono",
+    status: "Dipinjam",
   },
 ];
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMobil = ({ isSidebarOpen=false }) => {
+const DaftarPeminjaman = ({ isSidebarOpen=false }) => {
   const navigate = useNavigate();
-  const [mobilData] = useState(mockData);
+  const [peminjamanData] = useState(mockData);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const handleTambahMobil = () => navigate("/mobil/tambah_mobil");
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
@@ -145,8 +134,8 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * itemsPerPage;
     const lastPageIndex = firstPageIndex + itemsPerPage;
-    return mobilData.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, itemsPerPage, mobilData]);
+    return peminjamanData.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, itemsPerPage, peminjamanData]);
 
   const columns = [
     {
@@ -161,15 +150,14 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
     },
     { header: "Plat", accessor: "plat", sortable: true },
     { header: "Merk", accessor: "merk", sortable: true },
-    { header: "Jenis", accessor: "jenis", sortable: true },
+    { header: "Peminjam", accessor: "peminjam", sortable: true },
+    { header: "Tanggal Pinjam", accessor: "tgl_pinjam", sortable: true },
     {
-      header: "Penanggung Jawab",
-      accessor: "penanggung_jawab",
-      sortable: false,
+      header: "Rencana Kembali",
+      accessor: "rencana_kembali",
+      sortable: true,
     },
-    { header: "Lokasi", accessor: "lokasi", sortable: true },
-    { header: "Kondisi", accessor: "kondisi", sortable: true },
-    { header: "NUP", accessor: "nup", sortable: true },
+    { header: "Tanggal Kembali", accessor: "tgl_kembali", sortable: true },
     { header: "Status", accessor: "status", sortable: true },
     {
       header: "Action",
@@ -177,14 +165,11 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="text-blue-400 hover:underline cursor-pointer">
-            Detail
-          </button>
           <button
-            disabled={row.status !== "Ready"}
+            disabled={row.status === "Dikembalikan"}
             className="text-green-400 hover:underline disabled:text-gray-500 cursor-pointer disabled:cursor-not-allowed disabled:no-underline"
           >
-            Pinjam
+            Kembalikan
           </button>
         </div>
       ),
@@ -198,7 +183,7 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
       >
         <div className="flex flex-col gap-4 p-4">
           <header>
-            <h1 className="text-white font-semibold text-3xl">Daftar Mobil</h1>
+            <h1 className="text-white font-semibold text-3xl">Daftar Peminjaman</h1>
           </header>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Button
@@ -215,20 +200,15 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
                 />
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
-              <Button
-                text="Mobil"
-                icon={<Plus className="w-4 h-4" />}
-                bgColor="bg-[#1f4f27]"
-                onClick={handleTambahMobil}
-              />
             </div>
           </div>
+          <div></div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
             {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
           </div>
           <Pagination
-            totalItems={mobilData.length}
+            totalItems={peminjamanData.length}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}
@@ -240,4 +220,4 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   );
 };
 
-export default DaftarMobil;
+export default DaftarPeminjaman;

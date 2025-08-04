@@ -11,7 +11,10 @@ const Login = () => {
   };
 
   const handleRegisterClick = () => {
-    navigate("/register"); // Arahkan ke halaman /register
+    navigate("/register");
+  };
+  const handleLoginClick = () => {
+    navigate("/mobil"); 
   };
   return (
     <>
@@ -43,7 +46,7 @@ const Login = () => {
                   <input
                     required
                     type="email"
-                    placeholder="Email"
+                    placeholder="NIP"
                     className="text-sm text-white px-2 w-full outline-none bg-transparent"
                   />
                 </div>
@@ -79,7 +82,7 @@ const Login = () => {
               <Button
                 text={"Login"}
                 bgColor={"bg-[#1f4f27]"}
-                onClick={""}
+                onClick={handleLoginClick}
                 disabled={""}
                 icon={null}
                 shadow={"shadow-md"}
