@@ -17,80 +17,111 @@ class Pinjam extends Model
         'userID',
         'kendaraanID',
         'tglPinjam',
-        'tglKembali',
+        'tglJatuhTempo',     
+        'tglKembaliAktual',  
+        'keterangan',
     ];
 
     protected $casts = [
         'tglPinjam' => 'date',
-        'tglKembali' => 'date',
+        'tglJatuhTempo' => 'date',
+        'tglKembaliAktual' => 'date',
     ];
 
-    public function user()
+   public function user()
     {
-        return $this->belongsTo(User::class, 'userID','userID');
+        return $this->belongsTo(User::class, 'userID', 'userID');
     }
 
     public function kendaraan()
     {
-        return $this->belongsTo(Kendaraan::class, 'kendaraanID','kendaraanID');
+        return $this->belongsTo(Kendaraan::class, 'kendaraanID', 'kendaraanID');
     }
 
     public function isActive()
     {
-        return $this->tglPinjam <= now() &&
-            ($this->tglKembali === null || $this->tglKembali >= now());
+        return $this->tglPinjam <= now() && $this->tglKembaliAktual === null;
     }
 
     public function isOverdue()
     {
-        return $this->tglKembali !== null && 
-           $this->tglKembali < now() && 
-           !$this->isReturned();
-    }   
+        return $this->tglJatuhTempo && 
+            $this->tglJatuhTempo < now() && 
+            $this->tglKembaliAktual === null;
+    }
 
     public function isReturned()
     {
-        return $this->tglKembali !== null && $this ->tglKembali < now();
+        return $this->tglKembaliAktual !== null;
+    }
+
+    public function isLateReturn()
+    {
+        return $this->tglKembaliAktual !== null && 
+            $this->tglJatuhTempo !== null &&
+            $this->tglKembaliAktual > $this->tglJatuhTempo;
     }
 
     public function getDurationInDays()
     {
-        if($this -> tglPinjam && $this->tglKembali){
-            return $this -> tglPinjam->diffInDays($this ->tglKembali);
+         if ($this->tglPinjam && $this->tglKembaliAktual) {
+        return $this->tglPinjam->diffInDays($this->tglKembaliAktual);
         }
-        if($this -> tglPinjam){
-            return $this->tglPinjam->diffInDays(now());
+    
+        if ($this->tglPinjam) {
+        return $this->tglPinjam->diffInDays(now());
         }
         return 0;
     }
 
+    public function getOverdueDays()
+    {
+       if (!$this->tglJatuhTempo || !$this->isOverdue()) {
+        return 0;
+        }
+    
+        return $this->tglJatuhTempo->diffInDays(now());
+    }
+
+    public function getLateReturnDays()
+    {
+        if (!$this->tglJatuhTempo || !$this->tglKembaliAktual || !$this->isLateReturn()) {
+            return 0;
+        }
+    
+        return $this->tglJatuhTempo->diffInDays($this->tglKembaliAktual);
+    }
+    
     public function scopeActive($query)
     {
-        return $query->where('tglPinjam', '<=',now())
-            ->where (function($q){
-                $q->whereNull('tglKembali') ->orWhere('tglKembali','>=',now());
-            });
+        return $query->where('tglPinjam', '<=', now())
+                    ->whereNull('tglKembaliAktual');
     }
 
     public function scopeOverdue($query)
     {
-        return $query->whereNotNull('tglKembali') ->where('tglKembali','<', now())
-            ->active();
+        return $query->where('tglJatuhTempo', '<', now())
+                    ->whereNull('tglKembaliAktual');
     }
 
     public function scopeCompleted($query)
     {
-        return $query ->whereNotNull('tglKembali')
-            ->where ('tglKembali','<',now());
+        return $query->whereNotNull('tglKembaliAktual');
     }
 
-    public function scopeByUser($query,$userID)
+    public function scopeLateReturned($query)
     {
-        return $query->where('userID',$userID);
+        return $query->whereNotNull('tglKembaliAktual')
+                    ->whereColumn('tglKembaliAktual', '>', 'tglJatuhTempo');
     }
 
-    public function scopeByKendaraan($query,$kendaraanID)
+    public function scopeByUser($query, $userID)
     {
-        return $query->where('kendaraanID',$kendaraanID);
+        return $query->where('userID', $userID);
+    }
+
+    public function scopeByKendaraan($query, $kendaraanID)
+    {
+        return $query->where('kendaraanID', $kendaraanID);
     }
 }

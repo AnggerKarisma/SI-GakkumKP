@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id('userID');
             $table->string('nama')->unique();
             $table->string('NIP')->unique();
-            $table->string('email')->unique();
             $table->string('password');
             $table->string('jabatan');
             $table->enum('unitKerja',[
@@ -25,7 +24,6 @@ return new class extends Migration
                 'Sekwil III / Pontianak'
             ]);
             $table->enum('role',['Super Admin', 'Admin', 'User'])->default('User');
-            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -46,9 +44,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

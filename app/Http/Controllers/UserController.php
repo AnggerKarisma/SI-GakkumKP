@@ -17,10 +17,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'NIP' => 'required|string|max:255|unique:users,NIP',
-            'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6',
             'jabatan' => 'required|string|max:255',
-            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka raya,Sekwil II / Samarinda,Sekwil III / Pontianak'
+            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka Raya,Sekwil II / Samarinda,Sekwil III / Pontianak'
         ]);
 
         if ($validator->fails()) {
@@ -34,21 +33,9 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
 
-            $requiredFields = ['nama', 'NIP', 'email', 'password', 'jabatan', 'unitKerja'];
-            foreach ($requiredFields as $field) {
-                if (empty($request->$field)) {
-                    DB::rollback();
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Semua kolom harus diisi.'
-                    ], 400);
-                }
-            }
-
             $user = User::create([
                 'nama' => $request->nama,
                 'NIP' => $request->NIP,
-                'email' => $request->email,
                 'password' => Hash::make($request->password), 
                 'jabatan' => $request->jabatan,
                 'unitKerja' => $request->unitKerja,
@@ -64,7 +51,6 @@ class UserController extends Controller
                     'userID' => $user->userID,
                     'nama' => $user->nama,
                     'NIP' => $user->NIP,
-                    'email' => $user->email,
                     'jabatan' => $user->jabatan,
                     'unitKerja' => $user->unitKerja,
                     'role' => $user->role
@@ -85,10 +71,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'NIP' => 'required|string|max:255|unique:users,NIP',
-            'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6',
             'jabatan' => 'required|string|max:255',
-            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka raya,Sekwil II / Samarinda,Sekwil III / Pontianak'
+            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka Raya,Sekwil II / Samarinda,Sekwil III / Pontianak'
         ]);
 
         if ($validator->fails()) {
@@ -102,21 +87,9 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
 
-            $requiredFields = ['nama', 'NIP', 'email', 'password', 'jabatan', 'unitKerja'];
-            foreach ($requiredFields as $field) {
-                if (empty($request->$field)) {
-                    DB::rollback();
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Semua kolom harus diisi.'
-                    ], 400);
-                }
-            }
-
             $user = User::create([
                 'nama' => $request->nama,
                 'NIP' => $request->NIP,
-                'email' => $request->email,
                 'password' => Hash::make($request->password), 
                 'jabatan' => $request->jabatan,
                 'unitKerja' => $request->unitKerja,
@@ -132,7 +105,6 @@ class UserController extends Controller
                     'userID' => $user->userID,
                     'nama' => $user->nama,
                     'NIP' => $user->NIP,
-                    'email' => $user->email,
                     'jabatan' => $user->jabatan,
                     'unitKerja' => $user->unitKerja,
                     'role' => $user->role
@@ -143,25 +115,24 @@ class UserController extends Controller
             DB::rollback();
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mendaftarkan user: ' . $e->getMessage()
+                'message' => 'Gagal mendaftarkan Super Admin: ' . $e->getMessage()
             ], 500);
         }
     }
 
     public function login(Request $request)
     {
-        if (empty($request->NIP)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'NIP tidak boleh kosong.'
-            ], 400);
-        }
+        $validator = Validator::make($request->all(), [
+            'NIP' => 'required|string',
+            'password' => 'required|string|min:6'
+        ]);
 
-        if (strlen($request->password) < 6) {
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'panjang password minimal 6 karakter'
-            ], 400);
+                'message' => 'NIP dan password harus diisi dengan benar.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         try {
@@ -185,7 +156,6 @@ class UserController extends Controller
                     'userID' => $user->userID,
                     'nama' => $user->nama,
                     'NIP' => $user->NIP,
-                    'email' => $user->email,
                     'jabatan' => $user->jabatan,
                     'unitKerja' => $user->unitKerja,
                     'role' => $user->role
@@ -203,15 +173,25 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        if (Auth::check()) {
-            $request->user()->currentAccessToken()->delete();
-            Auth::logout();
+        try {
+            if (Auth::check()) {
+                $request->user()->currentAccessToken()->delete();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Logout berhasil'
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User tidak terautentikasi'
+                ], 401);
+            }  
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal logout: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Logout berhasil'
-        ], 200);
     }
 
     public function createAccountByAdmin(Request $request)
@@ -219,56 +199,24 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'NIP' => 'required|string|max:255|unique:users,NIP',
-            'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6',
             'jabatan' => 'required|string|max:255',
-            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka raya,Sekwil II / Samarinda,Sekwil III / Pontianak',
+            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka Raya,Sekwil II / Samarinda,Sekwil III / Pontianak',
             'role' => 'required|in:Admin,User'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal',
                 'errors' => $validator->errors()
             ], 422);
         }
 
-        $currentUser = Auth::user();
-        
-        if (!$currentUser) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User tidak terautentikasi'
-            ], 401);
-        }
-
         try {
-            if ($currentUser->isAdmin() && $request->role === 'Admin') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Akses ditolak: Admin tidak dapat membuat akun Admin lain.'
-                ], 403);
-            }
-
-            if ($currentUser->isAdmin() && $currentUser->unitKerja !== $request->unitKerja) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Akses ditolak: Admin hanya dapat membuat user di unit kerjanya.'
-                ], 403);
-            }
-
-            if (!$currentUser->isSuperAdmin() && !$currentUser->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Akses ditolak: Hanya Admin atau Super Admin yang dapat membuat Akun.'
-                ], 403);
-            }
-
             $newUser = User::create([
                 'nama' => $request->nama,
                 'NIP' => $request->NIP,
-                'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'jabatan' => $request->jabatan,
                 'unitKerja' => $request->unitKerja,
@@ -282,7 +230,6 @@ class UserController extends Controller
                     'userID' => $newUser->userID,
                     'nama' => $newUser->nama,
                     'NIP' => $newUser->NIP,
-                    'email' => $newUser->email,
                     'jabatan' => $newUser->jabatan,
                     'unitKerja' => $newUser->unitKerja,
                     'role' => $newUser->role
@@ -300,14 +247,14 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255',
+            'nama' => 'required|string|max:255',
             'password' => 'nullable|string|min:6'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -322,8 +269,7 @@ class UserController extends Controller
         }
 
         try {
-            
-            $updateData = ['email' => $request->email];
+            $updateData = ['nama' => $request->nama];
             
             if (!empty($request->password)) {
                 $updateData['password'] = Hash::make($request->password);
@@ -338,7 +284,6 @@ class UserController extends Controller
                     'userID' => $currentUser->userID,
                     'nama' => $currentUser->nama,
                     'NIP' => $currentUser->NIP,
-                    'email' => $currentUser->email,
                     'jabatan' => $currentUser->jabatan,
                     'unitKerja' => $currentUser->unitKerja,
                     'role' => $currentUser->role
@@ -364,7 +309,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -383,14 +328,14 @@ class UserController extends Controller
             if ($currentUser->userID == $targetUser->userID) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'tidak dapat mengelola akun sendiri.'
+                    'message' => 'Tidak dapat mengelola akun sendiri.'
                 ], 403);
             }
 
             if ($currentUser->isAdmin() && ($targetUser->isAdmin() || $targetUser->isSuperAdmin())) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Akses Ditolak.'
+                    'message' => 'Akses ditolak.'
                 ], 403);
             }
 
@@ -414,7 +359,6 @@ class UserController extends Controller
                     'userID' => $targetUser->userID,
                     'nama' => $targetUser->nama,
                     'NIP' => $targetUser->NIP,
-                    'email' => $targetUser->email,
                     'jabatan' => $targetUser->jabatan,
                     'unitKerja' => $targetUser->unitKerja,
                     'role' => $targetUser->role
@@ -445,15 +389,17 @@ class UserController extends Controller
             if ($currentUser->userID == $targetUser->userID) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'tidak dapat mengelola akun sendiri.'
+                    'message' => 'Tidak dapat menghapus akun sendiri.'
                 ], 403);
             }
+
             if ($currentUser->isAdmin() && ($targetUser->isAdmin() || $targetUser->isSuperAdmin())) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Akses Ditolak.'
+                    'message' => 'Akses ditolak.'
                 ], 403);
             }
+
             if (!$currentUser->isSuperAdmin() && !$currentUser->isAdmin()) {
                 return response()->json([
                     'success' => false,
@@ -488,7 +434,7 @@ class UserController extends Controller
         }
 
         try {
-            $accounts = User::select('nama', 'email', 'unitKerja')->get();
+            $accounts = User::select('nama', 'unitKerja')->get();
 
             return response()->json([
                 'success' => true,
@@ -522,7 +468,6 @@ class UserController extends Controller
                 'userID' => $currentUser->userID,
                 'nama' => $currentUser->nama,
                 'NIP' => $currentUser->NIP,
-                'email' => $currentUser->email,
                 'jabatan' => $currentUser->jabatan,
                 'unitKerja' => $currentUser->unitKerja,
                 'role' => $currentUser->role
@@ -542,7 +487,7 @@ class UserController extends Controller
         }
 
         try {
-            $users = User::select('userID', 'nama', 'NIP', 'email', 'jabatan', 'unitKerja', 'role')
+            $users = User::select('userID', 'nama', 'NIP', 'jabatan', 'unitKerja', 'role')
                          ->get();
 
             return response()->json([

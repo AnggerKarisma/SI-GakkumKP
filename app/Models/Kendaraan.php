@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,7 +38,7 @@ class Kendaraan extends Model
     ];
     
     protected $casts = [
-        'tahunPembuatan' => 'date',
+        'tahunPembuatan' => 'integer',
         'berlakuSampai' => 'date',
         'tahunRegistrasi' => 'integer',
     ];
@@ -86,6 +85,6 @@ class Kendaraan extends Model
 
     public function currentBorrowing()
     {
-        return $this->pinjams() -> whereNull('tglKembali') -> orWhere('tglKembali', '>=', now()) ->first();
+        return $this->pinjams() -> whereNull('tglKembaliAktual') ->first();
     }
 }

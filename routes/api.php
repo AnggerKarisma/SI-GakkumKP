@@ -30,17 +30,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('pinjam')->group(function () {
         Route::get('/', [BorrowController::class, 'index']);
         Route::post('/', [BorrowController::class, 'store']);
-        Route::get('/active', [BorrowController::class, 'getActive']);
-        Route::get('/overdue', [BorrowController::class, 'getOverdue']);
+        Route::get('/statistics', [BorrowController::class, 'getStatistics']); 
         Route::post('/return/{id}', [BorrowController::class, 'returnVehicle']);
-        Route::post('/update-kendaraan-status', [BorrowController::class, 'updateKendaraanStatus']);
         Route::post('/generate-report', [BorrowController::class, 'generateReport']);
+        Route::get('/maintenance', [BorrowController::class, 'getMaintenanceList']);
+        Route::post('/maintenance/{kendaraanId}', [BorrowController::class, 'setMaintenance']);
+        Route::post('/maintenance/{kendaraanId}/complete', [BorrowController::class, 'completeMaintenance']);
         Route::get('/user/{userId}', [BorrowController::class, 'getByUser']);
         Route::get('/kendaraan/{kendaraanId}', [BorrowController::class, 'getByKendaraan']);
         Route::get('/{id}', [BorrowController::class, 'show']);
         Route::delete('/{id}', [BorrowController::class, 'destroy']);
     });
-
+    
     Route::prefix('pajak')->group(function () {
         Route::get('/', [TaxController::class, 'index']);
         Route::post('/', [TaxController::class, 'store']);
@@ -54,7 +55,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('admin')->group(function () {
-        Route::post('/admin/create-account', [UserController::class, 'createAccountByAdmin']);
         Route::put('/admin/account/{id}', [UserController::class, 'updateAccount']);
         Route::delete('/admin/account/{id}', [UserController::class, 'deleteAccount']);
         Route::get('/admin/accounts', [UserController::class, 'showAllAccounts']);
@@ -66,5 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/kendaraan/{id}/status', [VehicleController::class, 'updateStatus']);
 
     });
-
+    Route::middleware('superadmin')->group(function () {
+        Route::post('/admin/create-account', [UserController::class, 'createAccountByAdmin']);
+    });
 });

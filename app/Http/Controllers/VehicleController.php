@@ -23,7 +23,7 @@ class VehicleController extends Controller
         }
 
         try{
-            if ($currentUser->isSuperAdmin() || $currentUser->unitKerja ==='balai'){
+            if ($currentUser->isSuperAdmin() || $currentUser->unitKerja ==='Balai'){
                 $kendaraan = Kendaraan::all();
             } else {
                 $kendaraan = Kendaraan::byUnitKerja($currentUser->unitKerja)->get();
@@ -65,7 +65,7 @@ class VehicleController extends Controller
             }
             
             if(!$currentUser->isSuperAdmin()&&
-                $currentUser->unitKerja !== 'balai' &&
+                $currentUser->unitKerja !== 'Balai' &&
                 $currentUser->unitKerja !== $kendaraan->unitKerja){
                     return response() ->json([
                         'success' => false,
@@ -87,8 +87,8 @@ class VehicleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'namaKendaraan' => 'rquired|string|max:255',
-            'plat' => 'required| string|max:255|unique:kendaraan.plat',
+            'namaKendaraan' => 'required|string|max:255',
+            'plat' => 'required|string|max:255|unique:kendaraan,plat',
             'pemilik' => 'required|string|max:255',
             'alamat' => 'required|string|max:255',
             'merk'=> 'required|string|max:255',
@@ -97,17 +97,17 @@ class VehicleController extends Controller
             'tahunPembuatan' => 'required|integer|min:1900|max:' . date('Y'),
             'silinder' => 'required|string|max:255',
             'warnaKB' => 'required|string|max:255',
-            'noRangka' => 'required|string|max:255|unique:kendaraan.noRangka',
-            'noMesin' => 'required|string|max:255|unique:kendaraan.noMesin',
-            'noBPKB' => 'required|string|max:255|unique:kendaraan.noBPKB',
+            'noRangka' => 'required|string|max:255|unique:kendaraan,noRangka',
+            'noMesin' => 'required|string|max:255|unique:kendaraan,noMesin',
+            'noBPKB' => 'required|string|max:255|unique:kendaraan,noBPKB',
             'warnaTNKB' => 'required|string|max:255',
-            'bahanBakar'=> 'required|in: Bensin, Solar',
+            'bahanBakar'=> 'required|in:Bensin,Solar',
             'tahunRegistrasi' => 'required|integer|min:1900|max:' . date('Y'),
             'berlakuSampai' => 'required|date|after:today',
             'biaya' => 'required|string|max:255',
             'penanggungjawab' => 'required|string|max:255',
             'NUP' => 'required|string|max:255',
-            'unitKerja' => 'required|in: Balai, Sekwil I / Palangka raya, Sekwil II / Samarinda, Sekwil III / Pontianak',
+            'unitKerja' => 'required|in:Balai,Sekwil I / Palangka raya,Sekwil II / Samarinda,Sekwil III / Pontianak',
             'Kkendaraan' => 'required|string|max:255'
         ]);
         if ($validator->fails()){
@@ -127,22 +127,21 @@ class VehicleController extends Controller
         }
 
         try{
-            if(!$currentUser->isAdmin() && !$currentUser->isSuperAdmin()){
-                return response()->json([
-                'success'=> false,
-                'message' => 'Akses Ditolak'
-                ],401);
+
+            $tahunPembuatan = $request->tahunPembuatan;
+            if(is_string($tahunPembuatan)&& strtotime($tahunPembuatan)){
+                $tahunPembuatan = (int) date('Y', strtotime($tahunPembuatan));
             }
 
             $kendaraan = Kendaraan::create([
-                'namaKendaraaan'=> $request->namaKendaraan,
+                'namaKendaraan'=> $request->namaKendaraan,
                 'plat' => $request->plat,
                 'pemilik' => $request->pemilik,
                 'alamat' => $request->alamat,
                 'merk' => $request->merk,
                 'model' => $request->model,
                 'jenisKendaraan' => $request->jenisKendaraan,
-                'tahunPembuatan' => $request->tahunPembuatan,
+                'tahunPembuatan' => $tahunPembuatan,
                 'silinder' => $request->silinder,
                 'warnaKB' => $request->warnaKB,
                 'noRangka' => $request->noRangka,
@@ -220,7 +219,7 @@ class VehicleController extends Controller
         }
 
         try{
-            if (!$currentUser->isAdmin() && !$isSuperAdmin()){
+            if (!$currentUser->isAdmin() && !$currentUser->isSuperAdmin()){
                 return response()->json([
                     'success' => false,
                     'message' => 'Akses ditolak.'
@@ -272,7 +271,8 @@ class VehicleController extends Controller
             ], 500);
         }
     }
-     public function destroy($kendaraanId)
+    
+    public function destroy($kendaraanId)
     {
         $currentUser = Auth::user();
         $kendaraan = Kendaraan::find($kendaraanId);
@@ -304,10 +304,6 @@ class VehicleController extends Controller
                     'success' => false,
                     'message' => 'Tidak dapat menghapus kendaraan yang sedang dipinjam.'
                 ], 400);
-            }
-            if ($kendaraan->gambar_url) {
-                $imagePath = str_replace('/storage/', '', $kendaraan->gambar_url);
-                Storage::disk('public')->delete($imagePath);
             }
 
             $kendaraan->delete();

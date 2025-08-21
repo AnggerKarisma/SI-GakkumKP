@@ -6,7 +6,6 @@ create or replace table user(
 	userID Int primary key not null Auto_increment,
 	nama varchar(255)not null unique,
 	NIP varchar(255) not null unique,
-	email varchar(255)not null unique,
 	password varchar(255)not null,
 	jabatan varchar (255)not null,
 	unitKerja enum ("Balai","Sekwil I / Palangka raya", "Sekwil II / Samarinda", "Sekwil III / Pontianak")not null,
