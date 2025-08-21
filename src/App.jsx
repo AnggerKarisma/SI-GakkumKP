@@ -11,6 +11,9 @@ import TambahMobil from "./pages/TambahMobil";
 import TambahMotor from "./pages/TambahMotor";
 import DaftarPajak from "./pages/DaftarPajak";
 import DaftarPeminjaman from "./pages/DaftarPeminjaman";
+import DaftarLaporan from "./pages/DaftarLaporan";
+import DaftarAkun from "./pages/DaftarAkun";
+import TambahAkun from "./pages/TambahAkun";
 
 const App = () => {
   const location = useLocation();
@@ -48,7 +51,10 @@ const App = () => {
           <Route path="/mobil" element={<DaftarMobil isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/motor" element={<DaftarMotor isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/pajak" element={<DaftarPajak isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/laporan" element={<DaftarLaporan isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/akun" element={<DaftarAkun isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/mobil/tambah_mobil" element={<TambahMobil isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/akun/tambah_akun" element={<TambahAkun isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/motor/tambah_motor" element={<TambahMotor isSidebarOpen={isSidebarOpen}/>} />
         </Routes>
       </div>

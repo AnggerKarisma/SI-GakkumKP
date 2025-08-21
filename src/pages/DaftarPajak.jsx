@@ -11,126 +11,13 @@ import {
 import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
+import DataPajak from "../dummy/pajak.jsx";
 
-// --- DATA CONTOH ---
-// Setiap item sekarang memiliki 'id' unik dan properti 'no' dihilangkan
-const mockData = [
-  {
-    id: "pajak-001",
-    plat: "KT 4532 XC",
-    merk: "Toyota Fortuner",
-    jenis: "Mobil PPLH",
-    penanggung_jawab: "Adi",
-    tahun_registrasi: "2020",
-    berlaku_sampai: "25-08-2025",
-    biaya: "Rp 4.500.000",  
-    status_pembayaran: "Lunas",
-  },
-  {
-    id: "pajak-002",
-    plat: "KT 3210 CB",
-    merk: "Toyota AE86",
-    jenis: "Mobil PPLH",
-    penanggung_jawab: "Eri",
-    tahun_registrasi: "2018",
-    berlaku_sampai: "10-03-2024",
-    biaya: "Rp 3.200.000",
-    status_pembayaran: "Belum Lunas",
-  },
-  {
-    id: "pajak-003",
-    plat: "KT 9052 BV",
-    merk: "Nissan GTR",
-    jenis: "Mobil PPLH",
-    penanggung_jawab: "Kano",
-    tahun_registrasi: "2022",
-    berlaku_sampai: "15-11-2026",
-    biaya: "Rp 15.000.000",
-    status_pembayaran: "Lunas",
-  },
-  {
-    id: "pajak-004",
-    plat: "KT 1111 AA",
-    merk: "Honda Civic",
-    jenis: "Sedan",
-    penanggung_jawab: "Budi",
-    tahun_registrasi: "2021",
-    berlaku_sampai: "01-01-2026",
-    biaya: "Rp 3.800.000",
-    status_pembayaran: "Lunas",
-  },
-  {
-    id: "pajak-005",
-    plat: "KT 2222 BB",
-    merk: "Mitsubishi Pajero",
-    jenis: "SUV",
-    penanggung_jawab: "Citra",
-    tahun_registrasi: "2019",
-    berlaku_sampai: "20-07-2024",
-    biaya: "Rp 5.500.000",
-    status_pembayaran: "Belum Lunas",
-  },
-  {
-    id: "pajak-006",
-    plat: "KT 3333 CC",
-    merk: "Suzuki Ertiga",
-    jenis: "MPV",
-    penanggung_jawab: "Dedi",
-    tahun_registrasi: "2023",
-    berlaku_sampai: "05-05-2028",
-    biaya: "Rp 2.800.000",
-    status_pembayaran: "Lunas",
-  },
-  {
-    id: "pajak-007",
-    plat: "KT 4444 DD",
-    merk: "Daihatsu Terios",
-    jenis: "SUV",
-    penanggung_jawab: "Fani",
-    tahun_registrasi: "2020",
-    berlaku_sampai: "12-09-2025",
-    biaya: "Rp 3.100.000",
-    status_pembayaran: "Lunas",
-  },
-  {
-    id: "pajak-008",
-    plat: "KT 5555 EE",
-    merk: "Wuling Almaz",
-    jenis: "SUV",
-    penanggung_jawab: "Gita",
-    tahun_registrasi: "2022",
-    berlaku_sampai: "30-06-2027",
-    biaya: "Rp 4.200.000",
-    status_pembayaran: "Lunas",
-  },
-  {
-    id: "pajak-009",
-    plat: "KT 6666 FF",
-    merk: "Hyundai Creta",
-    jenis: "SUV",
-    penanggung_jawab: "Hadi",
-    tahun_registrasi: "2023",
-    berlaku_sampai: "18-02-2028",
-    biaya: "Rp 4.000.000",
-    status_pembayaran: "Lunas",
-  },
-  {
-    id: "pajak-010",
-    plat: "KT 7777 GG",
-    merk: "Mazda CX-5",
-    jenis: "SUV",
-    penanggung_jawab: "Ina",
-    tahun_registrasi: "2021",
-    berlaku_sampai: "22-10-2026",
-    biaya: "Rp 6.000.000",
-    status_pembayaran: "Lunas",
-  },
-];
 
 // --- KOMPONEN HALAMAN UTAMA ---
 const DaftarPajak = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
-  const [pajakData] = useState(mockData);
+  const [pajakData] = useState(DataPajak);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 

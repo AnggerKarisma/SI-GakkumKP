@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Mail,
+  BookUser,
   LockKeyhole,
   UserPen,
   UsersRound,
@@ -68,11 +68,11 @@ const Register = () => {
                 </div>
 
                 <div className="flex border-1 border-white px-2 py-1 outline-none w-full rounded-md">
-                  <Mail className="text-white flex-shrink-0" />
+                  <BookUser className="text-white flex-shrink-0" />
                   <input
                   required
-                    type="email"
-                    placeholder="Email"
+                    type="text"
+                    placeholder="Username"
                     className="text-sm text-white px-2 w-full outline-none "
                   />
                 </div>
@@ -172,16 +172,7 @@ const Register = () => {
                 shadow={"shadow-md"}
                 customWidth={"w-full"}
               />
-              <Button
-                text={"Login"}
-                bgColor={""}
-                onClick={handleLoginClick}
-                disabled={""}
-                icon={null}
-                shadow={"shadow-md"}
-                border={"border-1"}
-                customWidth="w-full"
-              />
+              <div className="text-sm text-white">Sudah Punya Akun? <button className="underline cursor-pointer" onClick={handleLoginClick}>Login disini</button></div>
             </div>
           </div>
         </div>

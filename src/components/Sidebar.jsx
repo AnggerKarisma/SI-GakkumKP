@@ -18,7 +18,7 @@ const menuItems = [
   { path: "/motor", icon: <Bike />, text: "Motor" },
   { path: "/pajak", icon: <ReceiptText />, text: "Pajak" },
   { path: "/laporan", icon: <FileChartLine />, text: "Laporan" },
-  { path: "/daftar_akun", icon: <Users />, text: "Daftar Akun" },
+  { path: "/akun", icon: <Users />, text: "Daftar Akun" },
 ];
 
 const Sidebar = ({ isOpen, role }) => {

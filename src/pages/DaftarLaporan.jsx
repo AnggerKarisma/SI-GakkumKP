@@ -3,25 +3,23 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowUpDown,
   Search,
-  Plus,
+  SquareArrowOutUpLeft,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import Button from "../components/Button";
+import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
-import DataMobil from "../dummy/mobil.jsx";
-
+import DataLaporan from "../dummy/laporan.jsx";
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMobil = ({ isSidebarOpen=false }) => {
+const DaftarLaporan = ({ isSidebarOpen=false }) => {
   const navigate = useNavigate();
-  const [mobilData] = useState(DataMobil);
+  const [laporanData] = useState(DataLaporan);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const handleTambahMobil = () => navigate("/mobil/tambah_mobil");
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
@@ -32,8 +30,8 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * itemsPerPage;
     const lastPageIndex = firstPageIndex + itemsPerPage;
-    return mobilData.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, itemsPerPage, mobilData]);
+    return laporanData.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, itemsPerPage, laporanData]);
 
   const columns = [
     {
@@ -46,36 +44,18 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
         return (currentPage - 1) * itemsPerPage + index + 1;
       },
     },
+    { header: "Nama Mobil", accessor: "nama_mobil", sortable: true },
     { header: "Plat", accessor: "plat", sortable: true },
     { header: "Merk", accessor: "merk", sortable: true },
-    { header: "Jenis", accessor: "jenis", sortable: true },
-    {
-      header: "Penanggung Jawab",
-      accessor: "penanggung_jawab",
-      sortable: false,
-    },
-    { header: "Lokasi", accessor: "lokasi", sortable: true },
+    { header: "Lokasi Barang", accessor: "lokasi_barang", sortable: true },
+    { header: "Unit Kerja", accessor: "unit_kerja", sortable: true },
+    { header: "Penanggung Jawab", accessor: "penanggung_jawab", sortable: true },
+    { header: "Peminjam", accessor: "peminjam", sortable: true },
+    { header: "Tanggal Pinjam", accessor: "tgl_pinjam", sortable: true },
+    { header: "Rencana Kembali",accessor: "rencana_kembali",sortable: true,},
+    { header: "Tanggal Kembali", accessor: "tgl_kembali", sortable: true },
     { header: "Kondisi", accessor: "kondisi", sortable: true },
-    { header: "NUP", accessor: "nup", sortable: true },
     { header: "Status", accessor: "status", sortable: true },
-    {
-      header: "Action",
-      accessor: "action",
-      sortable: false,
-      cell: (row) => (
-        <div className="flex justify-center font-bold gap-2">
-          <button className="min-w-14 text-white bg-blue-500 px-2 py-1 rounded-xl cursor-pointer">
-            Detail
-          </button>
-          <button
-            disabled={row.status !== "Ready"}
-            className="min-w-14 text-white bg-green-400 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-500"
-          >
-            Pinjam
-          </button>
-        </div>
-      ),
-    },
   ];
 
   return (
@@ -85,7 +65,9 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
       >
         <div className="flex flex-col gap-4 p-4">
           <header>
-            <h1 className="text-white font-semibold text-3xl">Daftar Mobil</h1>
+            <h1 className="text-white font-semibold text-3xl">
+              Laporan
+            </h1>
           </header>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Button
@@ -103,19 +85,19 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
               <Button
-                text="Mobil"
-                icon={<Plus className="w-4 h-4" />}
+                text="Export"
+                icon={<SquareArrowOutUpLeft className="w-4 h-4" />}
                 bgColor="bg-[#1f4f27]"
-                onClick={handleTambahMobil}
               />
             </div>
           </div>
+          <div></div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
             {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
           </div>
           <Pagination
-            totalItems={mobilData.length}
+            totalItems={laporanData.length}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}
@@ -127,4 +109,4 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   );
 };
 
-export default DaftarMobil;
+export default DaftarLaporan;

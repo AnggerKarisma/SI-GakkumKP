@@ -16,7 +16,7 @@ const Button = ({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center justify-center cursor-pointer rounded-2xl ${border} ${bgColor} ${shadow} py-1 px-4 md:px-6 min-w-[120px] ${customWidth} text-white font-bold text-sm md:text-base transition-opacity duration-150 ${disabled ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"}`}
+      className={`flex gap-2 items-center justify-center cursor-pointer rounded-2xl ${border} ${bgColor} ${shadow} py-1 px-4 md:px-6 min-w-[120px] ${customWidth} text-white font-bold text-sm md:text-base transition-opacity duration-150 ${disabled ? "opacity-60 cursor-not-allowed" : "hover:opacity-90"}`}
     >
       {icon}
       {text}

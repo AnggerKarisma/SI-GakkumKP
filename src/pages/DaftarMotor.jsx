@@ -11,126 +11,12 @@ import {
 import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
-
-// --- DATA CONTOH ---
-// Data diperbanyak menjadi 10 item
-const mockData = [
-  {
-    no: 1,
-    plat: "KT 4532 XC",
-    merk: "Toyota Fortuner",
-    jenis: "Motor PPLH",
-    penanggung_jawab: "Adi",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "343432",
-    status: "Ready",
-  },
-  {
-    no: 2,
-    plat: "KT 3210 CB",
-    merk: "Toyota AE86",
-    jenis: "Motor PPLH",
-    penanggung_jawab: "Eri",
-    lokasi: "Samarinda",
-    kondisi: "Rusak",
-    nup: "23232",
-    status: "Used",
-  },
-  {
-    no: 3,
-    plat: "KT 9052 BV",
-    merk: "Nissan GTR",
-    jenis: "Motor PPLH",
-    penanggung_jawab: "Kano",
-    lokasi: "PPU",
-    kondisi: "Baik",
-    nup: "32323",
-    status: "Unready",
-  },
-  {
-    no: 4,
-    plat: "KT 1111 AA",
-    merk: "Honda Civic",
-    jenis: "Sedan",
-    penanggung_jawab: "Budi",
-    lokasi: "Banjarmasin",
-    kondisi: "Baik",
-    nup: "454545",
-    status: "Ready",
-  },
-  {
-    no: 5,
-    plat: "KT 2222 BB",
-    merk: "Mitsubishi Pajero",
-    jenis: "SUV",
-    penanggung_jawab: "Citra",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "565656",
-    status: "Used",
-  },
-  {
-    no: 6,
-    plat: "KT 3333 CC",
-    merk: "Suzuki Ertiga",
-    jenis: "MPV",
-    penanggung_jawab: "Dedi",
-    lokasi: "Samarinda",
-    kondisi: "Baik",
-    nup: "676767",
-    status: "Ready",
-  },
-  {
-    no: 7,
-    plat: "KT 4444 DD",
-    merk: "Daihatsu Terios",
-    jenis: "SUV",
-    penanggung_jawab: "Fani",
-    lokasi: "PPU",
-    kondisi: "Rusak",
-    nup: "787878",
-    status: "Unready",
-  },
-  {
-    no: 8,
-    plat: "KT 5555 EE",
-    merk: "Wuling Almaz",
-    jenis: "SUV",
-    penanggung_jawab: "Gita",
-    lokasi: "Balikpapan",
-    kondisi: "Baik",
-    nup: "898989",
-    status: "Ready",
-  },
-  {
-    no: 9,
-    plat: "KT 6666 FF",
-    merk: "Hyundai Creta",
-    jenis: "SUV",
-    penanggung_jawab: "Hadi",
-    lokasi: "Banjarmasin",
-    kondisi: "Baik",
-    nup: "909090",
-    status: "Used",
-  },
-  {
-    no: 10,
-    plat: "KT 7777 GG",
-    merk: "Mazda CX-5",
-    jenis: "SUV",
-    penanggung_jawab: "Ina",
-    lokasi: "Samarinda",
-    kondisi: "Baik",
-    nup: "121212",
-    status: "Ready",
-  },
-];
+import DataMotor from "../dummy/motor.jsx";
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMotor = ({ isSidebarOpen }) => {
+const DaftarMotor = ({ isSidebarOpen=false }) => {
   const navigate = useNavigate();
-  const [motorData] = useState(mockData);
+  const [motorData] = useState(DataMotor);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -138,7 +24,7 @@ const DaftarMotor = ({ isSidebarOpen }) => {
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
-    setCurrentPage(1); // Reset ke halaman pertama saat item per halaman berubah
+    setCurrentPage(1); 
   };
 
   // Logika untuk memotong data sesuai halaman saat ini
@@ -149,7 +35,16 @@ const DaftarMotor = ({ isSidebarOpen }) => {
   }, [currentPage, itemsPerPage, motorData]);
 
   const columns = [
-    { header: "NO", accessor: "no", sortable: false },
+    {
+      header: "NO",
+      accessor: "nomor", // Accessor bisa apa saja, karena kita akan render custom
+      sortable: false,
+      // FIX: Gunakan 'cell' untuk merender nomor urut secara dinamis
+      cell: (row, index) => {
+        // Hitung nomor urut berdasarkan halaman saat ini dan indeks baris
+        return (currentPage - 1) * itemsPerPage + index + 1;
+      },
+    },
     { header: "Plat", accessor: "plat", sortable: true },
     { header: "Merk", accessor: "merk", sortable: true },
     { header: "Jenis", accessor: "jenis", sortable: true },
@@ -168,10 +63,12 @@ const DaftarMotor = ({ isSidebarOpen }) => {
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="text-blue-400 cursor-pointer hover:underline">Detail</button>
+          <button className="min-w-14 text-white bg-blue-500 px-2 py-1 rounded-xl cursor-pointer">
+            Detail
+          </button>
           <button
             disabled={row.status !== "Ready"}
-            className="text-green-400 hover:underline disabled:text-gray-500 cursor-pointer disabled:cursor-not-allowed disabled:no-underline"
+            className="min-w-14 text-white bg-green-400 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-500"
           >
             Pinjam
           </button>
@@ -213,9 +110,9 @@ const DaftarMotor = ({ isSidebarOpen }) => {
             </div>
           </div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
+            {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
           </div>
-          {/* Paginasi baru digunakan di sini */}
           <Pagination
             totalItems={motorData.length}
             itemsPerPage={itemsPerPage}

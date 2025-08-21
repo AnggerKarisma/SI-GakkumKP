@@ -3,25 +3,24 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowUpDown,
   Search,
-  Plus,
+  UserPlus,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import Button from "../components/Button";
+import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
-import DataMobil from "../dummy/mobil.jsx";
-
+import DataAkun from "../dummy/akun.jsx";
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMobil = ({ isSidebarOpen=false }) => {
+const DaftarAkun = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
-  const [mobilData] = useState(DataMobil);
+  const [akunData] = useState(DataAkun);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const handleTambahMobil = () => navigate("/mobil/tambah_mobil");
+  const handleTambahMotor = () => navigate("/akun/tambah_akun");
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
@@ -32,8 +31,8 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * itemsPerPage;
     const lastPageIndex = firstPageIndex + itemsPerPage;
-    return mobilData.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, itemsPerPage, mobilData]);
+    return akunData.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, itemsPerPage, akunData]);
 
   const columns = [
     {
@@ -46,32 +45,21 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
         return (currentPage - 1) * itemsPerPage + index + 1;
       },
     },
-    { header: "Plat", accessor: "plat", sortable: true },
-    { header: "Merk", accessor: "merk", sortable: true },
-    { header: "Jenis", accessor: "jenis", sortable: true },
-    {
-      header: "Penanggung Jawab",
-      accessor: "penanggung_jawab",
-      sortable: false,
-    },
+    { header: "Nama", accessor: "nama", sortable: true },
+    { header: "NIP", accessor: "nip", sortable: false },
+    { header: "Jabatan", accessor: "jabatan", sortable: true },
+    { header: "Unit Kerja", accessor: "unit_kerja", sortable: true },
     { header: "Lokasi", accessor: "lokasi", sortable: true },
-    { header: "Kondisi", accessor: "kondisi", sortable: true },
-    { header: "NUP", accessor: "nup", sortable: true },
-    { header: "Status", accessor: "status", sortable: true },
+    { header: "Username", accessor: "username", sortable: true },
+    { header: "Level", accessor: "level", sortable: true },
     {
       header: "Action",
       accessor: "action",
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="min-w-14 text-white bg-blue-500 px-2 py-1 rounded-xl cursor-pointer">
+          <button className="text-blue-400 cursor-pointer hover:underline">
             Detail
-          </button>
-          <button
-            disabled={row.status !== "Ready"}
-            className="min-w-14 text-white bg-green-400 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-500"
-          >
-            Pinjam
           </button>
         </div>
       ),
@@ -85,7 +73,7 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
       >
         <div className="flex flex-col gap-4 p-4">
           <header>
-            <h1 className="text-white font-semibold text-3xl">Daftar Mobil</h1>
+            <h1 className="text-white font-semibold text-3xl">Daftar Akun</h1>
           </header>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <Button
@@ -103,19 +91,19 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
               <Button
-                text="Mobil"
-                icon={<Plus className="w-4 h-4" />}
+                text="Akun"
+                icon={<UserPlus className="w-4 h-4" />}
                 bgColor="bg-[#1f4f27]"
-                onClick={handleTambahMobil}
+                onClick={handleTambahMotor}
               />
             </div>
           </div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
-            {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
           </div>
+          {/* Paginasi baru digunakan di sini */}
           <Pagination
-            totalItems={mobilData.length}
+            totalItems={akunData.length}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}
@@ -127,4 +115,4 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   );
 };
 
-export default DaftarMobil;
+export default DaftarAkun;
