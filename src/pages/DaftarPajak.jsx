@@ -11,13 +11,12 @@ import {
 import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
-import DataPajak from "../dummy/pajak.jsx";
-
+import DataKendaraan from "../dummy/kendaraan.jsx";
 
 // --- KOMPONEN HALAMAN UTAMA ---
 const DaftarPajak = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
-  const [pajakData] = useState(DataPajak);
+  const [pajakData] = useState(DataKendaraan);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -67,7 +66,7 @@ const DaftarPajak = ({ isSidebarOpen }) => {
           {/* <button className="text-blue-400 hover:underline cursor-pointer">
             Detail
           </button> */}
-          <button className="text-green-400 hover:underline disabled:text-gray-500 cursor-pointer disabled:cursor-not-allowed disabled:no-underline">
+          <button className="min-w-14 bg-green-500 text-white px-2 py-1 rounded-xl cursor-pointer">
             Proses
           </button>
         </div>

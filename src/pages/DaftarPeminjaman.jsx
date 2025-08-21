@@ -63,7 +63,7 @@ const DaftarPeminjaman = ({ isSidebarOpen=false }) => {
         <div className="flex justify-center font-bold gap-2">
           <button
             disabled={row.status === "Dikembalikan"}
-            className="text-green-400 hover:underline disabled:text-gray-500 cursor-pointer disabled:cursor-not-allowed disabled:no-underline"
+            className="min-w-14 bg-blue-500 text-white px-2 py-1 rounded-xl cursor-pointer disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             Kembalikan
           </button>

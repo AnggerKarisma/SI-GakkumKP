@@ -11,20 +11,27 @@ import {
 import Button from "../components/Button.jsx";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
-import DataMotor from "../dummy/motor.jsx";
+import DataKendaraan from "../dummy/kendaraan.jsx";
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMotor = ({ isSidebarOpen=false }) => {
+const DaftarMotor = ({ isSidebarOpen = false }) => {
   const navigate = useNavigate();
-  const [motorData] = useState(DataMotor);
+  const [motorData] = useState(
+    DataKendaraan.filter((DataKendaraan) => DataKendaraan.jenis === "Motor"),
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const handleTambahMotor = () => navigate("/motor/tambah_motor");
+
+  const handleDetailClick = (id) => {
+    navigate(`/motor/${id}`);
+  };
+
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   // Logika untuk memotong data sesuai halaman saat ini
@@ -46,7 +53,7 @@ const DaftarMotor = ({ isSidebarOpen=false }) => {
       },
     },
     { header: "Plat", accessor: "plat", sortable: true },
-    { header: "Merk", accessor: "merk", sortable: true },
+    { header: "Merk", accessor: "merk_tipe", sortable: true },
     { header: "Jenis", accessor: "jenis", sortable: true },
     {
       header: "Penanggung Jawab",
@@ -63,12 +70,15 @@ const DaftarMotor = ({ isSidebarOpen=false }) => {
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="min-w-14 text-white bg-blue-500 px-2 py-1 rounded-xl cursor-pointer">
+          <button
+            className="min-w-14 text-white bg-blue-500 px-2 py-1 rounded-xl cursor-pointer"
+            onClick={() => handleDetailClick(row.id_kendaraan)}
+          >
             Detail
           </button>
           <button
             disabled={row.status !== "Ready"}
-            className="min-w-14 text-white bg-green-400 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-500"
+            className="min-w-14 text-white bg-green-500 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-600"
           >
             Pinjam
           </button>

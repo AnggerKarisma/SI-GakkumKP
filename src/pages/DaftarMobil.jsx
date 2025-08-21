@@ -11,17 +11,23 @@ import {
 import Button from "../components/Button";
 import DataTable from "../components/DataTable.jsx";
 import Pagination from "../components/Pagination.jsx";
-import DataMobil from "../dummy/mobil.jsx";
-
+import DataKendaraan from "../dummy/kendaraan.jsx";
 
 // --- KOMPONEN HALAMAN UTAMA ---
-const DaftarMobil = ({ isSidebarOpen=false }) => {
+const DaftarMobil = ({ isSidebarOpen = false }) => {
   const navigate = useNavigate();
-  const [mobilData] = useState(DataMobil);
+  const [mobilData] = useState(
+    DataKendaraan.filter((DataKendaraan) => DataKendaraan.jenis === "Mobil"),
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const handleTambahMobil = () => navigate("/mobil/tambah_mobil");
+
+  const handleDetailClick = (id) => {
+    navigate(`/mobil/${id}`);
+  };
+  
   const handlePageChange = (page) => setCurrentPage(page);
   const handleItemsPerPageChange = (number) => {
     setItemsPerPage(number);
@@ -38,16 +44,14 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
   const columns = [
     {
       header: "NO",
-      accessor: "nomor", // Accessor bisa apa saja, karena kita akan render custom
+      accessor: "nomor",
       sortable: false,
-      // FIX: Gunakan 'cell' untuk merender nomor urut secara dinamis
       cell: (row, index) => {
-        // Hitung nomor urut berdasarkan halaman saat ini dan indeks baris
         return (currentPage - 1) * itemsPerPage + index + 1;
       },
     },
     { header: "Plat", accessor: "plat", sortable: true },
-    { header: "Merk", accessor: "merk", sortable: true },
+    { header: "Merk", accessor: "merk_tipe", sortable: true },
     { header: "Jenis", accessor: "jenis", sortable: true },
     {
       header: "Penanggung Jawab",
@@ -64,12 +68,15 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="min-w-14 text-white bg-blue-500 px-2 py-1 rounded-xl cursor-pointer">
+          <button
+            onClick={() => handleDetailClick(row.id_kendaraan)}
+            className="min-w-14 text-white bg-blue-500 px-2 py-1 rounded-xl cursor-pointer"
+          >
             Detail
           </button>
           <button
             disabled={row.status !== "Ready"}
-            className="min-w-14 text-white bg-green-400 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-500"
+            className="min-w-14 text-white bg-green-500 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-600"
           >
             Pinjam
           </button>
@@ -111,7 +118,6 @@ const DaftarMobil = ({ isSidebarOpen=false }) => {
             </div>
           </div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
-            {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
           </div>
           <Pagination

@@ -58,7 +58,7 @@ const DaftarAkun = ({ isSidebarOpen }) => {
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          <button className="text-blue-400 cursor-pointer hover:underline">
+          <button className="min-w-14 bg-blue-500 text-white px-2 py-1 rounded-xl cursor-pointer">
             Detail
           </button>
         </div>

@@ -4,16 +4,26 @@ import FormKendaraan from "../components/FormKendaraan";
 
 // Data untuk field formulir "Data Motor"
 const dataMotorFields = [
-  { id: "nama_motor", label: "Nama Motor" },
+  { id: "nama_kendaraan", label: "Nama Motor" },
   { id: "plat", label: "Plat" },
   { id: "nama_pemilik", label: "Nama Pemilik" },
   { id: "merk_tipe", label: "Merk / Tipe" },
-  { id: "jenis_model", label: "Jenis / Model" },
+  { id: "jenis", label: "Jenis / Model" },
   { id: "kondisi", label: "Kondisi" },
   { id: "penanggungjawab", label: "Penanggungjawab" },
-  { id: "unit_kerja", label: "Unit Kerja" },
+  {
+    id: "unit_kerja",
+    label: "Unit Kerja",
+    type: "select",
+    options: ["Balai", "Seksi Wilayah 1", "Seksi Wilayah 2", "Seksi Wilayah 3"],
+  },
+  {
+    id: "lokasi",
+    label: "Lokasi Barang",
+    type: "select",
+    options: ["Samarinda", "Palangkaraya", "Pontianak"],
+  },
   { id: "nup", label: "NUP" },
-  { id: "lokasi_barang", label: "Lokasi Barang" },
 ];
 
 // Data untuk field formulir "Data STNK"

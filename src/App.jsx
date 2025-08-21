@@ -14,6 +14,8 @@ import DaftarPeminjaman from "./pages/DaftarPeminjaman";
 import DaftarLaporan from "./pages/DaftarLaporan";
 import DaftarAkun from "./pages/DaftarAkun";
 import TambahAkun from "./pages/TambahAkun";
+import DetailMobil from "./pages/DetailMobil";
+import DetailMotor from "./pages/DetailMotor";
 
 const App = () => {
   const location = useLocation();
@@ -47,15 +49,22 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/register" element={<Register />} />
+          {/* peminjaman */}
           <Route path="/peminjaman" element={<DaftarPeminjaman isSidebarOpen={isSidebarOpen}/>} />
+          {/* mobil */}
           <Route path="/mobil" element={<DaftarMobil isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/mobil/tambah_mobil" element={<TambahMobil isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/mobil/:id" element={<DetailMobil isSidebarOpen={isSidebarOpen} isFormDisabled={true}/>} />
+          <Route path="/mobil/edit/:id" element={<DetailMobil isSidebarOpen={isSidebarOpen} isFormDisabled ={false}/>} />
+          {/* motor */}
           <Route path="/motor" element={<DaftarMotor isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/pajak" element={<DaftarPajak isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/laporan" element={<DaftarLaporan isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/akun" element={<DaftarAkun isSidebarOpen={isSidebarOpen}/>} />
-          <Route path="/mobil/tambah_mobil" element={<TambahMobil isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/akun/tambah_akun" element={<TambahAkun isSidebarOpen={isSidebarOpen}/>} />
           <Route path="/motor/tambah_motor" element={<TambahMotor isSidebarOpen={isSidebarOpen}/>} />
+          <Route path="/motor/:id" element={<DetailMotor isSidebarOpen={isSidebarOpen} isFormDisabled={true}/>} />
+          <Route path="/motor/edit/:id" element={<DetailMotor isSidebarOpen={isSidebarOpen} isFormDisabled ={false}/>} />
         </Routes>
       </div>
     );
