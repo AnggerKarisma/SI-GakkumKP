@@ -262,9 +262,10 @@ class BorrowController extends Controller
         }
     }
 
-    public function show(Pinjam $pinjam): JsonResponse
+    public function show($pinjamId): JsonResponse
     {
         try {
+            $pinjam = Pinjam ::findOrFail($pinjamId);
             $pinjam->load(['user', 'kendaraan']);
         
             $pinjam->duration_days = $pinjam->tglPinjam ? $pinjam->getDurationInDays() : 0;
@@ -296,9 +297,11 @@ class BorrowController extends Controller
         }
     }
 
-    public function getByUser(User $user): JsonResponse
+    public function getByUser($userID): JsonResponse
     {
         try {
+            $user = User ::findOrFail($userID);
+
             $pinjam = $user->pinjams()
                 ->with(['user', 'kendaraan'])
                 ->latest('created_at')
@@ -328,9 +331,10 @@ class BorrowController extends Controller
         }
     }
 
-    public function getByKendaraan(Kendaraan $kendaraan): JsonResponse
+    public function getByKendaraan($kendaraanId): JsonResponse
     {
         try {
+            $kendaraan = Kendaraan ::findOrFail($kendaraanId);
             $pinjam = $kendaraan->pinjams()
                 ->with(['user', 'kendaraan'])
                 ->latest('created_at')

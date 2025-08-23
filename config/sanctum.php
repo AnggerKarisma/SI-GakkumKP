@@ -49,7 +49,7 @@ return [
     |
     */
 
-    'expiration' => nenv('SANCTUM_TOKEN_EXPIRATION', null),
+    'expiration' => env('SANCTUM_TOKEN_EXPIRATION', null),
 
     /*
     |--------------------------------------------------------------------------
