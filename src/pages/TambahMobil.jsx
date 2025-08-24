@@ -8,7 +8,7 @@ const dataMobilFields = [
   { id: "plat", label: "Plat" },
   { id: "nama_pemilik", label: "Nama Pemilik" },
   { id: "merk_tipe", label: "Merk / Tipe" },
-  { id: "jenis", label: "Jenis / Model" },
+  { id: "jenis", label: "Jenis", value: "Mobil"},
   { id: "kondisi", label: "Kondisi" },
   { id: "penanggungjawab", label: "Penanggungjawab" },
   {
@@ -43,7 +43,7 @@ const dataStnkFields = [
 ];
 
 const TambahMobil = ({ isSidebarOpen }) => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({jenis: "Mobil"});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +54,7 @@ const TambahMobil = ({ isSidebarOpen }) => {
   };
 
   const handleReset = () => {
-    setFormData({});
+    setFormData({jenis: "Mobil"});
   };
 
   const handleSubmit = (e) => {

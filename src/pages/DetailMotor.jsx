@@ -10,7 +10,7 @@ const dataMotorFields = [
   { id: "plat", label: "Plat" },
   { id: "nama_pemilik", label: "Nama Pemilik" },
   { id: "merk_tipe", label: "Merk / Tipe" },
-  { id: "jenis", label: "Jenis / Model" },
+  { id: "jenis", label: "Jenis" },
   { id: "kondisi", label: "Kondisi" },
   { id: "penanggung_jawab", label: "Penanggungjawab" },
   {

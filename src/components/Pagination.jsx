@@ -30,15 +30,17 @@ const Pagination = ({
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <span>Per page</span>
-          <select
-            value={itemsPerPage}
-            onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-            className="bg-[#242424] border border-gray-600 rounded-md px-2 py-1"
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-          </select>
+          <div className="px-2 py-1 border border-gray-600 rounded-md">
+            <select
+              value={itemsPerPage}
+              onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+              className="bg-[#242424] rounded-md "
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <button

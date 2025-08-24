@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "../components/Button";
 import FormKendaraan from "../components/FormKendaraan";
 import DataKendaraan from "../dummy/kendaraan";
@@ -10,7 +10,7 @@ const dataMobilFields = [
   { id: "plat", label: "Plat" },
   { id: "nama_pemilik", label: "Nama Pemilik" },
   { id: "merk_tipe", label: "Merk / Tipe" },
-  { id: "jenis", label: "Jenis / Model" },
+  { id: "jenis", label: "Jenis" },
   { id: "kondisi", label: "Kondisi" },
   { id: "penanggung_jawab", label: "Penanggungjawab" },
   {
@@ -47,7 +47,8 @@ const dataStnkFields = [
 const DetailMobil = ({ isSidebarOpen, isFormDisabled }) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ jenis: "Mobil" });
+  const [originalData, setOriginalData] = useState({ jenis: "Mobil" });
 
   useEffect(() => {
     const dataToEdit = DataKendaraan.find(
@@ -56,6 +57,7 @@ const DetailMobil = ({ isSidebarOpen, isFormDisabled }) => {
 
     if (dataToEdit) {
       setFormData(dataToEdit);
+      setOriginalData(dataToEdit);
     }
   }, [id]);
 
@@ -68,17 +70,24 @@ const DetailMobil = ({ isSidebarOpen, isFormDisabled }) => {
   };
 
   const handleReset = () => {
-    setFormData({});
+    setFormData({ jenis: "Mobil" });
   };
 
+  const handleCancel = () => {
+    setFormData(originalData);
+    navigate(`/mobil/${id}`)
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Data yang disimpan:", formData);
+    setOriginalData(formData)
+    navigate(`/mobil/${id}`)
   };
 
   const handleEdit = () => {
-    navigate(`/mobil/edit/${id}`)
-  }
+    navigate(`/mobil/edit/${id}`);
+  };
 
   return (
     <div className="transition-all flex duration-300">
@@ -93,53 +102,58 @@ const DetailMobil = ({ isSidebarOpen, isFormDisabled }) => {
             className="flex flex-col gap-4 h-fit p-4 md:p-6 bg-[#171717] rounded-lg md:rounded-2xl"
             onSubmit={handleSubmit}
           >
-              {isFormDisabled ? (
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  <p className="text-white font-semibold text-xl">
-                    Detail Mobil
-                  </p>
-                  <div className="flex gap-3 w-full md:w-auto">
-                    <Button
-                      text={"Pinjam"}
-                      bgColor={"bg-[#1f4f27]"}
-                      additionalClasses="w-full md:w-auto"
-                      type={"button"}
-                    />
-                    <Button
-                      text={"Hapus"}
-                      bgColor={"bg-red-800"}
-                      additionalClasses="w-full md:w-auto"
-                      type={"button"}
-                    />
-                    <Button
-                      text={"Edit"}
-                      bgColor={"bg-yellow-600"}
-                      additionalClasses="w-full md:w-auto"
-                      type={"button"}
-                      onClick={handleEdit}
-                    />
-                  </div>
+            {isFormDisabled ? (
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <p className="text-white font-semibold text-xl">Detail Mobil</p>
+                <div className="flex gap-3 w-full md:w-auto">
+                  <Button
+                    text={"Pinjam"}
+                    bgColor={"bg-[#1f4f27]"}
+                    additionalClasses="w-full md:w-auto"
+                    type={"button"}
+                  />
+                  <Button
+                    text={"Hapus"}
+                    bgColor={"bg-red-800"}
+                    additionalClasses="w-full md:w-auto"
+                    type={"button"}
+                  />
+                  <Button
+                    text={"Edit"}
+                    bgColor={"bg-yellow-600"}
+                    additionalClasses="w-full md:w-auto"
+                    type={"button"}
+                    onClick={handleEdit}
+                  />
                 </div>
-              ) : (
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  <p className="text-white font-semibold text-xl">Edit Mobil</p>
-                  <div className="flex gap-3 w-full md:w-auto">
-                    <Button
-                      text={"Reset"}
-                      bgColor={"bg-red-800"}
-                      additionalClasses="w-full md:w-auto"
-                      onClick={handleReset}
-                      type={"button"}
-                    />
-                    <Button
-                      text={"Simpan"}
-                      bgColor={"bg-[#1f4f27]"}
-                      additionalClasses="w-full md:w-auto"
-                      type={"submit"}
-                    />
-                  </div>
+              </div>
+            ) : (
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <p className="text-white font-semibold text-xl">Edit Mobil</p>
+                <div className="flex gap-3 w-full md:w-auto">
+                  <Button
+                    text={"Simpan"}
+                    bgColor={"bg-[#1f4f27]"}
+                    additionalClasses="w-full md:w-auto"
+                    type={"submit"}
+                  />
+                  <Button
+                    text={"Reset"}
+                    bgColor={"bg-red-800"}
+                    additionalClasses="w-full md:w-auto"
+                    onClick={handleReset}
+                    type={"button"}
+                  />
+                  <Button
+                    text={"Batal"}
+                    bgColor={"bg-gray-600"}
+                    additionalClasses="w-full md:w-auto"
+                    onClick={handleCancel}
+                    type={"button"}
+                  />
                 </div>
-              )}
+              </div>
+            )}
             <div className="flex flex-col gap-6 h-full mt-2">
               <FormKendaraan
                 title="Data Mobil"

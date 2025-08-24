@@ -37,7 +37,7 @@ const FormField = ({
             name={id}
             value={value}
             onChange={onChange}
-            disabled={disabled}
+            disabled={id === "jenis" || disabled}
             className="bg-transparent outline-none text-white pr-2 py-1 w-full"
           />
         );
@@ -48,7 +48,7 @@ const FormField = ({
       <label htmlFor={id} className="text-sm text-gray-300 md:w-2/5">
         {label}
       </label>
-      <div className="flex border-1 text-sm border-gray-400 px-2 py-1 outline-none md:w-3/5 rounded-md">
+      <div className={`flex text-sm px-2 py-1 outline-none md:w-3/5 rounded-md ${disabled? "border-none" : "border-1 border-gray-400"}`}>
         {renderInput()}
       </div>
     </div>
@@ -74,7 +74,7 @@ const FormKendaraan = ({ title, fields, formData, handleChange, disabled }) => {
               label={field.label}
               type={field.type}
               options={field.options}
-              value={formData[field.id]}
+              value={formData[field.id] || ""}
               onChange={handleChange}
               disabled={disabled}
             />
@@ -88,7 +88,7 @@ const FormKendaraan = ({ title, fields, formData, handleChange, disabled }) => {
               label={field.label}
               type={field.type}
               options={field.options}
-              value={formData[field.id]}
+              value={formData[field.id] || ""}
               onChange={handleChange}
               disabled={disabled}
             />

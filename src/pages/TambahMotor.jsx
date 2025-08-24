@@ -8,7 +8,7 @@ const dataMotorFields = [
   { id: "plat", label: "Plat" },
   { id: "nama_pemilik", label: "Nama Pemilik" },
   { id: "merk_tipe", label: "Merk / Tipe" },
-  { id: "jenis", label: "Jenis / Model" },
+  { id: "jenis", label: "Jenis", value: "Motor" },
   { id: "kondisi", label: "Kondisi" },
   { id: "penanggungjawab", label: "Penanggungjawab" },
   {
@@ -43,7 +43,7 @@ const dataStnkFields = [
 ];
 
 const TambahMotor = ({ isSidebarOpen }) => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({jenis: "Motor"});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +54,7 @@ const TambahMotor = ({ isSidebarOpen }) => {
   };
 
   const handleReset = () => {
-    setFormData({});
+    setFormData({jenis : "Motor"});
   };
 
   const handleSubmit = (e) => {
