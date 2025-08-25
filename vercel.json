@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/index.php",
+      "use": "@vercel/php"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "public/index.php"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "public/index.php"
+    }
+  ],
+  "env": {
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "APP_KEY": "base64:DVT1jCFRYxHwzz6CG1sP6PmBluUMhKW0MMv+vvtuLpE=",
+    "APP_URL" : "http://localhost",
+    "CACHE_DRIVER" : "array",
+    "LOG_CHANNEL"  : "stderr",
+    "SESSION_DRIVER" : "cookie",
+    "DB_CONNECTION" : "mysql",
+    "DB_HOST" : "127.0.0.1",
+    "DB_PORT" : "3306",
+    "DB_DATABASE" : "backend_app",
+    "DB_USERNAME" : "root"
+  },
+  "functions": {
+    "public/index.php": {
+      "runtime": "@vercel/php@0.6.0"
+    }
+  }
+}
