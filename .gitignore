@@ -15,7 +15,6 @@
 # Jangan pernah commit file .env ke repository!
 .env
 .env.*
-!.env.example
 *.local
 
 
