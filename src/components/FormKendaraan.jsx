@@ -8,8 +8,20 @@ const FormField = ({
   disabled
 }) => {
   const renderInput = () => {
+
+    if (disabled) {
+      return (
+        <input
+          type="text"
+          value={value}
+          readOnly
+          className="bg-transparent outline-none text-white pr-2 py-1 w-full cursor-default"
+        />
+      );
+    }
     switch (type) {
       case "select":
+        disabled? type ="text" : type="select"
         return (
           <select
             id={id}

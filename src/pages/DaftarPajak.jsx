@@ -33,6 +33,9 @@ const DaftarPajak = ({ isSidebarOpen }) => {
     return pajakData.slice(firstPageIndex, lastPageIndex);
   }, [currentPage, itemsPerPage, pajakData]);
 
+  const handleProsesClick = (id) => {
+    navigate(`/pajak/proses/${id}`);
+  };
   const columns = [
     {
       header: "NO",
@@ -43,7 +46,7 @@ const DaftarPajak = ({ isSidebarOpen }) => {
       },
     },
     { header: "Plat", accessor: "plat", sortable: true },
-    { header: "Merk", accessor: "merk", sortable: true },
+    { header: "Merk", accessor: "merk_tipe", sortable: true },
     { header: "Jenis", accessor: "jenis", sortable: true },
     {
       header: "Penanggung Jawab",
@@ -63,10 +66,10 @@ const DaftarPajak = ({ isSidebarOpen }) => {
       sortable: false,
       cell: (row) => (
         <div className="flex justify-center font-bold gap-2">
-          {/* <button className="text-blue-400 hover:underline cursor-pointer">
-            Detail
-          </button> */}
-          <button className="min-w-14 bg-green-500 text-white px-2 py-1 rounded-xl cursor-pointer">
+          <button
+            className="min-w-14 bg-green-500 text-white px-2 py-1 rounded-xl cursor-pointer"
+            onClick={() => handleProsesClick(row.id_kendaraan)}
+          >
             Proses
           </button>
         </div>
@@ -101,7 +104,6 @@ const DaftarPajak = ({ isSidebarOpen }) => {
             </div>
           </div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
-            {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
           </div>
           <Pagination
