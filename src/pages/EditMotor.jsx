@@ -74,7 +74,7 @@ const EditMotor = ({ isSidebarOpen }) => {
     }));
   };
 
-  const handleCancel = () => {
+  const handleReset = () => {
     setFormData(originalData);
   };
 
@@ -121,10 +121,10 @@ const EditMotor = ({ isSidebarOpen }) => {
                   type={"button"}
                 />
                 <Button
-                  text={"Batal"}
+                  text={"Reset"}
                   bgColor={"bg-red-800"}
                   additionalClasses="w-full md:w-auto"
-                  onClick={handleCancel}
+                  onClick={handleReset}
                   type={"button"}
                 />
                 <Button
@@ -143,7 +143,7 @@ const EditMotor = ({ isSidebarOpen }) => {
                 handleChange={handleChange}
               />
               <FormKendaraan
-                title="Data STNK"
+                title="Data Perpajakan"
                 fields={dataStnkFields}
                 formData={formData}
                 handleChange={handleChange}

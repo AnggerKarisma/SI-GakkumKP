@@ -91,7 +91,6 @@ const DaftarLaporan = ({ isSidebarOpen=false }) => {
               />
             </div>
           </div>
-          <div></div>
           <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
             {/* DataTable sekarang akan menerima index untuk rendering nomor */}
             <DataTable columns={columns} data={currentTableData} />
