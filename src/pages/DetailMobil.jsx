@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "../components/Button";
-import FormKendaraan from "../components/FormKendaraan";
+import DetailKendaraan from "../components/DetailKendaraan";
 import DataKendaraan from "../dummy/kendaraan";
 
 // Data untuk field formulir "Data Mobil"
@@ -44,50 +44,32 @@ const dataStnkFields = [
   { id: "biaya", label: "Biaya Pajak" },
 ];
 
-const DetailMobil = ({ isSidebarOpen, isFormDisabled }) => {
+const DetailMobil = ({ isSidebarOpen}) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ jenis: "Mobil" });
-  const [originalData, setOriginalData] = useState({ jenis: "Mobil" });
+  const [detailData, setDetailData] = useState(null);
 
   useEffect(() => {
-    const dataToEdit = DataKendaraan.find(
+    const data = DataKendaraan.find(
       (kendaraan) => kendaraan.id_kendaraan === id,
     );
 
-    if (dataToEdit) {
-      setFormData(dataToEdit);
-      setOriginalData(dataToEdit);
+    if (data) {
+      setDetailData(data);
     }
   }, [id]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleReset = () => {
-    setFormData({ jenis: "Mobil" });
-  };
-
-  const handleCancel = () => {
-    setFormData(originalData);
-    navigate(`/mobil/${id}`)
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Data yang disimpan:", formData);
-    setOriginalData(formData)
-    navigate(`/mobil/${id}`)
-  };
 
   const handleEdit = () => {
     navigate(`/mobil/edit/${id}`);
   };
+
+  if (!detailData) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#242424] text-white">
+        Memuat data atau data tidak ditemukan...
+      </div>
+    );
+  }
 
   return (
     <div className="transition-all flex duration-300">
@@ -98,79 +80,46 @@ const DetailMobil = ({ isSidebarOpen, isFormDisabled }) => {
           <header className="mb-4">
             <p className="text-white font-semibold text-2xl">Manajemen Mobil</p>
           </header>
-          <form
-            className="flex flex-col gap-4 h-fit p-4 md:p-6 bg-[#171717] rounded-lg md:rounded-2xl"
-            onSubmit={handleSubmit}
-          >
-            {isFormDisabled ? (
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <p className="text-white font-semibold text-xl">Detail Mobil</p>
-                <div className="flex gap-3 w-full md:w-auto">
-                  <Button
-                    text={"Pinjam"}
-                    bgColor={"bg-[#1f4f27]"}
-                    additionalClasses="w-full md:w-auto"
-                    type={"button"}
-                  />
-                  <Button
-                    text={"Hapus"}
-                    bgColor={"bg-red-800"}
-                    additionalClasses="w-full md:w-auto"
-                    type={"button"}
-                  />
-                  <Button
-                    text={"Edit"}
-                    bgColor={"bg-yellow-600"}
-                    additionalClasses="w-full md:w-auto"
-                    type={"button"}
-                    onClick={handleEdit}
-                  />
-                </div>
+          <div className="flex flex-col gap-4 h-fit p-4 md:p-6 bg-[#171717] rounded-lg md:rounded-2xl">
+            {/* Header dengan judul dan tombol aksi */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <p className="text-white font-semibold text-xl">{detailData.nama_kendaraan} - {detailData.plat}</p>
+              <div className="flex gap-3 w-full md:w-auto">
+                <Button
+                  text={"Pinjam"}
+                  bgColor={"bg-[#1f4f27]"}
+                  additionalClasses="w-full md:w-auto"
+                  type={"button"}
+                />
+                <Button
+                  text={"Hapus"}
+                  bgColor={"bg-red-800"}
+                  additionalClasses="w-full md:w-auto"
+                  type={"button"}
+                />
+                <Button
+                  text={"Edit"}
+                  bgColor={"bg-yellow-600"}
+                  additionalClasses="w-full md:w-auto"
+                  type={"button"}
+                  onClick={handleEdit}
+                />
               </div>
-            ) : (
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <p className="text-white font-semibold text-xl">Edit Mobil</p>
-                <div className="flex gap-3 w-full md:w-auto">
-                  <Button
-                    text={"Simpan"}
-                    bgColor={"bg-[#1f4f27]"}
-                    additionalClasses="w-full md:w-auto"
-                    type={"submit"}
-                  />
-                  <Button
-                    text={"Reset"}
-                    bgColor={"bg-red-800"}
-                    additionalClasses="w-full md:w-auto"
-                    onClick={handleReset}
-                    type={"button"}
-                  />
-                  <Button
-                    text={"Batal"}
-                    bgColor={"bg-gray-600"}
-                    additionalClasses="w-full md:w-auto"
-                    onClick={handleCancel}
-                    type={"button"}
-                  />
-                </div>
-              </div>
-            )}
+            </div>
+            {/* Konten detail menggunakan komponen DetailKendaraan */}
             <div className="flex flex-col gap-6 h-full mt-2">
-              <FormKendaraan
+              <DetailKendaraan
                 title="Data Mobil"
                 fields={dataMobilFields}
-                formData={formData}
-                handleChange={handleChange}
-                disabled={isFormDisabled}
+                data={detailData}
               />
-              <FormKendaraan
+              <DetailKendaraan
                 title="Data STNK"
                 fields={dataStnkFields}
-                formData={formData}
-                handleChange={handleChange}
-                disabled={isFormDisabled}
+                data={detailData}
               />
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
