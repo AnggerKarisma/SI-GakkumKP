@@ -29,7 +29,6 @@ class Kendaraan extends Model
         'bahanBakar',
         'tahunRegistrasi',
         'berlakuSampai',
-        'biaya',
         'penanggungjawab',
         'NUP',
         'unitKerja',
@@ -87,4 +86,9 @@ class Kendaraan extends Model
     {
         return $this->pinjams() -> whereNull('tglKembaliAktual') ->first();
     }
+
+    public function isTaxExpired()
+{
+    return $this->pajak && ($this->pajak->isStnkExpired() || $this->pajak->isPtExpired());
+}
 }

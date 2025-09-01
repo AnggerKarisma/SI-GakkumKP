@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Pinjam;
+
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $tabel = 'users';
+    protected $table = 'users';
     protected $primaryKey = 'userID';
     protected $fillable = [
         'nama',
@@ -36,7 +38,7 @@ class User extends Authenticatable
 
     public function pinjams()
     {
-        return $this->hasMany (pinjam :: class, 'userID','userID');
+        return $this->hasMany (Pinjam :: class, 'userID','userID');
     }
 
     public function isSuperAdmin()
@@ -56,6 +58,6 @@ class User extends Authenticatable
 
     public function hasAdminPrivileges()
     {
-        return in_array ($this -> role, ['Super Admin', 'Admin', 'User']);
+        return in_array ($this -> role, ['Super Admin', 'Admin']);
     }   
 }

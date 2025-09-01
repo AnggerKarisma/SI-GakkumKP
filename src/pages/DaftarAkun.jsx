@@ -51,7 +51,6 @@ const DaftarAkun = ({ isSidebarOpen }) => {
     { header: "Jabatan", accessor: "jabatan", sortable: true },
     { header: "Unit Kerja", accessor: "unit_kerja", sortable: true },
     { header: "Lokasi", accessor: "lokasi", sortable: true },
-    { header: "Username", accessor: "username", sortable: true },
     { header: "Level", accessor: "level", sortable: true },
     {
       header: "Action",

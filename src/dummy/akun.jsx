@@ -8,7 +8,6 @@ const DataAkun = [
     jabatan: "Kepala Seksi Operasi",
     unit_kerja: "Seksi Wilayah I",
     lokasi: "Samarinda",
-    username: "ahmad.s",
     level: "Admin",
   },
   {
@@ -18,7 +17,6 @@ const DataAkun = [
     jabatan: "Staf Lapangan",
     unit_kerja: "Seksi Wilayah II",
     lokasi: "Balikpapan",
-    username: "bambang.p",
     level: "User",
   },
   {
@@ -28,7 +26,6 @@ const DataAkun = [
     jabatan: "Analis Kehutanan",
     unit_kerja: "Seksi Wilayah I",
     lokasi: "Samarinda",
-    username: "chandra.w",
     level: "User",
   },
   {
@@ -38,7 +35,6 @@ const DataAkun = [
     jabatan: "Kepala Balai",
     unit_kerja: "Pimpinan",
     lokasi: "Balikpapan",
-    username: "dewi.l",
     level: "Super Admin",
   },
   {
@@ -48,7 +44,6 @@ const DataAkun = [
     jabatan: "Pengemudi",
     unit_kerja: "Umum",
     lokasi: "PPU",
-    username: "eko.p",
     level: "User",
   },
   {
@@ -58,7 +53,6 @@ const DataAkun = [
     jabatan: "Staf Administrasi",
     unit_kerja: "Tata Usaha",
     lokasi: "Banjarmasin",
-    username: "fitriani",
     level: "Admin",
   },
   {
@@ -68,7 +62,6 @@ const DataAkun = [
     jabatan: "Kepala Seksi Perencanaan",
     unit_kerja: "Perencanaan",
     lokasi: "Pontianak",
-    username: "gunawan.s",
     level: "Admin",
   },
   {
@@ -78,7 +71,6 @@ const DataAkun = [
     jabatan: "Staf Lapangan",
     unit_kerja: "Seksi Wilayah III",
     lokasi: "Pontianak",
-    username: "hasanudin",
     level: "User",
   },
   {
@@ -88,7 +80,6 @@ const DataAkun = [
     jabatan: "Analis Data",
     unit_kerja: "Perencanaan",
     lokasi: "Samarinda",
-    username: "indah.p",
     level: "User",
   },
   {
@@ -98,7 +89,6 @@ const DataAkun = [
     jabatan: "Pengemudi",
     unit_kerja: "Umum",
     lokasi: "Balikpapan",
-    username: "joko.s",
     level: "User",
   },
 ];

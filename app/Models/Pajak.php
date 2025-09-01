@@ -87,7 +87,7 @@ class Pajak extends Model
         ];
 
         if($this->isStnkExpired()){
-            $status['stnk'] = 'expaired';
+            $status['stnk'] = 'expired';
         } elseif ($this->isStnkExpiringSoon()){
             $status ['stnk'] = 'expiring_soon';
         }

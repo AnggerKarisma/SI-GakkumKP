@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 
 class Pinjam extends Model
 {
@@ -123,5 +125,44 @@ class Pinjam extends Model
     public function scopeByKendaraan($query, $kendaraanID)
     {
         return $query->where('kendaraanID', $kendaraanID);
+    }
+
+    protected function tglPinjam(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value 
+                ? \Carbon\Carbon::parse($value)->format('d-m-Y') 
+                : null,
+
+            set: fn ($value) => $value 
+                ? \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d') 
+                : null,
+        );
+    }
+
+    protected function tglJatuhTempo(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value 
+                ? \Carbon\Carbon::parse($value)->format('d-m-Y') 
+                : null,
+
+            set: fn ($value) => $value 
+                ? \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d') 
+                : null,
+        );
+    }   
+
+    protected function tglKembaliAktual(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value 
+                ? \Carbon\Carbon::parse($value)->format('d-m-Y') 
+                : null,
+
+            set: fn ($value) => $value 
+                ? \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d') 
+                : null,
+        );
     }
 }

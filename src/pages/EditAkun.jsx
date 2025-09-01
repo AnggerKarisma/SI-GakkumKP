@@ -21,7 +21,6 @@ const akunFields = [
     type: "select",
     options: ["Samarinda", "Palangkaraya", "Pontianak"],
   },
-  { id: "username", label: "Username" },
   { id: "password", label: "Password", type: "password" },
   { id: "konfirmasi_password", label: "Konfirmasi Password", type: "password" },
   {
