@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 // Import kelas-kelas baru
 use App\Http\Requests\User\StoreUserRequest;
-use App\Http\Requests\User\UpdateUserRequest;
-use App\Http\Requests\User\UpdateProfileRequest;
+use App\Http\Requests\User\UpdateUserDetailRequest;
+use App\Http\Requests\User\UpdateUserCoreRequest;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -43,7 +43,7 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => 'NIP atau password salah'], 401);
         }
 
-        $token = $user->createToken('auth-token', [$user->role])->plainTextToken;
+        $token = $user->createToken('auth-token', [$user->role])->plainTextToken;   
 
         return response()->json([
             'success' => true,
@@ -66,7 +66,7 @@ class UserController extends Controller
         return response()->json(['success' => true, 'data' => Auth::user()]);
     }
 
-    public function updateProfile(UpdateProfileRequest $request)
+    public function updateUserCoreData(UpdateUserCoreRequest $request)
     {
         $user = Auth::user();
         $validatedData = $request->validated();
@@ -77,7 +77,7 @@ class UserController extends Controller
 
         $user->update($validatedData);
 
-        return response()->json(['success' => true, 'message' => 'Profil berhasil diupdate', 'data' => $user]);
+        return response()->json(['success' => true, 'message' => 'Core Data berhasil diupdate', 'data' => $user]);
     }
 
     public function getAllUsers()
@@ -99,20 +99,43 @@ class UserController extends Controller
         return response()->json(['success' => true, 'message' => 'Akun berhasil dibuat', 'data' => $user], 201);
     }
 
-    public function updateAccount(UpdateUserRequest $request, User $targetUser)
+    public function updateUserDetail(UpdateUserDetailRequest $request, User $user)
     {
-        $this->authorize('update', $targetUser);
+        $this->authorize('update', $user);
         
-        $targetUser->update($request->validated());
+        try {
+            // 1. Lakukan update dan simpan hasilnya di sebuah variabel
+            $isUpdated = $user->update($request->validated());
 
-        return response()->json(['success' => true, 'message' => 'Akun berhasil diupdate', 'data' => $targetUser]);
+            // 2. Periksa secara eksplisit apakah update berhasil
+            if (!$isUpdated) {
+                // Jika gagal, lempar exception agar ditangkap oleh blok catch.
+                throw new Exception('Gagal memperbarui data akun di database.');
+            }
+
+            // Muat ulang data user untuk memastikan data yang dikembalikan adalah yang terbaru.
+            $user->refresh();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Akun berhasil diupdate',
+                'data' => $user
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui akun.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
     
-    public function deleteAccount(User $targetUser)
+    public function deleteAccount(User $user)
     {
-        $this->authorize('delete', $targetUser);
+        $this->authorize('delete', $user);
 
-        $targetUser->delete();
+        $user->delete();
 
         return response()->json(['success' => true, 'message' => 'Akun berhasil dihapus']);
     }

@@ -1,5 +1,7 @@
-// import axios from "axios"
+// import axios from "axios";
 
-// const App_URL = "http://127.0.0.1:8000/api"
+// const API_URL = "http://127.0.0.1:8000/api";
 
-// export const getUsers = () => axios.get
+// export const getUsers = () => {
+//     return axios.get(API_URL + "/admin/users");
+// };

@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
-
 class Pinjam extends Model
 {
     use HasFactory;
 
+    // --- BAGIAN INI TIDAK BERUBAH DARI VERSI LAMA ---
     protected $table = 'pinjam';
     protected $primaryKey = 'pinjamID';
 
@@ -30,7 +30,10 @@ class Pinjam extends Model
         'tglKembaliAktual' => 'date',
     ];
 
-   public function user()
+    protected $appends = ['status_info', 'duration_days'];
+
+
+    public function user()
     {
         return $this->belongsTo(User::class, 'userID', 'userID');
     }
@@ -40,6 +43,31 @@ class Pinjam extends Model
         return $this->belongsTo(Kendaraan::class, 'kendaraanID', 'kendaraanID');
     }
 
+    protected function statusInfo(): Attribute
+    {
+        return Attribute::make(get: function () {
+            $info = [
+                'is_active' => $this->isActive(),
+                'is_overdue' => $this->isOverdue(),
+                'is_returned' => $this->isReturned(),
+                'overdue_days' => $this->getOverdueDays()
+            ];
+
+            if ($info['is_returned']) {
+                $info['is_late_return'] = $this->isLateReturn();
+                $info['late_return_days'] = $this->getLateReturnDays();
+            }
+            
+            return $info;
+        });
+    }
+
+
+    protected function durationDays(): Attribute
+    {
+        return Attribute::make(get: fn () => $this->getDurationInDays());
+    }
+    
     public function isActive()
     {
         return $this->tglPinjam <= now() && $this->tglKembaliAktual === null;
@@ -67,11 +95,11 @@ class Pinjam extends Model
     public function getDurationInDays()
     {
          if ($this->tglPinjam && $this->tglKembaliAktual) {
-        return $this->tglPinjam->diffInDays($this->tglKembaliAktual);
+            return $this->tglPinjam->diffInDays($this->tglKembaliAktual);
         }
     
         if ($this->tglPinjam) {
-        return $this->tglPinjam->diffInDays(now());
+            return $this->tglPinjam->diffInDays(now());
         }
         return 0;
     }
@@ -79,9 +107,8 @@ class Pinjam extends Model
     public function getOverdueDays()
     {
        if (!$this->tglJatuhTempo || !$this->isOverdue()) {
-        return 0;
+            return 0;
         }
-    
         return $this->tglJatuhTempo->diffInDays(now());
     }
 
@@ -90,7 +117,6 @@ class Pinjam extends Model
         if (!$this->tglJatuhTempo || !$this->tglKembaliAktual || !$this->isLateReturn()) {
             return 0;
         }
-    
         return $this->tglJatuhTempo->diffInDays($this->tglKembaliAktual);
     }
     
@@ -126,6 +152,8 @@ class Pinjam extends Model
     {
         return $query->where('kendaraanID', $kendaraanID);
     }
+
+    // --- ACCESSOR/MUTATOR UNTUK FORMAT TANGGAL DARI VERSI LAMA JUGA DIPERTAHANKAN ---
 
     protected function tglPinjam(): Attribute
     {
@@ -166,3 +194,4 @@ class Pinjam extends Model
         );
     }
 }
+

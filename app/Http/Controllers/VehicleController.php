@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Kendaraan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
 use Exception;
 use App\Http\Requests\Vehicle\StoreVehicleRequest;
 use App\Http\Requests\Vehicle\UpdateVehicleRequest;
@@ -44,7 +47,7 @@ class VehicleController extends Controller
     public function show(Kendaraan $kendaraan)
     {
         // Logika otorisasi dipindahkan ke VehiclePolicy
-        $this->authorize('view', $kendaraan);
+        $this->authorize('view-vehicle', $kendaraan);
 
         return response()->json([
             'success' => true,
@@ -85,6 +88,8 @@ class VehicleController extends Controller
      */
     public function update(UpdateVehicleRequest $request, Kendaraan $kendaraan)
     {
+        $this->authorize('update-vehicle', $kendaraan);
+
         try {
             // Validasi dan otorisasi sudah otomatis dijalankan.
             $validatedData = $request->validated();
@@ -108,7 +113,7 @@ class VehicleController extends Controller
     public function destroy(Kendaraan $kendaraan)
     {
         // Logika otorisasi dipindahkan ke VehiclePolicy
-        $this->authorize('delete', $kendaraan);
+        $this->authorize('delete-vehicle', $kendaraan);
 
         try {
             if ($kendaraan->currentBorrowing()) {
@@ -131,8 +136,8 @@ class VehicleController extends Controller
      */
     public function updateStatus(Request $request, Kendaraan $kendaraan)
     {
-        // Otorisasi menggunakan policy 'update' karena logikanya sama.
-        $this->authorize('update', $kendaraan);
+
+        $this->authorize('update-vehicle', $kendaraan);
 
         $validator = Validator::make($request->all(), [
             'statKendaraan' => 'required|in:Stand by,Not Available,Maintenance'

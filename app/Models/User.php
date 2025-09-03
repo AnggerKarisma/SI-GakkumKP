@@ -43,17 +43,17 @@ class User extends Authenticatable
 
     public function isSuperAdmin()
     {
-        return $this ->role === 'Super Admin';
+        return trim($this ->role) === 'Super Admin';
     }
 
     public function isAdmin()
     {
-        return $this ->role === 'Admin';
+        return trim($this ->role) === 'Admin';
     }
 
     public function isUser()
     {
-        return $this ->role === 'User';
+        return trim($this ->role) === 'User';
     }
 
     public function hasAdminPrivileges()
