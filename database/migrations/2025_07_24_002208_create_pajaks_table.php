@@ -14,9 +14,18 @@ return new class extends Migration
         Schema::create('pajak', function (Blueprint $table) {
             $table->id('pajakID');
             $table->unsignedBigInteger('kendaraanID')->unique();
-            $table->string('nostnk');
-            $table->date('activeSTNK')->nullable();
-            $table->date('activePT')->nullable();
+            $table->string('alamat');
+            $table->decimal('biaya', 12, 2)->nullable();
+            $table->integer('tahunPembuatan')->nullable();
+            $table->string('silinder');
+            $table->string('warnaKB');
+            $table->string('noRangka')->unique();
+            $table->string('noMesin')->unique();
+            $table->string('noBPKB')->unique();
+            $table->string('warnaTNKB');
+            $table->enum('bahanBakar',['Bensin','Solar'])->nullable();
+            $table->integer('tahunRegistrasi')->nullable();
+            $table->date('berlakuSampai')->nullable();
             $table->timestamps();
 
             $table->foreign('kendaraanID')->references('kendaraanID')->on('kendaraan')->onDelete('cascade');

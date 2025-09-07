@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Pinjam;
+namespace App\Http\Requests\Borrow;
 
 use Illuminate\Foundation\Http\FormRequest;
 

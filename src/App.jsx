@@ -23,115 +23,122 @@ import EditMotor from "./pages/EditMotor";
 import ProsesPajak from "./pages/ProsesPajak";
 
 const App = () => {
-  const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const location = useLocation();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-  // let role = null;
-  let role = "admin";
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+    // let role = null;
+    let role = "admin";
 
-  const excludedRoutes = ["/", "/login", "/register"];
-  const showNavbar = !excludedRoutes.includes(location.pathname);
-  const showFooter = showNavbar;
+    const excludedRoutes = ["/", "/login", "/register"];
+    const showNavbar = !excludedRoutes.includes(location.pathname);
+    const showSidebar = !excludedRoutes.includes(location.pathname);
+    // const showFooter = showNavbar;
 
-  if (location.pathname.match)
-    return (
-      <div className="App">
-        {showNavbar && <NavbarDashboard />}
-
-        {/* Conditionally render Sidebar and Navbar based on the role */}
-        {role && (
-          <Sidebar
-            toggleSidebar={toggleSidebar}
-            isOpen={isSidebarOpen}
-            role={role}
-          />
-        )}
-        {role === "admin" && (
-          <NavbarDashboard
-            toggleSidebar={toggleSidebar}
-            isSidebarOpen={isSidebarOpen}
-          />
-        )}
-        <Routes>
-          {/* auth */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/register" element={<Register />} />
-          {/* akun */}
-          <Route
-            path="/akun"
-            element={<DaftarAkun isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/akun/:id"
-            element={<DetailAkun isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/akun/edit/:id"
-            element={<EditAkun isSidebarOpen={isSidebarOpen} />}
-          />
-          {/* peminjaman */}
-          <Route
-            path="/peminjaman"
-            element={<DaftarPeminjaman isSidebarOpen={isSidebarOpen} />}
-          />
-          {/* mobil */}
-          <Route
-            path="/mobil"
-            element={<DaftarMobil isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/mobil/tambah_mobil"
-            element={<TambahMobil isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/mobil/:id"
-            element={<DetailMobil isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/mobil/edit/:id"
-            element={<EditMobil isSidebarOpen={isSidebarOpen} />}
-          />
-          {/* motor */}
-          <Route
-            path="/motor"
-            element={<DaftarMotor isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/motor/tambah_motor"
-            element={<TambahMotor isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/motor/:id"
-            element={<DetailMotor isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/motor/edit/:id"
-            element={<EditMotor isSidebarOpen={isSidebarOpen} />}
-          />
-          {/* pajak */}
-          <Route
-            path="/pajak"
-            element={<DaftarPajak isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/pajak/proses/:id"
-            element={<ProsesPajak isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/laporan"
-            element={<DaftarLaporan isSidebarOpen={isSidebarOpen} />}
-          />
-          <Route
-            path="/akun/tambah_akun"
-            element={<TambahAkun isSidebarOpen={isSidebarOpen} />}
-          />
-        </Routes>
-      </div>
-    );
+    if (location.pathname.match)
+        return (
+            <div className="App">
+                {/* Conditionally render Sidebar and Navbar based on the role */}
+                {role && showSidebar && (
+                    <Sidebar
+                        toggleSidebar={toggleSidebar}
+                        isOpen={isSidebarOpen}
+                        role={role}
+                    />
+                )}
+                {role === "admin" && showNavbar && (
+                    <NavbarDashboard
+                        toggleSidebar={toggleSidebar}
+                        isSidebarOpen={isSidebarOpen}
+                    />
+                )}
+                <Routes>
+                    {/* auth */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/" element={<Navigate to="/login" />} />
+                    <Route path="/register" element={<Register />} />
+                    {/* akun */}
+                    <Route
+                        path="/akun"
+                        element={<DaftarAkun isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/profile"
+                        element={<DetailAkun isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/akun/:id"
+                        element={<DetailAkun isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/akun/edit/:id"
+                        element={<EditAkun isSidebarOpen={isSidebarOpen} />}
+                    />
+                    {/* peminjaman */}
+                    <Route
+                        path="/peminjaman"
+                        element={
+                            <DaftarPeminjaman isSidebarOpen={isSidebarOpen} />
+                        }
+                    />
+                    {/* mobil */}
+                    <Route
+                        path="/mobil"
+                        element={<DaftarMobil isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/mobil/tambah_mobil"
+                        element={<TambahMobil isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/mobil/:id"
+                        element={<DetailMobil isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/mobil/edit/:id"
+                        element={<EditMobil isSidebarOpen={isSidebarOpen} />}
+                    />
+                    {/* motor */}
+                    <Route
+                        path="/motor"
+                        element={<DaftarMotor isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/motor/tambah_motor"
+                        element={<TambahMotor isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/motor/:id"
+                        element={<DetailMotor isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/motor/edit/:id"
+                        element={<EditMotor isSidebarOpen={isSidebarOpen} />}
+                    />
+                    {/* pajak */}
+                    <Route
+                        path="/pajak"
+                        element={<DaftarPajak isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/pajak/proses/:id"
+                        element={<ProsesPajak isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/laporan"
+                        element={
+                            <DaftarLaporan isSidebarOpen={isSidebarOpen} />
+                        }
+                    />
+                    <Route
+                        path="/akun/tambah_akun"
+                        element={<TambahAkun isSidebarOpen={isSidebarOpen} />}
+                    />
+                </Routes>
+            </div>
+        );
 };
 
 export default App;

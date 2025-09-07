@@ -16,21 +16,9 @@ return new class extends Migration
             $table->string('namaKendaraan');
             $table->string('plat')->unique();
             $table->string('pemilik');
-            $table->string('alamat');
             $table->string('merk');
             $table->string('model');
             $table->enum('jenisKendaraan',['mobil','motor']);
-            $table->integer('tahunPembuatan')->nullable();
-            $table->string('silinder');
-            $table->string('warnaKB');
-            $table->string('noRangka')->unique();
-            $table->string('noMesin')->unique();
-            $table->string('noBPKB')->unique();
-            $table->string('warnaTNKB');
-            $table->enum('bahanBakar',['Bensin','Solar'])->nullable();
-            $table->integer('tahunRegistrasi')->nullable();
-            $table->date('berlakuSampai')->nullable();
-            $table->string('biaya');
             $table->string('penanggungjawab');
             $table->string('NUP');
             $table->enum('unitKerja',[
@@ -40,7 +28,7 @@ return new class extends Migration
                 'Sekwil III / Pontianak'
             ]);
             $table->enum('statKendaraan',['Stand by', 'Not Available', 'Maintenance']);
-            $table->string('Kkendaraan');
+            $table->string('kondisi');
             $table->timestamps();
         });
     }

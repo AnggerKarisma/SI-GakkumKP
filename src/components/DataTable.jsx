@@ -24,7 +24,7 @@ const DataTable = ({ columns, data }) => {
         <tr>
           {columns.map((col) => (
             <th
-              key={col.accessor}
+              key={col.header}
               scope="col"
               className="px-6 py-3 whitespace-nowrap"
             >
@@ -44,7 +44,7 @@ const DataTable = ({ columns, data }) => {
               className="bg-[#171717] border-b border-gray-700 hover:bg-gray-800/50"
             >
               {columns.map((col) => (
-                <td key={col.accessor} className="px-6 py-4 whitespace-nowrap">
+                <td key={col.header} className="px-6 py-4 whitespace-nowrap">
                   {/* FIX: Logika ini sekarang akan memanggil StatusBadge dengan benar */}
                   {col.accessor === "status" ? (
                     <StatusBadge status={row.status} />

@@ -16,79 +16,71 @@ class Pajak extends Model
     protected $fillable = [
         'kendaraanID',
         'nostnk',
-        'activeSTNK',
-        'activePT',
+        'alamat',
+        'biaya',
+        'tahunPembuatan',
+        'silinder',
+        'warnaKB',
+        'noRangka',
+        'noMesin',
+        'noBPKB',
+        'warnaTNKB',
+        'bahanBakar',
+        'tahunRegistrasi',
+        'berlakuSampai',
     ];
 
     protected $casts = [
-        'activeSTNK' => 'date',
-        'activePT' => 'date',
+        'biaya' => 'decimal:2',
+        'berlakuSampai' => 'date',
+        'tahunPembuatan' => 'integer',
+        'tahunRegistrasi' => 'integer',
     ];
 
     public function kendaraan()
     {
-        return $this-> belongsTo (Kendaraan::class, 'kendaraanID','kendaraanID');
+        return $this->belongsTo(Kendaraan::class, 'kendaraanID', 'kendaraanID');
     }
 
-    public function isStnkExpired()
+    // --- LOGIKA UNTUK JATUH TEMPO PAJAK ---
+
+    public function isExpired(): bool
     {
-        return $this->activeSTNK !== null && $this ->activeSTNK < now();
+        return $this->berlakuSampai && $this->berlakuSampai < now();
     }
 
-    public function isStnkExpiringSoon($days = 30)
+    public function isExpiringSoon(int $days = 30): bool
     {
-        return $this ->activeSTNK !== null &&
-            $this ->activeSTNK->diffInDays(now()) <= $days &&
-            $this ->activeSTNK >= now();
+        return $this->berlakuSampai &&
+            $this->berlakuSampai >= now() &&
+            $this->berlakuSampai <= now()->addDays($days);
     }
 
-    public function isPtExpired()
+    // --- QUERY SCOPES (untuk digunakan di Controller) ---
+
+    public function scopeExpired($query)
     {
-        return $this->activePT !== null && $this-> activePT < now();
+        return $query->where('berlakuSampai', '<', now());
     }
-
-    public function isPtExpiringSoon($days=30)
-{
-    return $this->activePT !== null && 
-        $this->activePT->diffInDays(now()) <= $days &&
-        $this->activePT >= now(); 
-}
-
-    public function getDaysUntilStnkExpires()
+    
+    /**
+     * Scope untuk memfilter pajak yang akan kedaluwarsa.
+     */
+    public function scopeExpiringSoon($query, int $days = 30)
     {
-        if($this->activeSTNK === null){
-            return null;
-        }
-        return now()->diffInDays($this->activeSTNK, false);
-    }
-
-    public function scopeExpiredStnk($query)
-    {
-        return $query->whereNotNull('activeSTNK')
-            ->where('activeSTNK','<', now());
-    }
-
-    public function scopeExpiredPt($query)
-    {
-        return $query->whereNotNull('activePT')
-            ->where('activePT','<',now());
-    }
-
-    public function scopeExpiringSoon($query, $days=30)
-    {
-        return $query->whereNotNull ('activePT')-> whereBetween('activePT',[now(), now()->addDays($days)]);
+        $targetDate = now()->addDays($days);
+        return $query->whereBetween('berlakuSampai', [now(), $targetDate]);
     }
 
     public function getTaxStatus()
     {
         $status = [
             'stnk'=>'valid',
-            'pt' => 'valid'
         ];
 
-        if($this->isStnkExpired()){
+        if($this->isExpired()){
             $status['stnk'] = 'expired';
-        } elseif ($this->isStnkExpiringSoon()){
+        } elseif ($this->isExpiringSoon()){
             $status ['stnk'] = 'expiring_soon';
         }
         return $status;

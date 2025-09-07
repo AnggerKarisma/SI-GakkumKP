@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 
 // Menggunakan Form Requests untuk validasi dan beberapa otorisasi
-use App\Http\Requests\Pinjam\StoreBorrowRequest;
-use App\Http\Requests\Pinjam\ReturnBorrowRequest;
-use App\Http\Requests\Pinjam\GenerateReportRequest;
+use App\Http\Requests\Borrow\StoreBorrowRequest;
+use App\Http\Requests\Borrow\ReturnBorrowRequest;
+use App\Http\Requests\Borrow\GenerateReportRequest;
 
 class BorrowController extends Controller
 {
@@ -23,7 +23,7 @@ class BorrowController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Pinjam::class);
+        $this->authorize('get-borrow-index', Pinjam::class);
         $user = $request->user();
 
         $query = Pinjam::with(['user:userID,nama,NIP', 'kendaraan:kendaraanID,namaKendaraan,plat']);
@@ -48,27 +48,34 @@ class BorrowController extends Controller
      * Menyimpan data peminjaman baru.
      */
     public function store(StoreBorrowRequest $request): JsonResponse
-    {
-        $kendaraan = Kendaraan::find($request->validated('kendaraanID'));
-        $this->authorize('create', [Pinjam::class, $kendaraan]);
+{
+    $validatedData = $request->validated();
+    $kendaraan = Kendaraan::find($validatedData['kendaraanID']);
 
-        $pinjam = DB::transaction(function () use ($request, $kendaraan) {
-            $newPinjam = Pinjam::create(array_merge(
-                $request->validated(),
-                ['userID' => $request->user()->userID]
-            ));
-            
-            $kendaraan->update(['statKendaraan' => 'Not Available']);
-            
-            return $newPinjam;
-        });
+    $this->authorize('borrow-vehicle', $kendaraan);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Peminjaman berhasil dibuat',
-            'data' => $pinjam->load(['user', 'kendaraan'])
-        ], 201);
-    }
+    $dataToCreate = array_merge(
+        $validatedData,
+        [
+            'userID' => $request->user()->userID,
+            'tglPinjam' => now()
+        ]
+    );
+
+    $pinjam = DB::transaction(function () use ($dataToCreate, $kendaraan) {
+        $newPinjam = Pinjam::create($dataToCreate);
+        
+        $kendaraan->update(['statKendaraan' => 'Not Available']);
+        
+        return $newPinjam;
+    });
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Peminjaman berhasil dibuat',
+        'data' => $pinjam->load(['user', 'kendaraan'])
+    ], 201);
+}
 
     /**
      * Menampilkan detail satu data peminjaman.
@@ -84,7 +91,7 @@ class BorrowController extends Controller
      */
     public function returnVehicle(ReturnBorrowRequest $request, Pinjam $pinjam): JsonResponse
     {
-        $this->authorize('returnVehicle', $pinjam);
+        $this->authorize('return', $pinjam);
 
         DB::transaction(function () use ($request, $pinjam) {
             $pinjam->update($request->validated());
@@ -120,7 +127,7 @@ class BorrowController extends Controller
      */
     public function getStatistics(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Pinjam::class); // Hanya admin yang boleh lihat statistik
+        $this->authorize('get-borrow-index', Pinjam::class); // Hanya admin yang boleh lihat statistik
 
         $query = Pinjam::query();
         if ($request->filled('start_date') && $request->filled('end_date')) {
@@ -145,7 +152,7 @@ class BorrowController extends Controller
      */
     public function generateReport(GenerateReportRequest $request): JsonResponse
     {
-        $this->authorize('viewAny', Pinjam::class);
+        $this->authorize('get-borrow-index', Pinjam::class);
         $validated = $request->validated();
         
         $query = Pinjam::with(['user', 'kendaraan'])

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Pinjam;
+namespace App\Http\Requests\Borrow;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Kendaraan;
@@ -27,7 +27,6 @@ class StoreBorrowRequest extends FormRequest
                     }
                 },
             ],
-            'tglPinjam' => 'required|date|after_or_equal:today',
             'tglJatuhTempo' => 'required|date|after:tglPinjam',
             'keterangan' => 'nullable|string|max:500',
         ];

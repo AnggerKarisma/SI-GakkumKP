@@ -35,11 +35,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/statistics', [BorrowController::class, 'getStatistics']); 
         Route::patch('/return/{pinjam}', [BorrowController::class, 'returnVehicle']);
         Route::post('/generate-report', [BorrowController::class, 'generateReport']);
-        Route::get('/maintenance', [BorrowController::class, 'getMaintenanceList']);
-        Route::post('/maintenance/{kendaraanId}', [BorrowController::class, 'setMaintenance']);
-        Route::post('/maintenance/{kendaraanId}/complete', [BorrowController::class, 'completeMaintenance']);
-        Route::get('/user/{userId}', [BorrowController::class, 'getByUser']);
-        Route::get('/kendaraan/{kendaraanId}', [BorrowController::class, 'getByKendaraan']);
+        // Route::get('/maintenance', [BorrowController::class, 'getMaintenanceList']);
+        // Route::post('/maintenance/{kendaraanId}', [BorrowController::class, 'setMaintenance']);
+        // Route::post('/maintenance/{kendaraanId}/complete', [BorrowController::class, 'completeMaintenance']);
+        // Route::get('/user/{userId}', [BorrowController::class, 'getByUser']);
+        // Route::get('/kendaraan/{kendaraanId}', [BorrowController::class, 'getByKendaraan']);
         Route::get('/{pinjam}', [BorrowController::class, 'show']);
         Route::delete('/{pinjam}', [BorrowController::class, 'destroy']);
     });
@@ -47,8 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('pajak')->group(function () {
         Route::get('/', [TaxController::class, 'index']);
         Route::post('/', [TaxController::class, 'store']);
-        Route::get('/expired', [TaxController::class, 'getExpired']);
-        Route::get('/expiring-soon', [TaxController::class, 'getExpiringSoon']);
+        // Route::get('/expired', [TaxController::class, 'getExpired']);
+        // Route::get('/expiring-soon', [TaxController::class, 'getExpiringSoon']);
         Route::post('/bulk-update', [TaxController::class, 'bulkUpdate']);
         Route::get('/kendaraan/{kendaraanId}', [TaxController::class, 'getByKendaraan']);
         Route::get('/{pajak}', [TaxController::class, 'show']);
@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('admin')->group(function () {
         Route::get('/users', [UserController::class, 'getAllUsers']);
+        Route::get('/users/{user}', [UserController::class, 'getOtherProfile']);
         Route::post('/users', [UserController::class, 'createAccountByAdmin']);
         Route::put('/users/{user}', [UserController::class, 'updateUserDetail']);
         Route::delete('/users/{user}', [UserController::class, 'deleteAccount']);

@@ -12,7 +12,6 @@ class VehiclePolicy
      */
     public function view(User $user, Kendaraan $kendaraan): bool
     {
-        // User boleh melihat jika dia Super Admin, dari Balai, atau dari unit kerja yang sama dengan kendaraan.
         return $user->isSuperAdmin() 
             || $user->unitKerja === $kendaraan->unitKerja;
     }
@@ -42,5 +41,16 @@ class VehiclePolicy
     {
         // Logikanya sama dengan update.
         return $this->update($user, $kendaraan);
+    }
+
+    public function borrow(User $user, Kendaraan $kendaraan): bool
+    {
+        // Selalu izinkan Super Admin untuk fleksibilitas.
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        // User biasa hanya boleh meminjam kendaraan dari unit kerjanya sendiri.
+        return $user->unitKerja === $kendaraan->unitKerja;
     }
 }

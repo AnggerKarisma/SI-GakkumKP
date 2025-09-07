@@ -9,40 +9,36 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Exception;
-// Menggunakan Form Requests untuk validasi yang bersih
 use App\Http\Requests\Tax\StoreTaxRequest;
 use App\Http\Requests\Tax\UpdateTaxRequest;
 use App\Http\Requests\Tax\BulkUpdateTaxRequest;
 
 class TaxController extends Controller
 {
-    // Tanpa constructor, otorisasi akan dipanggil manual di setiap metode.
-
     /**
      * Menampilkan daftar data pajak dengan berbagai filter.
      */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Pajak::class);
+        $this->authorize('get-tax-index', Pajak::class);
 
-        $query = Pajak::with('kendaraan:kendaraanID,namaKendaraan,plat,unitKerja');
+        $query = Pajak::with('kendaraan:kendaraanID,merk,plat,jenisKendaraan,penanggungjawab');
 
-        if ($request->filled('status')) {
-            switch ($request->status) {
-                case 'expired_stnk': $query->expiredStnk(); break;
-                case 'expired_pt': $query->expiredPt(); break;
-                case 'expiring_soon': $query->expiringSoon($request->get('days', 30)); break;
-                case 'expired_all': $query->where(fn($q) => $q->expiredStnk()->orWhere->expiredPt()); break;
-            }
-        }
+        $query->when($request->filled('status'), function ($q) use ($request) {
+            return match ($request->status) {
+                'expired' => $q->expired(),
+                'expiring_soon' => $q->expiringSoon($request->get('days', 30)),
+                default => $q, 
+            };
+        });
         
-        if ($request->has('kendaraan_id')) {
-            $query->where('kendaraanID', $request->kendaraan_id);
-        }
+        $query->when($request->filled('kendaraan_id'), function ($q) use ($request) {
+            return $q->where('kendaraanID', $request->kendaraan_id);
+        });
 
-        $pajak = $query->paginate($request->get('per_page', 15));
+        $pajak = $query->get();
         
-        return response()->json(['success' => true, 'message' => 'Data pajak berhasil diambil', 'data' => $pajak]);
+        return $this->jsonResponse('Data pajak berhasil diambil', $pajak);
     }
 
     /**
@@ -50,20 +46,17 @@ class TaxController extends Controller
      */
     public function store(StoreTaxRequest $request): JsonResponse
     {
-        $this->authorize('create', Pajak::class);
-        
-        $validatedData = $request->validated();
+        $this->authorize('create-tax', Pajak::class);
         
         $pajak = Pajak::updateOrCreate(
-            ['kendaraanID' => $validatedData['kendaraanID']],
-            $validatedData
+            ['kendaraanID' => $request->validated('kendaraanID')],
+            $request->validated()
         );
         
-        return response()->json([
-            'success' => true,
-            'message' => $pajak->wasRecentlyCreated ? 'Pajak berhasil dibuat' : 'Pajak berhasil diperbarui',
-            'data' => $pajak
-        ], $pajak->wasRecentlyCreated ? 201 : 200);
+        $message = $pajak->wasRecentlyCreated ? 'Pajak berhasil dibuat' : 'Pajak berhasil diperbarui';
+        $statusCode = $pajak->wasRecentlyCreated ? 201 : 200;
+
+        return $this->jsonResponse($message, $pajak, $statusCode);
     }
 
     /**
@@ -71,9 +64,9 @@ class TaxController extends Controller
      */
     public function show(Pajak $pajak): JsonResponse
     {
-        $this->authorize('view', $pajak);
+        $this->authorize('view-detail-tax', $pajak);
 
-        return response()->json(['success' => true, 'data' => $pajak->load('kendaraan')]);
+        return $this->jsonResponse('Detail pajak berhasil diambil', $pajak->load('kendaraan'));
     }
 
     /**
@@ -81,11 +74,11 @@ class TaxController extends Controller
      */
     public function update(UpdateTaxRequest $request, Pajak $pajak): JsonResponse
     {
-        $this->authorize('update', $pajak);
+        $this->authorize('update-tax', $pajak);
 
         $pajak->update($request->validated());
 
-        return response()->json(['success' => true, 'message' => 'Pajak berhasil diperbarui', 'data' => $pajak]);
+        return $this->jsonResponse('Pajak berhasil diperbarui', $pajak);
     }
 
     /**
@@ -93,11 +86,11 @@ class TaxController extends Controller
      */
     public function destroy(Pajak $pajak): JsonResponse
     {
-        $this->authorize('delete', $pajak);
+        $this->authorize('delete-tax', $pajak);
 
         $pajak->delete();
 
-        return response()->json(['success' => true, 'message' => 'Pajak berhasil dihapus']);
+        return $this->jsonResponse('Pajak berhasil dihapus');
     }
 
     /**
@@ -105,9 +98,11 @@ class TaxController extends Controller
      */
     public function getByKendaraan(Kendaraan $kendaraan): JsonResponse
     {
-        $pajak = Pajak::where('kendaraanID', $kendaraan->kendaraanID)->firstOrFail();
+        // Menggunakan relasi untuk mengambil data pajak, lebih efisien.
+        $pajak = $kendaraan->pajak()->firstOrFail();
         $this->authorize('view', $pajak);
-        return response()->json(['success' => true, 'data' => $pajak]);
+
+        return $this->jsonResponse('Data pajak berhasil diambil', $pajak);
     }
     
     /**
@@ -117,33 +112,40 @@ class TaxController extends Controller
     {
         $this->authorize('create', Pajak::class);
 
-        $results = [];
-        $errors = [];
-        
-        DB::beginTransaction();
-        try {
+        $results = ['successful' => [], 'failed' => []];
+
+        // Menggunakan DB::transaction() lebih aman dan bersih.
+        DB::transaction(function () use ($request, &$results) {
             foreach ($request->validated('data') as $index => $item) {
                 try {
                     $pajak = Pajak::updateOrCreate(['kendaraanID' => $item['kendaraanID']], $item);
-                    $results[] = $pajak;
+                    $results['successful'][] = $pajak;
                 } catch (Exception $e) {
-                    $errors[] = ['index' => $index, 'error' => $e->getMessage(), 'data' => $item];
+                    $results['failed'][] = ['index' => $index, 'error' => $e->getMessage(), 'data' => $item];
                 }
             }
-            DB::commit();
+        });
 
-            return response()->json([
-                'success' => count($errors) === 0,
-                'message' => 'Bulk update selesai',
-                'data' => [
-                    'successful' => $results,
-                    'failed' => $errors,
-                ]
-            ]);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Bulk update gagal total.', 'error' => $e->getMessage()], 500);
+        $isSuccess = count($results['failed']) === 0;
+        return $this->jsonResponse('Bulk update selesai', $results, 200, $isSuccess);
+    }
+
+    /**
+     * Helper untuk membuat respons JSON yang konsisten.
+     */
+    private function jsonResponse(string $message, $data = null, int $statusCode = 200, bool $success = true): JsonResponse
+    {
+        $response = [
+            'success' => $success,
+            'message' => $message,
+        ];
+
+        if ($data !== null) {
+            $response['data'] = $data;
         }
+
+        return response()->json($response, $statusCode);
     }
 }
+
 

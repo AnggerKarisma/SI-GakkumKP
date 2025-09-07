@@ -152,46 +152,5 @@ class Pinjam extends Model
     {
         return $query->where('kendaraanID', $kendaraanID);
     }
-
-    // --- ACCESSOR/MUTATOR UNTUK FORMAT TANGGAL DARI VERSI LAMA JUGA DIPERTAHANKAN ---
-
-    protected function tglPinjam(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value 
-                ? \Carbon\Carbon::parse($value)->format('d-m-Y') 
-                : null,
-
-            set: fn ($value) => $value 
-                ? \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d') 
-                : null,
-        );
-    }
-
-    protected function tglJatuhTempo(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value 
-                ? \Carbon\Carbon::parse($value)->format('d-m-Y') 
-                : null,
-
-            set: fn ($value) => $value 
-                ? \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d') 
-                : null,
-        );
-    }   
-
-    protected function tglKembaliAktual(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value 
-                ? \Carbon\Carbon::parse($value)->format('d-m-Y') 
-                : null,
-
-            set: fn ($value) => $value 
-                ? \Carbon\Carbon::createFromFormat('d-m-Y', $value)->format('Y-m-d') 
-                : null,
-        );
-    }
 }
 

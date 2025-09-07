@@ -65,6 +65,17 @@ class UserController extends Controller
     {
         return response()->json(['success' => true, 'data' => Auth::user()]);
     }
+    
+    public function getOtherProfile (User $user)
+    {
+        $this->authorize('viewAny', $user);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail user berhasil diambil',
+            'data' => $user
+        ], 200);
+    }
 
     public function updateUserCoreData(UpdateUserCoreRequest $request)
     {

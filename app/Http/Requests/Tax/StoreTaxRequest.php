@@ -5,30 +5,36 @@ namespace App\Http\Requests\Tax;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTaxRequest extends FormRequest
-
 {
     /**
      * Determine if the user is authorized to make this request.
-     * Karena kita memanggil otorisasi manual di controller, di sini kita set true.
      */
     public function authorize(): bool
     {
+        // Otorisasi ditangani di controller, jadi di sini kita set true.
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * Aturan ini disesuaikan dengan migrasi 'pajak' yang baru.
      */
     public function rules(): array
     {
         return [
             'kendaraanID' => 'required|integer|exists:kendaraan,kendaraanID|unique:pajak,kendaraanID',
-            'nostnk' => 'required|string|max:255',
-            'activeSTNK' => 'required|date|after_or_equal:today',
-            'activePT' => 'required|date|after_or_equal:today',
+            'alamat' => 'required|string|max:255',
+            'biaya' => 'nullable|numeric|min:0',
+            'berlakuSampai' => 'required|date',
+            'tahunPembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'silinder' => 'required|string|max:255',
+            'warnaKB' => 'required|string|max:255',
+            'noRangka' => 'required|string|max:255|unique:pajak,noRangka',
+            'noMesin' => 'required|string|max:255|unique:pajak,noMesin',
+            'noBPKB' => 'required|string|max:255|unique:pajak,noBPKB',
+            'warnaTNKB' => 'required|string|max:255',
+            'bahanBakar' => 'nullable|in:Bensin,Solar',
+            'tahunRegistrasi' => 'nullable|integer|min:1900|max:' . date('Y'),
         ];
     }
 }
-

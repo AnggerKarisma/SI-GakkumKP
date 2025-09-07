@@ -30,11 +30,13 @@ class BorrowPolicy
     /**
      * Siapa yang boleh membuat peminjaman baru.
      */
-    public function create(User $user, Kendaraan $kendaraan): bool
-    {
-        // User hanya boleh meminjam kendaraan dari unit kerjanya sendiri.
-        return $user->unitKerja === $kendaraan->unitKerja;
-    }
+    // public function create(User $user, Kendaraan $kendaraan): bool
+    // {
+    //     if ($user->isSuperAdmin()) {
+    //     return true;
+    // }
+    //     return $user->unitKerja === $kendaraan->unitKerja;
+    // }
 
     /**
      * Siapa yang boleh memproses pengembalian kendaraan.
