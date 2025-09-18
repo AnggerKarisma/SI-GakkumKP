@@ -69,4 +69,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('superadmin')->group(function () {
         Route::post('/admin/create-account', [UserController::class, 'createAccountByAdmin']);
     });
+    
+    Route::middleware(['auth:sanctum', 'role:admin,superadmin'])->group(function () {
+        Route::post('/reports/borrowings/generate', [BorrowController::class, 'generateReport']);
+    });
 });

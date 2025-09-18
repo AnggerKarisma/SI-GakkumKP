@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 
 class BorrowController extends Controller
@@ -417,7 +418,7 @@ class BorrowController extends Controller
         }
     }
 
-    public function generateReport(Request $request): JsonResponse
+    public function generateReport(Request $request)
     {
         $validated = $request->validate([
             'start_date' => 'required|date',
@@ -455,9 +456,8 @@ class BorrowController extends Controller
                     }
 
                     return $item->setAttribute('duration_days', $item->getDurationInDays())
-                               ->setAttribute('status_info', $statusInfo);
+                                ->setAttribute('status_info', $statusInfo);
                 });
-            
             $summary = [
                 'period' => [
                     'start_date' => $validated['start_date'],
@@ -469,18 +469,21 @@ class BorrowController extends Controller
                 'peminjaman_selesai' => $pinjam->where('status_info.is_returned', true)->count(),
                 'pengembalian_terlambat' => $pinjam->where('status_info.is_late_return', true)->count(),
             ];
+            $dataForPdf = [
+                'title' => 'Laporan Peminjaman Kendaraan',
+                'date' => date('d/m/Y'),
+                'summary' => $summary,
+                'details' => $pinjam
+            ];
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Laporan berhasil dibuat',
-                'data' => [
-                    'summary' => $summary,
-                    'details' => $pinjam
-                ]
-            ]);
+            $pdf = Pdf::loadView('reports.peminjaman_pdf', $dataForPdf);
+
+            $fileName = 'laporan-peminjaman-' . $validated['start_date'] . '-sampai-' . $validated['end_date'] . '.pdf';
+
+            return $pdf->download($fileName);
 
         } catch (Exception $e) {
-            return response()->json([
+                return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat laporan',
                 'error' => $e->getMessage()
