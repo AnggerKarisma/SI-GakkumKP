@@ -1,159 +1,252 @@
-import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
 import Button from "../components/Button";
 import FormKendaraan from "../components/FormKendaraan";
-import { DataKendaraan } from "../dummy/kendaraan";
+import SuccessModal from "../components/SuccessModal";
+
+// 1. Impor semua fungsi service yang dibutuhkan
+import { getVehicleById, updateVehicle } from "../services/vehicleService";
+import { getTaxesByVehicleId, updateTax } from "../services/taxService";
 
 // --- DEFINISI FIELD UNTUK FORMULIR ---
-// Ini mendefinisikan field mana yang akan ditampilkan di formulir
 const dataMobilFields = [
-  { id: "nama_kendaraan", label: "Nama Mobil" },
-  { id: "plat", label: "Plat" },
-  { id: "nama_pemilik", label: "Nama Pemilik" },
-  { id: "merk_tipe", label: "Merk / Tipe" },
-  { id: "jenis", label: "Jenis" },
-  { id: "kondisi", label: "Kondisi" },
-  { id: "penanggung_jawab", label: "Penanggung Jawab" },
-  {
-    id: "unit_kerja",
-    label: "Unit Kerja",
-    type: "select",
-    options: ["Balai", "Seksi Wilayah 1", "Seksi Wilayah 2", "Seksi Wilayah 3"],
-  },
-  {
-    id: "lokasi",
-    label: "Lokasi Barang",
-    type: "select",
-    options: ["Samarinda", "Palangkaraya", "Pontianak"],
-  },
-  { id: "nup", label: "NUP" },
+    { id: "namaKendaraan", label: "Nama Mobil" },
+    { id: "plat", label: "Plat" },
+    { id: "pemilik", label: "Nama Pemilik" },
+    { id: "merk", label: "Merk / Tipe" },
+    { id: "jenisKendaraan", label: "Jenis", disabled: true },
+    { id: "kondisi", label: "Kondisi" },
+    { id: "penanggungjawab", label: "Penanggung Jawab" },
+    {
+        id: "unitKerja",
+        label: "Unit Kerja",
+        type: "select",
+        options: ["Balai", "Sekwil I", "Sekwil II", "Sekwil III"],
+    },
+    {
+        id: "lokasi",
+        label: "Lokasi Barang",
+        type: "select",
+        options: ["Palangka Raya", "Samarinda", "Pontianak"],
+    },
+    { id: "NUP", label: "NUP" },
 ];
 
 const dataStnkFields = [
-  { id: "alamat_stnk", label: "Alamat STNK" },
-  { id: "tahun_pembuatan", label: "Tahun Pembuatan" },
-  { id: "isi_silinder", label: "Isi Silinder" },
-  { id: "warna_kb", label: "Warna KB" },
-  { id: "bahan_bakar", label: "Bahan Bakar" },
-  { id: "tahun_registrasi", label: "Tahun Registrasi" },
-  { id: "no_rangka", label: "Nomor Rangka" },
-  { id: "no_mesin", label: "Nomor Mesin" },
-  { id: "no_bpkb", label: "Nomor BPKB" },
-  { id: "warna_tnkb", label: "Warna TNKB" },
-  { id: "berlaku_sampai", label: "Berlaku Sampai" },
-  { id: "biaya", label: "Biaya Pajak" },
+    { id: "alamat", label: "Alamat STNK" },
+    { id: "tahunPembuatan", label: "Tahun Pembuatan" },
+    { id: "silinder", label: "Isi Silinder" },
+    { id: "warnaKB", label: "Warna KB" },
+    {
+        id: "bahanBakar",
+        label: "Bahan Bakar",
+        type: "select",
+        options: ["Bensin", "Solar"],
+    },
+    { id: "tahunRegistrasi", label: "Tahun Registrasi" },
+    { id: "noRangka", label: "Nomor Rangka" },
+    { id: "noMesin", label: "Nomor Mesin" },
+    { id: "noBPKB", label: "Nomor BPKB" },
+    { id: "warnaTNKB", label: "Warna TNKB" },
+    { id: "berlakuSampai", label: "Berlaku Sampai", type: "date" },
+    { id: "biaya", label: "Biaya Pajak" },
 ];
 
-// --- KOMPONEN HALAMAN EDIT ---
 const EditMobil = ({ isSidebarOpen }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  // State untuk menyimpan data yang sedang diedit
-  const [formData, setFormData] = useState(null);
-  // State untuk menyimpan data asli (untuk fungsi batal)
-  const [originalData, setOriginalData] = useState(null);
+    const [formData, setFormData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState("");
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  useEffect(() => {
-    // Cari data kendaraan berdasarkan ID dari URL
-    const dataToEdit = DataKendaraan.find(
-      (kendaraan) => kendaraan.id_kendaraan === id,
-    );
-    if (dataToEdit) {
-      setFormData(dataToEdit);
-      setOriginalData(dataToEdit); // Simpan data asli
+    // Fetch data awal saat komponen dimuat
+    const fetchInitialData = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const [vehicleResponse, taxResponse] = await Promise.all([
+                getVehicleById(id),
+                getTaxesByVehicleId(id),
+            ]);
+
+            const vehicleData = vehicleResponse.data;
+            const taxData = taxResponse.data || {};
+            let combinedData = { ...vehicleData, ...taxData };
+
+            if (
+                combinedData.unitKerja &&
+                combinedData.unitKerja.includes(" / ")
+            ) {
+                const parts = combinedData.unitKerja.split(" / ");
+                combinedData.unitKerja = parts[0]?.trim();
+                combinedData.lokasi = parts[1]?.trim();
+            }
+            if (combinedData.berlakuSampai) {
+                const date = new Date(combinedData.berlakuSampai);
+                combinedData.berlakuSampai = date.toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                });
+            }
+
+            setFormData(combinedData);
+        } catch (err) {
+            setError("Gagal memuat data untuk diedit.");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        fetchInitialData();
+    }, [fetchInitialData]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevState) => ({ ...prevState, [name]: value }));
+    };
+
+    const handleBack = () => navigate(-1);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setIsSubmitting(true);
+        try {
+            const finalUnitKerja =
+                formData.unitKerja === "Balai"
+                    ? "Balai"
+                    : `${formData.unitKerja} / ${formData.lokasi}`;
+
+            const vehiclePayload = {
+                namaKendaraan: formData.namaKendaraan,
+                plat: formData.plat,
+                pemilik: formData.pemilik,
+                merk: formData.merk,
+                kondisi: formData.kondisi,
+                penanggungjawab: formData.penanggungjawab,
+                unitKerja: finalUnitKerja,
+                NUP: formData.NUP,
+            };
+
+            const taxPayload = {
+                alamat: formData.alamat,
+                tahunPembuatan: formData.tahunPembuatan,
+                silinder: formData.silinder,
+                warnaKB: formData.warnaKB,
+                bahanBakar: formData.bahanBakar,
+                tahunRegistrasi: formData.tahunRegistrasi,
+                noRangka: formData.noRangka,
+                noMesin: formData.noMesin,
+                noBPKB: formData.noBPKB,
+                warnaTNKB: formData.warnaTNKB,
+                berlakuSampai: formData.berlakuSampai,
+                biaya: formData.biaya,
+            };
+
+            // Jalankan kedua update secara paralel
+            await Promise.all([
+                updateVehicle(id, vehiclePayload),
+                updateTax(formData.pajakID, taxPayload), // Asumsi pajakID ada di formData
+            ]);
+
+            setIsSuccessModalOpen(true);
+        } catch (err) {
+            setError(
+                err.response?.data?.message || "Gagal menyimpan perubahan.",
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleModalClose = () => {
+        setIsSuccessModalOpen(false);
+        navigate(`/mobil/${id}`);
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-[#242424] text-white">
+                Memuat data...
+            </div>
+        );
     }
-  }, [id]);
 
-  // Fungsi untuk menangani perubahan pada input form
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-[#242424] text-red-500">
+                {error}
+            </div>
+        );
+    }
 
-  const handleReset = () => {
-    setFormData(originalData);
-  };
-
-  const handleBack = () => {
-    navigate(-1); n
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Data yang diperbarui:", formData);
-    navigate(`/mobil/${id}`); 
-  };
-
-  // Tampilkan pesan loading jika data belum siap
-  if (!formData) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#242424] text-white">
-        Memuat data...
-      </div>
-    );
-  }
-
-  return (
-    <div className="transition-all flex duration-300">
-      <div
-        className={`bg-[#242424] mt-16 p-4 w-full min-h-screen transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
-      >
-        <div className="flex flex-col h-full">
-          <header className="mb-4">
-            <p className="text-white font-semibold text-2xl">Manajemen Mobil</p>
-          </header>
-          <form
-            className="flex flex-col gap-4 h-fit p-4 md:p-6 bg-[#171717] rounded-lg md:rounded-2xl"
-            onSubmit={handleSubmit}
-          >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <p className="text-white font-semibold text-xl">Edit Mobil</p>
-              <div className="flex gap-3 w-full md:w-auto">
-                <Button
-                  text={"Kembali"}
-                  bgColor={"bg-gray-600"}
-                  additionalClasses="w-full md:w-auto"
-                  onClick={handleBack}
-                  type={"button"}
-                />
-                <Button
-                  text={"Reset"}
-                  bgColor={"bg-red-800"}
-                  additionalClasses="w-full md:w-auto"
-                  onClick={handleReset}
-                  type={"button"}
-                />
-                <Button
-                  text={"Simpan"}
-                  bgColor={"bg-[#1f4f27]"}
-                  additionalClasses="w-full md:w-auto"
-                  type={"submit"}
-                />
-              </div>
+        <div className="transition-all flex duration-300">
+            <div
+                className={`bg-[#242424] mt-16 p-4 w-full min-h-screen ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
+            >
+                <div className="flex flex-col h-full">
+                    <header className="mb-4">
+                        <p className="text-white font-semibold text-2xl">
+                            Manajemen Mobil
+                        </p>
+                    </header>
+                    <form
+                        onSubmit={handleSubmit}
+                        className="flex flex-col gap-4 h-fit p-4 md:p-6 bg-[#171717] rounded-lg md:rounded-2xl"
+                    >
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <p className="text-white font-semibold text-xl">
+                                Edit Mobil
+                            </p>
+                            <div className="flex gap-3 w-full md:w-auto">
+                                <Button
+                                    text="Kembali"
+                                    bgColor="bg-gray-600"
+                                    onClick={handleBack}
+                                    type="button"
+                                />
+                                <Button
+                                    text={
+                                        isSubmitting ? "Menyimpan..." : "Simpan"
+                                    }
+                                    bgColor="bg-[#1f4f27]"
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+                        </div>
+                        {formData && (
+                            <div className="flex flex-col gap-6 h-full mt-2">
+                                <FormKendaraan
+                                    title="Data Mobil"
+                                    fields={dataMobilFields}
+                                    formData={formData}
+                                    handleChange={handleChange}
+                                />
+                                <FormKendaraan
+                                    title="Data Perpajakan"
+                                    fields={dataStnkFields}
+                                    formData={formData}
+                                    handleChange={handleChange}
+                                />
+                            </div>
+                        )}
+                    </form>
+                </div>
             </div>
-            <div className="flex flex-col gap-6 h-full mt-2">
-              <FormKendaraan
-                title="Data Mobil"
-                fields={dataMobilFields}
-                formData={formData}
-                handleChange={handleChange}
-              />
-              <FormKendaraan
-                title="Data Perpajakan"
-                fields={dataStnkFields}
-                formData={formData}
-                handleChange={handleChange}
-              />
-            </div>
-          </form>
+            <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={handleModalClose}
+                title="Perubahan Disimpan!"
+                message="Data kendaraan telah berhasil diperbarui."
+            />
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default EditMobil;

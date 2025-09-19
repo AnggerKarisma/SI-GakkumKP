@@ -21,6 +21,7 @@ import DetailMotor from "./pages/DetailMotor";
 import EditMobil from "./pages/EditMobil";
 import EditMotor from "./pages/EditMotor";
 import ProsesPajak from "./pages/ProsesPajak";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
     const location = useLocation();
@@ -59,6 +60,11 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/" element={<Navigate to="/login" />} />
                     <Route path="/register" element={<Register />} />
+                    {/* dashboard */}
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard isSidebarOpen={isSidebarOpen} />}
+                    />
                     {/* akun */}
                     <Route
                         path="/akun"
@@ -67,6 +73,10 @@ const App = () => {
                     <Route
                         path="/profile"
                         element={<DetailAkun isSidebarOpen={isSidebarOpen} />}
+                    />
+                    <Route
+                        path="/profile/edit"
+                        element={<EditAkun isSidebarOpen={isSidebarOpen} />}
                     />
                     <Route
                         path="/akun/:id"

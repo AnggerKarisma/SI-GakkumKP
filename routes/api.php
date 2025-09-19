@@ -6,6 +6,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\TaxController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -16,6 +18,8 @@ Route::post('/registerSA',[UserController::class,'registerSA']);
 Route::post('/login', [UserController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'getDashboardStats']);
+
     Route::post('/logout', [UserController::class, 'logout']);
     Route::get('/profile', [UserController::class, 'getProfile']);
     Route::put('/profile', [UserController::class, 'updateUserCoreData']);
@@ -39,7 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Route::post('/maintenance/{kendaraanId}', [BorrowController::class, 'setMaintenance']);
         // Route::post('/maintenance/{kendaraanId}/complete', [BorrowController::class, 'completeMaintenance']);
         // Route::get('/user/{userId}', [BorrowController::class, 'getByUser']);
-        // Route::get('/kendaraan/{kendaraanId}', [BorrowController::class, 'getByKendaraan']);
+        Route::get('/kendaraan/{kendaraanId}', [BorrowController::class, 'getByKendaraan']);
         Route::get('/{pinjam}', [BorrowController::class, 'show']);
         Route::delete('/{pinjam}', [BorrowController::class, 'destroy']);
     });
@@ -50,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Route::get('/expired', [TaxController::class, 'getExpired']);
         // Route::get('/expiring-soon', [TaxController::class, 'getExpiringSoon']);
         Route::post('/bulk-update', [TaxController::class, 'bulkUpdate']);
-        Route::get('/kendaraan/{kendaraanId}', [TaxController::class, 'getByKendaraan']);
+        Route::get('/kendaraan/{kendaraan}', [TaxController::class, 'getByKendaraan']);
         Route::get('/{pajak}', [TaxController::class, 'show']);
         Route::put('/{pajak}', [TaxController::class, 'update']);
         Route::delete('/{pajak}', [TaxController::class, 'destroy']);
@@ -62,5 +66,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/users', [UserController::class, 'createAccountByAdmin']);
         Route::put('/users/{user}', [UserController::class, 'updateUserDetail']);
         Route::delete('/users/{user}', [UserController::class, 'deleteAccount']);
+    });
+    
+    Route::prefix('report')->group(function () {
+        Route::get('/borrowing', [ReportController::class, 'generateBorrowingReport']);
     });
 });

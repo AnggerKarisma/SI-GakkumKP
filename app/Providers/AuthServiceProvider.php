@@ -41,7 +41,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('view-vehicle', [VehiclePolicy::class, 'view']);
         Gate::define('borrow-vehicle', [VehiclePolicy::class, 'borrow']);
 
-        Gate::define('get-tax-index', [TaxPolicy::class, 'viewAny']);
         Gate::define('create-tax', [TaxPolicy::class, 'create']);
         Gate::define('view-detail-tax', [TaxPolicy::class, 'view']);
         Gate::define('update-tax', [TaxPolicy::class, 'update']);

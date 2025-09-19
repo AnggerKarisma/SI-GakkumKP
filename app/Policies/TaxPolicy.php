@@ -8,14 +8,6 @@ use App\Models\User;
 class TaxPolicy
 {
     /**
-     * Siapa yang boleh melihat daftar pajak atau melakukan aksi umum.
-     */
-    public function viewAny(User $user): bool
-    {
-        return $user->hasAdminPrivileges();
-    }
-
-    /**
      * Siapa yang boleh melihat detail pajak.
      */
     public function view(User $user, Pajak $pajak): bool

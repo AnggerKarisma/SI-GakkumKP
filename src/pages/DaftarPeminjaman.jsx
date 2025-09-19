@@ -1,118 +1,278 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowUpDown,
-  Search,
-  Plus,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import Button from "../components/Button.jsx";
-import DataTable from "../components/DataTable.jsx";
-import Pagination from "../components/Pagination.jsx";
-import DataPeminjaman from "../dummy/peminjaman.jsx";
+import { Search, RefreshCw } from "lucide-react";
+import Button from "../components/Button";
+import DataTable from "../components/DataTable";
+import Pagination from "../components/Pagination";
+import ReturnModal from "../components/ReturnModal";
+import SuccessModal from "../components/SuccessModal";
 
-// --- KOMPONEN HALAMAN UTAMA ---
-const DaftarPeminjaman = ({ isSidebarOpen=false }) => {
-  const navigate = useNavigate();
-  const [peminjamanData] = useState(DataPeminjaman);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+// 1. Impor getProfile bersama dengan service peminjaman
+import { getAllBorrows, returnVehicle } from "../services/borrowService";
+import { getProfile } from "../services/authService";
 
-  const handlePageChange = (page) => setCurrentPage(page);
-  const handleItemsPerPageChange = (number) => {
-    setItemsPerPage(number);
-    setCurrentPage(1); // Reset ke halaman pertama saat item per halaman berubah
-  };
+const DaftarPeminjaman = ({ isSidebarOpen = false }) => {
+    const navigate = useNavigate();
 
-  // Logika untuk memotong data sesuai halaman saat ini
-  const currentTableData = useMemo(() => {
-    const firstPageIndex = (currentPage - 1) * itemsPerPage;
-    const lastPageIndex = firstPageIndex + itemsPerPage;
-    return peminjamanData.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, itemsPerPage, peminjamanData]);
+    const [peminjamanData, setPeminjamanData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    // 2. State untuk menyimpan data pengguna yang login (untuk logika UI)
+    const [currentUser, setCurrentUser] = useState(null);
 
-  const columns = [
-    {
-      header: "NO",
-      accessor: "nomor", // Accessor bisa apa saja, karena kita akan render custom
-      sortable: false,
-      // FIX: Gunakan 'cell' untuk merender nomor urut secara dinamis
-      cell: (row, index) => {
-        // Hitung nomor urut berdasarkan halaman saat ini dan indeks baris
-        return (currentPage - 1) * itemsPerPage + index + 1;
-      },
-    },
-    { header: "Plat", accessor: "plat", sortable: true },
-    { header: "Merk", accessor: "merk", sortable: true },
-    { header: "Peminjam", accessor: "peminjam", sortable: true },
-    { header: "Tanggal Pinjam", accessor: "tgl_pinjam", sortable: true },
-    {
-      header: "Rencana Kembali",
-      accessor: "rencana_kembali",
-      sortable: true,
-    },
-    { header: "Tanggal Kembali", accessor: "tgl_kembali", sortable: true },
-    { header: "Status", accessor: "status", sortable: true },
-    {
-      header: "Action",
-      accessor: "action",
-      sortable: false,
-      cell: (row) => (
-        <div className="flex justify-center font-bold gap-2">
-          <button
-            disabled={row.status === "Dikembalikan"}
-            className="min-w-14 bg-blue-500 text-white px-2 py-1 rounded-xl cursor-pointer disabled:bg-gray-600 disabled:cursor-not-allowed"
-          >
-            Kembalikan
-          </button>
-        </div>
-      ),
-    },
-  ];
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: "ascending",
+    });
 
-  return (
-    <div className="flex">
-      <div
-        className={`bg-[#242424] min-h-screen pt-16 w-full transition-all duration-300 overflow-hidden ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
-      >
-        <div className="flex flex-col gap-4 p-4">
-          <header>
-            <h1 className="text-white font-semibold text-3xl">Daftar Peminjaman</h1>
-          </header>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <Button
-              text="Refresh"
-              icon={<RefreshCw className="w-4 h-4" />}
-              bgColor="bg-gray-600"
-            />
-            <div className="flex items-center gap-2 w-full md:w-auto">
-              <div className="relative w-full md:w-64">
-                <input
-                  type="text"
-                  placeholder="Cari..."
-                  className="bg-[#171717] text-white border-2 border-gray-600 rounded-lg py-2 pl-4 pr-10 w-full focus:outline-none focus:border-green-700"
-                />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              </div>
+    const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [selectedBorrow, setSelectedBorrow] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // 3. Modifikasi fetchData untuk mengambil data profil dan peminjaman
+    const fetchData = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            // Ambil data profil dan data peminjaman secara bersamaan
+            const [profileResponse, borrowsResponse] = await Promise.all([
+                getProfile(),
+                getAllBorrows(),
+            ]);
+
+            setCurrentUser(profileResponse.data); // Simpan data profil
+            const borrowArray = Array.isArray(borrowsResponse?.data)
+                ? borrowsResponse.data
+                : [];
+            setPeminjamanData(borrowArray);
+        } catch (err) {
+            setError("Gagal memuat data peminjaman.");
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    const handleSort = (key) => {
+        let direction = "ascending";
+        if (sortConfig.key === key && sortConfig.direction === "ascending") {
+            direction = "descending";
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const handlePageChange = (page) => setCurrentPage(page);
+    const handleItemsPerPageChange = (number) => {
+        setItemsPerPage(number);
+        setCurrentPage(1);
+    };
+
+    const handleKembalikanClick = (borrowRecord) => {
+        setSelectedBorrow(borrowRecord);
+        setIsReturnModalOpen(true);
+    };
+
+    const handleReturnSubmit = async () => {
+        if (!selectedBorrow) return;
+        setIsSubmitting(true);
+        try {
+            await returnVehicle(selectedBorrow.pinjamID);
+            setIsReturnModalOpen(false);
+            setIsSuccessModalOpen(true);
+            fetchData();
+        } catch (err) {
+            setError(
+                err.response?.data?.message || "Gagal mengembalikan kendaraan.",
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleSuccessModalClose = () => {
+        setIsSuccessModalOpen(false);
+        setSelectedBorrow(null);
+    };
+
+    // 4. Logika sorting sekarang berjalan langsung pada data yang diterima
+    const sortedData = useMemo(() => {
+        let sortableItems = [...peminjamanData];
+        if (sortConfig.key) {
+            sortableItems.sort((a, b) => {
+                const valA =
+                    sortConfig.key.split(".").reduce((o, i) => o?.[i], a) || "";
+                const valB =
+                    sortConfig.key.split(".").reduce((o, i) => o?.[i], b) || "";
+                if (valA < valB)
+                    return sortConfig.direction === "ascending" ? -1 : 1;
+                if (valA > valB)
+                    return sortConfig.direction === "ascending" ? 1 : -1;
+                return 0;
+            });
+        }
+        return sortableItems;
+    }, [peminjamanData, sortConfig]);
+
+    const currentTableData = useMemo(() => {
+        const firstPageIndex = (currentPage - 1) * itemsPerPage;
+        const lastPageIndex = firstPageIndex + itemsPerPage;
+        return sortedData.slice(firstPageIndex, lastPageIndex);
+    }, [currentPage, itemsPerPage, sortedData]);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return "-";
+        return new Date(dateString).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        });
+    };
+
+    const columns = [
+        {
+            header: "NO",
+            cell: (row, index) => (currentPage - 1) * itemsPerPage + index + 1,
+        },
+        {
+            header: "Plat",
+            accessor: "kendaraan.plat",
+            sortable: true,
+            cell: (row) => row.kendaraan?.plat || "-",
+        },
+        {
+            header: "Nama Kendaraan",
+            accessor: "kendaraan.namaKendaraan",
+            sortable: true,
+            cell: (row) => row.kendaraan?.namaKendaraan || "-",
+        },
+        {
+            header: "Peminjam",
+            accessor: "user.nama",
+            sortable: true,
+            cell: (row) => row.user?.nama || "-",
+        },
+        {
+            header: "Tanggal Pinjam",
+            accessor: "tglPinjam",
+            sortable: true,
+            cell: (row) => formatDate(row.tglPinjam),
+        },
+        {
+            header: "Jatuh Tempo",
+            accessor: "tglJatuhTempo",
+            sortable: true,
+            cell: (row) => formatDate(row.tglJatuhTempo),
+        },
+        {
+            header: "Tanggal Kembali",
+            accessor: "tglKembaliAktual",
+            sortable: true,
+            cell: (row) => formatDate(row.tglKembaliAktual),
+        },
+        {
+            header: "Status",
+            accessor: "status_info.is_returned",
+            sortable: true,
+            cell: (row) => {
+                if (row.status_info?.is_returned) return "Dikembalikan";
+                if (row.status_info?.is_overdue) return "Terlambat";
+                if (row.status_info?.is_active) return "Dipinjam";
+                return "Status Tidak Dikenal";
+            },
+        },
+        {
+            header: "Action",
+            cell: (row) => {
+                // 5. Logika tombol disesuaikan, hanya aktif jika user ID cocok
+                const isOwner = currentUser?.userID === row.user?.userID;
+                const isReturned = row.status_info?.is_returned;
+                const isDisabled = isReturned || isSubmitting || !isOwner;
+
+                return (
+                    <div className="flex justify-center font-bold gap-2">
+                        <button
+                            onClick={() => handleKembalikanClick(row)}
+                            disabled={isDisabled}
+                            className="min-w-14 bg-blue-500 text-white px-2 py-1 rounded-xl cursor-pointer disabled:bg-gray-600 disabled:cursor-not-allowed"
+                        >
+                            Kembalikan
+                        </button>
+                    </div>
+                );
+            },
+        },
+    ];
+
+    return (
+        <div className="flex">
+            <div
+                className={`bg-[#242424] min-h-screen pt-16 w-full transition-all duration-300 overflow-hidden ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
+            >
+                <div className="flex flex-col gap-4 p-4">
+                    <header>
+                        <h1 className="text-white font-semibold text-3xl">
+                            Data Peminjaman
+                        </h1>
+                    </header>
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <Button
+                            text="Refresh"
+                            icon={<RefreshCw className="w-4 h-4" />}
+                            bgColor="bg-gray-600"
+                            onClick={fetchData}
+                            disabled={isLoading}
+                        />
+                    </div>
+                    {isLoading ? (
+                        <div className="text-white text-center py-10">
+                            Memuat data...
+                        </div>
+                    ) : error ? (
+                        <div className="text-red-500 text-center py-10">
+                            {error}
+                        </div>
+                    ) : (
+                        <>
+                            <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
+                                <DataTable
+                                    columns={columns}
+                                    data={currentTableData}
+                                    sortConfig={sortConfig}
+                                    onSort={handleSort}
+                                />
+                            </div>
+                            <Pagination
+                                totalItems={sortedData.length}
+                                itemsPerPage={itemsPerPage}
+                                currentPage={currentPage}
+                                onPageChange={handlePageChange}
+                                onItemsPerPageChange={handleItemsPerPageChange}
+                            />
+                        </>
+                    )}
+                </div>
             </div>
-          </div>
-          <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
-            {/* DataTable sekarang akan menerima index untuk rendering nomor */}
-            <DataTable columns={columns} data={currentTableData} />
-          </div>
-          <Pagination
-            totalItems={peminjamanData.length}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-            onItemsPerPageChange={handleItemsPerPageChange}
-          />
+            <ReturnModal
+                isOpen={isReturnModalOpen}
+                onClose={() => setIsReturnModalOpen(false)}
+                onSubmit={handleReturnSubmit}
+                borrowData={selectedBorrow}
+                isLoading={isSubmitting}
+            />
+            <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={handleSuccessModalClose}
+                title="Berhasil Dikembalikan!"
+                message={`Kendaraan ${selectedBorrow?.kendaraan?.namaKendaraan} telah ditandai sebagai dikembalikan.`}
+            />
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default DaftarPeminjaman;

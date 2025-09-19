@@ -7,22 +7,14 @@ use Illuminate\Validation\Rule;
 
 class UpdateVehicleRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     * Otorisasi lebih detail akan ditangani oleh VehiclePolicy di controller.
-     * Di sini kita hanya memastikan user adalah admin.
-     */
+
     public function authorize(): bool
     {
         return $this->user() && $this->user()->hasAdminPrivileges();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
-        // $this->kendaraan akan mengambil model Kendaraan dari URL (Route Model Binding)
         $kendaraanId = $this->kendaraan->kendaraanID;
 
         return [

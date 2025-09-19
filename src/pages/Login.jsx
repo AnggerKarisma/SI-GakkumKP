@@ -39,7 +39,7 @@ const Login = () => {
             // Jika sukses:
             // console.log("Login berhasil:", data);
             localStorage.setItem("authToken", data.token); // Simpan token agar tetap login
-            navigate("/mobil"); // Arahkan ke halaman selanjutnya
+            navigate("/dashboard"); // Arahkan ke halaman selanjutnya
         } catch (err) {
             // Jika gagal:
             // Ambil pesan error dari respons API, atau tampilkan pesan default

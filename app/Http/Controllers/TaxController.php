@@ -7,6 +7,7 @@ use App\Models\Pajak;
 use App\Models\Kendaraan;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Http\Requests\Tax\StoreTaxRequest;
@@ -15,20 +16,23 @@ use App\Http\Requests\Tax\BulkUpdateTaxRequest;
 
 class TaxController extends Controller
 {
-    /**
-     * Menampilkan daftar data pajak dengan berbagai filter.
-     */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('get-tax-index', Pajak::class);
+        $currentUser = Auth::user();
 
         $query = Pajak::with('kendaraan:kendaraanID,merk,plat,jenisKendaraan,penanggungjawab');
+
+        if ($currentUser->role !== 'Super Admin') {
+            $query->whereHas('kendaraan', function ($q) use ($currentUser) {
+                $q->where('unitKerja', $currentUser->unitKerja);
+            });
+        }
 
         $query->when($request->filled('status'), function ($q) use ($request) {
             return match ($request->status) {
                 'expired' => $q->expired(),
                 'expiring_soon' => $q->expiringSoon($request->get('days', 30)),
-                default => $q, 
+                default => $q,
             };
         });
         
@@ -41,9 +45,6 @@ class TaxController extends Controller
         return $this->jsonResponse('Data pajak berhasil diambil', $pajak);
     }
 
-    /**
-     * Menyimpan data pajak baru atau memperbaruinya.
-     */
     public function store(StoreTaxRequest $request): JsonResponse
     {
         $this->authorize('create-tax', Pajak::class);
@@ -59,9 +60,6 @@ class TaxController extends Controller
         return $this->jsonResponse($message, $pajak, $statusCode);
     }
 
-    /**
-     * Menampilkan detail satu data pajak.
-     */
     public function show(Pajak $pajak): JsonResponse
     {
         $this->authorize('view-detail-tax', $pajak);
@@ -69,9 +67,6 @@ class TaxController extends Controller
         return $this->jsonResponse('Detail pajak berhasil diambil', $pajak->load('kendaraan'));
     }
 
-    /**
-     * Memperbarui data pajak yang sudah ada.
-     */
     public function update(UpdateTaxRequest $request, Pajak $pajak): JsonResponse
     {
         $this->authorize('update-tax', $pajak);
@@ -81,9 +76,6 @@ class TaxController extends Controller
         return $this->jsonResponse('Pajak berhasil diperbarui', $pajak);
     }
 
-    /**
-     * Menghapus data pajak.
-     */
     public function destroy(Pajak $pajak): JsonResponse
     {
         $this->authorize('delete-tax', $pajak);
@@ -93,21 +85,15 @@ class TaxController extends Controller
         return $this->jsonResponse('Pajak berhasil dihapus');
     }
 
-    /**
-     * Mendapatkan data pajak berdasarkan Kendaraan.
-     */
     public function getByKendaraan(Kendaraan $kendaraan): JsonResponse
     {
         // Menggunakan relasi untuk mengambil data pajak, lebih efisien.
         $pajak = $kendaraan->pajak()->firstOrFail();
-        $this->authorize('view', $pajak);
+        $this->authorize('view-detail-tax', $pajak);
 
         return $this->jsonResponse('Data pajak berhasil diambil', $pajak);
     }
     
-    /**
-     * Melakukan update/create data pajak secara massal.
-     */
     public function bulkUpdate(BulkUpdateTaxRequest $request): JsonResponse
     {
         $this->authorize('create', Pajak::class);
@@ -130,9 +116,6 @@ class TaxController extends Controller
         return $this->jsonResponse('Bulk update selesai', $results, 200, $isSuccess);
     }
 
-    /**
-     * Helper untuk membuat respons JSON yang konsisten.
-     */
     private function jsonResponse(string $message, $data = null, int $statusCode = 200, bool $success = true): JsonResponse
     {
         $response = [

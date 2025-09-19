@@ -6,19 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTaxRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        // Otorisasi ditangani di controller, jadi di sini kita set true.
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     * Aturan ini disesuaikan dengan migrasi 'pajak' yang baru.
-     */
     public function rules(): array
     {
         return [

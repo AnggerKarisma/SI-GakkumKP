@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('plat')->unique();
             $table->string('pemilik');
             $table->string('merk');
-            $table->string('model');
             $table->enum('jenisKendaraan',['mobil','motor']);
             $table->string('penanggungjawab');
             $table->string('NUP');

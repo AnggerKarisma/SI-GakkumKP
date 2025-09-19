@@ -36,7 +36,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function pinjams()
+    public function pinjam()
     {
         return $this->hasMany (Pinjam :: class, 'userID','userID');
     }

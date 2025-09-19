@@ -24,13 +24,13 @@ const FormField = ({
               onChange={onChange}
               className="bg-transparent text-white pr-2 py-1 w-full outline-none"
             />
-            <button
+            <div
               type="button"
               onClick={togglePassword}
-              className="flex text-gray-400"
+              className="flex text-gray-400 cursor-pointer"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+            </div>
           </div>
         );
       case "select":

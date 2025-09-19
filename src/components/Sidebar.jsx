@@ -8,10 +8,11 @@ import {
     Home,
     BookUser,
     SquarePen,
+    LogOut,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import { getProfile } from "../services/authService";
+import { getProfile, logout } from "../services/authService";
 
 // Daftar menu dipisahkan untuk kemudahan pengelolaan di masa depan
 const menuItems = [
@@ -20,8 +21,8 @@ const menuItems = [
     { path: "/mobil", icon: <CarFront />, text: "Mobil" },
     { path: "/motor", icon: <Bike />, text: "Motor" },
     { path: "/pajak", icon: <ReceiptText />, text: "Pajak" },
-    { path: "/laporan", icon: <FileChartLine />, text: "Laporan" },
-    { path: "/akun", icon: <Users />, text: "Daftar Akun" },
+    { path: "/laporan", icon: <FileChartLine />, text: "Laporan", adminOnly:true},
+    { path: "/akun", icon: <Users />, text: "Daftar Akun", adminOnly:true },
 ];
 
 const Sidebar = ({ toggleSidebar, isOpen, role }) => {
@@ -30,25 +31,34 @@ const Sidebar = ({ toggleSidebar, isOpen, role }) => {
 
     const [profileName, setProfileName] = useState("Memuat...");
     const [profileUnit, setProfileUnit] = useState("...");
+    const [profileRole, setProfileRole] = useState("User");
 
     const handleProfileEdit = () => {
         navigate("/profile");
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            localStorage.removeItem("authToken");
+            navigate("/login");
+        } catch (error) {
+            localStorage.removeItem("authToken");
+            console.error("Logout gagal:", error);
+        }
     };
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const response = await getProfile();
-                // Asumsi data pengguna ada di dalam `response.data`
                 const userData = response.data;
 
-                // Ambil nama
                 setProfileName(userData.nama || "Tanpa Nama");
+                setProfileRole(userData.role);
 
-                // Proses unitKerja sesuai logika
                 let unitKerjaDisplay = userData.unitKerja || "Tidak ada unit";
                 if (unitKerjaDisplay.includes("Sekwil")) {
-                    // Ambil bagian sebelum "/"
                     unitKerjaDisplay = unitKerjaDisplay.split("/")[0].trim();
                 }
                 setProfileUnit(unitKerjaDisplay);
@@ -61,6 +71,15 @@ const Sidebar = ({ toggleSidebar, isOpen, role }) => {
 
         fetchProfile();
     }, []);
+
+    const visibleMenuItems = menuItems.filter((item) => {
+        // Jika item tidak ditandai 'adminOnly', selalu tampilkan
+        if (!item.adminOnly) {
+            return true;
+        }
+        // Jika item ditandai 'adminOnly', hanya tampilkan jika role BUKAN 'user'
+        return profileRole !== "User";
+    });
     return (
         // Kontainer utama sidebar dengan lebar tetap
 
@@ -80,8 +99,8 @@ const Sidebar = ({ toggleSidebar, isOpen, role }) => {
                 <div className="flex flex-col gap-2 items-center">
                     <img
                         src="/Logo_Kehutanan_white.png" // Placeholder untuk gambar profil
-                        alt="User Profile"
-                        className="w-24 h-24 object-center"
+                        alt="GAKKUMHUT KALIMANTAN"
+                        className="w-20 h-20 object-center"
                         onError={(e) => {
                             e.target.onerror = null;
                             e.target.src =
@@ -99,13 +118,22 @@ const Sidebar = ({ toggleSidebar, isOpen, role }) => {
                 </div>
 
                 {/* Daftar Menu Navigasi */}
-                <nav className="flex-col">
+                <nav className="flex-col mt-4 flex-grow overflow-y-auto custom-scrollbar">
                     <ul>
-                        {menuItems.map((item) => {
-                            const isActive =
-                                item.path === "/dashboard"
-                                    ? location.pathname === item.path
-                                    : location.pathname.startsWith(item.path);
+                        {visibleMenuItems.map((item) => {
+                            const isActive = (() => {
+                                if (item.path === "/dashboard") {
+                                    return location.pathname === item.path;
+                                }
+                                if (item.path === "/akun") {
+                                    return (
+                                        location.pathname.startsWith(
+                                            item.path,
+                                        ) || location.pathname.startsWith("/profile")
+                                    );
+                                }
+                                return location.pathname.startsWith(item.path);
+                            })();
                             return (
                                 <Link to={item.path} key={item.path}>
                                     <li
@@ -126,6 +154,15 @@ const Sidebar = ({ toggleSidebar, isOpen, role }) => {
                         })}
                     </ul>
                 </nav>
+                <div className="mt-auto">
+                    <div
+                        onClick={handleLogout}
+                        className="flex items-center my-1 px-3 py-2 rounded-3xl cursor-pointer transition-colors duration-200 hover:bg-red-800/50"
+                    >
+                        <LogOut />
+                        <span className="ml-4 font-medium">Logout</span>
+                    </div>
+                </div>
             </div>
             <div
                 onClick={toggleSidebar}

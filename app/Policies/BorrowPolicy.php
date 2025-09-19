@@ -13,7 +13,7 @@ class BorrowPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true; // Semua user yang login boleh lihat daftar (tapi akan difilter di controller).
+        return true;
     }
 
     /**

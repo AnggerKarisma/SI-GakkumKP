@@ -29,6 +29,8 @@ class StoreBorrowRequest extends FormRequest
             ],
             'tglJatuhTempo' => 'required|date|after:tglPinjam',
             'keterangan' => 'nullable|string|max:500',
+            // 'tglPinjam' => 'required|date|after_or_equal:today',
+            'tglPinjam' => 'required|date'
         ];
     }
 }

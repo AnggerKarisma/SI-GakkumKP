@@ -68,7 +68,7 @@ class Kendaraan extends Model
 
     public function currentBorrowing()
     {
-        return $this->pinjams()->whereNull('tglKembaliAktual')->first();
+        return $this->pinjam()->whereNull('tglKembaliAktual')->first();
     }
 
     public function isTaxExpired(): bool

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+
 class Pinjam extends Model
 {
     use HasFactory;
@@ -70,7 +71,8 @@ class Pinjam extends Model
     
     public function isActive()
     {
-        return $this->tglPinjam <= now() && $this->tglKembaliAktual === null;
+        // return $this->tglPinjam->startOfDay() <= now() && $this->tglKembaliAktual === null;
+        return $this->tglKembaliAktual === null;
     }
 
     public function isOverdue()

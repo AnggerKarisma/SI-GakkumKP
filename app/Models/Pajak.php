@@ -42,6 +42,14 @@ class Pajak extends Model
         return $this->belongsTo(Kendaraan::class, 'kendaraanID', 'kendaraanID');
     }
 
+    public function getBerlakuSampaiAttribute($value)
+    {
+        if ($value) {
+            return Carbon::parse($value)->format('d-m-Y');
+        }
+        return null;
+    }
+
     // --- LOGIKA UNTUK JATUH TEMPO PAJAK ---
 
     public function isExpired(): bool

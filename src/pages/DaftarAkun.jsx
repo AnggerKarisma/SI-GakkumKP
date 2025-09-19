@@ -1,18 +1,12 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-    ArrowUpDown,
-    Search,
-    UserPlus,
-    RefreshCw,
-    ChevronLeft,
-    ChevronRight,
-} from "lucide-react";
+import { UserPlus, RefreshCw, User } from "lucide-react";
 import Button from "../components/Button";
 import DataTable from "../components/DataTable";
 import Pagination from "../components/Pagination";
-import DataAkun from "../dummy/akun.jsx";
 import { getAllUsers } from "../services/userService.js";
+import { getProfile } from "../services/authService.js";
+
 // --- KOMPONEN HALAMAN UTAMA ---
 const DaftarAkun = ({ isSidebarOpen }) => {
     const navigate = useNavigate();
@@ -21,17 +15,57 @@ const DaftarAkun = ({ isSidebarOpen }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [currentUserRole, setCurrentUserRole] = useState(null);
+
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    const fetchAkunData = useCallback(async () => {
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: "ascending",
+    });
+
+    const handleSort = (key) => {
+        let direction = "ascending";
+        if (sortConfig.key === key && sortConfig.direction === "ascending") {
+            direction = "descending";
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedData = useMemo(() => {
+        let sortableItems = [...akunData]; // Menggunakan akunData
+        if (sortConfig.key !== null) {
+            sortableItems.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === "ascending" ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === "ascending" ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableItems;
+    }, [akunData, sortConfig]);
+
+    const fetchData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
+        setSortConfig({
+            key: null,
+            direction: "ascending",
+        });
         try {
-            const responseData = await getAllUsers();
-            // PERUBAHAN 1: Mengambil array dari `responseData.data` sesuai struktur backend baru.
-            const usersArray = Array.isArray(responseData?.data)
-                ? responseData.data
+            const [profileResponse, usersResponse] = await Promise.all([
+                getProfile(),
+                getAllUsers(),
+            ]);
+
+            setCurrentUserRole(profileResponse.data.role);
+
+            const usersArray = Array.isArray(usersResponse?.data)
+                ? usersResponse.data
                 : [];
             setAkunData(usersArray);
         } catch (err) {
@@ -44,10 +78,11 @@ const DaftarAkun = ({ isSidebarOpen }) => {
     }, []);
 
     useEffect(() => {
-        fetchAkunData();
-    }, [fetchAkunData]);
+        fetchData();
+    }, [fetchData]);
 
     const handleTambahAkun = () => navigate("/akun/tambah_akun");
+    const handleMyAcc = () => navigate("/profile");
     const handleDetailClick = (row) => {
         navigate(`/akun/${row.userID}`, { state: { user: row } });
     };
@@ -60,17 +95,15 @@ const DaftarAkun = ({ isSidebarOpen }) => {
     const currentTableData = useMemo(() => {
         const firstPageIndex = (currentPage - 1) * itemsPerPage;
         const lastPageIndex = firstPageIndex + itemsPerPage;
-        return akunData.slice(firstPageIndex, lastPageIndex);
-    }, [currentPage, itemsPerPage, akunData]);
+        return sortedData.slice(firstPageIndex, lastPageIndex); 
+    }, [currentPage, itemsPerPage, sortedData]);
 
     const columns = [
         {
             header: "NO",
             accessor: "nomor",
             sortable: false,
-            // FIX: Gunakan 'cell' untuk merender nomor urut secara dinamis
             cell: (row, index) => {
-                // Hitung nomor urut berdasarkan halaman saat ini dan indeks baris
                 return (currentPage - 1) * itemsPerPage + index + 1;
             },
         },
@@ -81,22 +114,20 @@ const DaftarAkun = ({ isSidebarOpen }) => {
             header: "Unit Kerja",
             accessor: "unitKerja",
             sortable: true,
-            // Gunakan 'cell' untuk merender tampilan custom
             cell: (row) => {
                 const unitKerjaData = row.unitKerja || "";
                 const parts = unitKerjaData.split(" / ");
-                return parts[0] || ""; // Menampilkan bagian sebelum " / "
+                return parts[0] || ""; 
             },
         },
         {
             header: "Lokasi",
-            accessor: "lokasi", // Accessor buatan untuk kolom baru
-            sortable: true,
-            // Gunakan 'cell' untuk merender tampilan custom
+            accessor: "lokasi", 
+            sortable: false,
             cell: (row) => {
                 const unitKerjaData = row.unitKerja || "";
                 const parts = unitKerjaData.split(" / ");
-                return parts[1] || "-"; // Menampilkan bagian setelah " / "
+                return parts[1] || "-";
             },
         },
         { header: "Level", accessor: "role", sortable: true },
@@ -129,28 +160,31 @@ const DaftarAkun = ({ isSidebarOpen }) => {
                         </h1>
                     </header>
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <Button
-                            text="Refresh"
-                            icon={<RefreshCw className="w-4 h-4" />}
-                            bgColor="bg-gray-600"
-                            onClick={fetchAkunData}
-                            disabled={isLoading}
-                        />
-                        <div className="flex items-center gap-2 w-full md:w-auto">
-                            <div className="relative w-full md:w-64">
-                                <input
-                                    type="text"
-                                    placeholder="Cari..."
-                                    className="bg-[#171717] text-white border-2 border-gray-600 rounded-lg py-2 pl-4 pr-10 w-full focus:outline-none focus:border-green-700"
-                                />
-                                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            </div>
+                        <div className="flex gap-2">
                             <Button
-                                text="Akun"
-                                icon={<UserPlus className="w-4 h-4" />}
-                                bgColor="bg-[#1f4f27]"
-                                onClick={handleTambahAkun}
+                                text="Refresh"
+                                icon={<RefreshCw className="w-4 h-4" />}
+                                bgColor="bg-gray-600"
+                                onClick={fetchData}
+                                disabled={isLoading}
                             />
+                            <Button
+                                text="Akun Saya"
+                                icon={<User className="w-4 h-4" />}
+                                bgColor="bg-[#1f4f27]"
+                                onClick={handleMyAcc}
+                                disabled={isLoading}
+                            />
+                        </div>
+                        <div className="flex items-center gap-2 w-full md:w-auto">
+                            {currentUserRole === "Super Admin" && (
+                                <Button
+                                    text="Akun"
+                                    icon={<UserPlus className="w-4 h-4" />}
+                                    bgColor="bg-[#1f4f27]"
+                                    onClick={handleTambahAkun}
+                                />
+                            )}
                         </div>
                     </div>
                     {isLoading ? (
@@ -167,6 +201,8 @@ const DaftarAkun = ({ isSidebarOpen }) => {
                                 <DataTable
                                     columns={columns}
                                     data={currentTableData}
+                                    sortConfig={sortConfig} // Menambahkan prop sortConfig
+                                    onSort={handleSort} // Menambahkan prop onSort
                                 />
                             </div>
                             {/* Paginasi baru digunakan di sini */}

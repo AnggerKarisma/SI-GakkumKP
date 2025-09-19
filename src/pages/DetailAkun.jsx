@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Button from "../components/Button.jsx";
-import { getUserById } from "../services/userService.js";
+import { getUserById, deleteUser } from "../services/userService.js";
 import { getProfile } from "../services/authService.js";
 import FieldAkun from "../components/FieldAkun.jsx";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 const akunFields = [
     { id: "nama", label: "Nama" },
@@ -25,25 +26,37 @@ const DetailAkun = ({ isSidebarOpen }) => {
     const [isLoading, setIsLoading] = useState(!initialData);
     const [error, setError] = useState(null);
     const [isMyProfile, setIsMyProfile] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const fetchDetailAkun = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         try {
             let responseData;
-            // 2. Logika untuk memilih fungsi fetch
             if (id) {
-                // Jika ada ID di URL, fetch data pengguna lain
                 responseData = await getUserById(id);
                 setIsMyProfile(false);
             } else {
-                // Jika tidak ada ID, fetch profil sendiri
                 responseData = await getProfile();
                 setIsMyProfile(true);
             }
 
             if (responseData && responseData.data) {
-                setDetailData(responseData.data);
+                const fetchedData = responseData.data;
+                let processedData = { ...fetchedData };
+
+                if (
+                    fetchedData.unitKerja &&
+                    fetchedData.unitKerja.includes("/")
+                ) {
+                    const parts = fetchedData.unitKerja.split("/");
+                    processedData.unitKerja = parts[0] ? parts[0].trim() : "";
+                    processedData.lokasi = parts[1] ? parts[1].trim() : "";
+                } else {
+                    processedData.lokasi = fetchedData.lokasi || "";
+                }
+
+                setDetailData(processedData);
             } else {
                 setError("Format data tidak sesuai.");
             }
@@ -64,18 +77,37 @@ const DetailAkun = ({ isSidebarOpen }) => {
         navigate(editPath);
     };
 
+    const handleDeleteConfirm = async () => {
+        setIsModalOpen(false); // Tutup modal dulu
+        setIsLoading(true);
+        try {
+            await deleteUser(id);
+            navigate("/akun");
+        } catch (err) {
+            setError("Gagal menghapus akun.");
+            console.error("Error saat menghapus:", err);
+            setIsLoading(false);
+        }
+    };
+
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-[#242424] text-white">
-                Memuat data...
+            <div
+                className={`flex items-center justify-center h-screen bg-[#242424] text-white`}
+            >
+                <span className={`${isSidebarOpen ? "md:ml-64" : "ml-0"}`}>
+                    Memuat data...
+                </span>
             </div>
         );
     }
 
     if (error || !detailData) {
         return (
-            <div className="flex items-center justify-center h-screen bg-[#242424] text-red-500">
-                {error || "Data tidak ditemukan."}
+            <div className="flex items-center justify-center h-screen bg-[#242424] text-white">
+                <span className={`${isSidebarOpen ? "md:ml-64" : "ml-0"}`}>
+                    {error || "Data tidak ditemukan."}
+                </span>
             </div>
         );
     }
@@ -107,6 +139,7 @@ const DetailAkun = ({ isSidebarOpen }) => {
                                         bgColor={"bg-red-800"}
                                         additionalClasses="w-full md:w-auto"
                                         type={"button"}
+                                        onClick={() => setIsModalOpen(true)}
                                     />
                                 )}
                                 <Button
@@ -128,6 +161,13 @@ const DetailAkun = ({ isSidebarOpen }) => {
                     </div>
                 </div>
             </div>
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                title="Konfirmasi Hapus Akun"
+                message={`Apakah Anda yakin ingin menghapus akun milik ${detailData?.nama}? Tindakan ini tidak dapat dibatalkan.`}
+            />
         </div>
     );
 };

@@ -92,11 +92,27 @@ class UserController extends Controller
     }
 
     public function getAllUsers()
-    {
-        $this->authorize('viewAny', User::class);
-        $users = User::select('userID', 'nama', 'NIP', 'jabatan', 'unitKerja', 'role')->get();
-        return response()->json(['success' => true, 'data' => $users]);
+{
+    $this->authorize('viewAny', User::class);
+
+    $currentUser = auth()->user();
+
+    $query = User::select('userID', 'nama', 'NIP', 'jabatan', 'unitKerja', 'role');
+
+    if ($currentUser->role === 'Super Admin') {
+        $query->whereIn('role', ['Admin', 'User']);
+
+    } elseif ($currentUser->role === 'Admin') {
+        $query->where('unitKerja', $currentUser->unitKerja)
+              ->where('role', 'User');
     }
+
+    $query->where('userID', '!=', $currentUser->userID);
+
+    $users = $query->get(); 
+
+    return response()->json(['success' => true, 'data' => $users]);
+}
 
     // --- Aksi Khusus Admin ---
     
