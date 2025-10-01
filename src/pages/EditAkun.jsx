@@ -175,7 +175,7 @@ const EditAkun = ({ isSidebarOpen }) => {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-[#242424] text-white">
+            <div className="flex  items-center justify-center h-screen bg-[#242424] text-white">
                 Memuat data...
             </div>
         );

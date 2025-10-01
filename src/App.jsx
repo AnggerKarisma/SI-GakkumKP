@@ -103,7 +103,7 @@ const App = () => {
                         element={<TambahMobil isSidebarOpen={isSidebarOpen} />}
                     />
                     <Route
-                        path="/mobil/:id"
+                        path="  "
                         element={<DetailMobil isSidebarOpen={isSidebarOpen} />}
                     />
                     <Route

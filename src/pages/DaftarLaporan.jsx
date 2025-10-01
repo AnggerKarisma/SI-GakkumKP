@@ -160,6 +160,7 @@ const DaftarLaporan = ({ isSidebarOpen = false }) => {
 
     return (
         <div className="flex">
+            
             <div
                 className={`bg-[#242424] min-h-screen pt-16 w-full transition-all duration-300 overflow-hidden ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
             >
