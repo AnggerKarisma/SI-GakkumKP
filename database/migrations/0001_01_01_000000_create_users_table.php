@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('jabatan');
             $table->enum('unitKerja',[
                 'Balai',
-                'Sekwil I / Palangka raya',
+                'Sekwil I / Palangkaraya',
                 'Sekwil II / Samarinda',
                 'Sekwil III / Pontianak'
             ]);
