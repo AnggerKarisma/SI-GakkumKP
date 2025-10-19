@@ -9,26 +9,6 @@ Cocok untuk **developer junior** yang akan melanjutkan pengembangan proyek ini.
 
 ---
 
-## 📁 Struktur Folder
-
-```
-project-root/
-│
-├── backend/         # Folder Laravel (API)
-│   ├── app/
-│   ├── routes/
-│   ├── config/
-│   ├── public/
-│   ├── composer.json
-│   └── ...
-│
-└── frontend/        # Folder React
-    ├── src/
-    ├── public/
-    ├── package.json
-    └── ...
-```
-
 ---
 
 ## ⚙️ Persiapan Awal
@@ -49,12 +29,6 @@ project-root/
 ---
 
 ## 🧱 Setup Backend (Laravel)
-
-Masuk ke folder backend:
-
-```bash
-cd backend
-```
 
 ### 1. Install Dependencies
 ```bash
@@ -110,12 +84,6 @@ Server default:
 ---
 
 ## 🖥️ Setup Frontend (React)
-
-Masuk ke folder frontend:
-
-```bash
-cd frontend
-```
 
 ### 1. Install Dependencies
 ```bash
@@ -246,14 +214,7 @@ POST /api/login
 
 ## 🧑‍💻 Kontributor
 
-- **Lead Developer:** [Nama Kamu]
-- **Frontend Developer:** [Nama Developer Frontend]
-- **Backend Developer:** [Nama Developer Backend]
-
----
-
-## 📄 Lisensi
-
-Proyek ini berada di bawah lisensi **MIT License** — bebas digunakan dan dimodifikasi dengan tetap mencantumkan atribusi.
+- **Frontend Developer:** [Muhammad Raihan Bramatama]
+- **Backend Developer:** [Angger Karisma Deotama]
 
 ---
