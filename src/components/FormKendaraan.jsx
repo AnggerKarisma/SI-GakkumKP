@@ -29,7 +29,7 @@ const FormField = ({
             value={value}
             onChange={onChange}
             disabled={disabled}
-            className={`bg-transparent text-sm outline-none pr-2 py-1 w-full ${value === "" ? "text-gray-400" : "text-white"}`}
+            className={`bg-transparent text-sm outline-none pr-2 py-1 w-full ${value === "" ? "text-gray-400" : "text-white"} ${disabled ? "cursor-default" : ""}`}
           >
             <option value="" disabled className="bg-[#242424]">
               Pilih...
@@ -88,7 +88,7 @@ const FormKendaraan = ({ title, fields, formData, handleChange, disabled }) => {
               options={field.options}
               value={formData[field.id] || ""}
               onChange={handleChange}
-              disabled={disabled}
+              disabled={field.disabled}
             />
           ))}
         </div>
@@ -102,7 +102,7 @@ const FormKendaraan = ({ title, fields, formData, handleChange, disabled }) => {
               options={field.options}
               value={formData[field.id] || ""}
               onChange={handleChange}
-              disabled={disabled}
+              disabled={field.disabled}
             />
           ))}
         </div>

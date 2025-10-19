@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import FormKendaraan from "../components/FormKendaraan";
 import SuccessModal from "../components/SuccessModal";
-import { createVehicle } from "../services/vehicleService";
-import { createTax } from "../services/taxService";
+import { createVehicleWithTax } from "../services/vehicleService";
 import { getProfile } from "../services/authService";
 
 const TambahMotor = ({ isSidebarOpen }) => {
@@ -117,17 +116,15 @@ const TambahMotor = ({ isSidebarOpen }) => {
         e.preventDefault();
         setError("");
 
-        // --- VALIDASI DATA PAYLOAD ---
+        // Validasi frontend tetap penting untuk User Experience
         const allFields = [...motorFields, ...dataStnkFields];
         for (const field of allFields) {
-            // Periksa setiap field yang ditandai 'required'
-            // Abaikan validasi untuk 'lokasi' jika unit kerja adalah 'Balai'
             if (field.required && !formData[field.id]) {
                 if (field.id === "lokasi" && formData.unitKerja === "Balai") {
                     continue;
                 }
                 setError(`Kolom "${field.label}" wajib diisi.`);
-                return; // Hentikan proses jika ada data yang kosong
+                return;
             }
         }
 
@@ -138,51 +135,33 @@ const TambahMotor = ({ isSidebarOpen }) => {
                     ? "Balai"
                     : `${formData.unitKerja} / ${formData.lokasi}`;
 
-            const vehiclePayload = {
-                namaKendaraan: formData.namaKendaraan,
-                plat: formData.plat,
-                pemilik: formData.pemilik,
-                merk: formData.merk,
-                jenisKendaraan: "Motor", // Diubah menjadi huruf kecil sesuai migrasi
-                penanggungjawab: formData.penanggungjawab,
-                NUP: formData.NUP,
+            // Siapkan satu payload gabungan
+            const combinedPayload = {
+                ...formData,
                 unitKerja: finalUnitKerja,
-                statKendaraan: "Stand by",
-                kondisi: formData.kondisi,
+                jenisKendaraan: "Motor", // Pastikan jenis kendaraan di-hardcode dengan benar
             };
+            // Hapus properti yang tidak diperlukan oleh backend jika ada
+            delete combinedPayload.lokasi;
 
-            const vehicleResponse = await createVehicle(vehiclePayload);
-            const newVehicleId = vehicleResponse.data.kendaraanID;
+            // Panggil SATU API saja
+            await createVehicleWithTax(combinedPayload);
 
-            if (!newVehicleId) {
-                throw new Error(
-                    "Gagal mendapatkan ID kendaraan baru dari server.",
-                );
-            }
-
-            const taxPayload = {
-                kendaraanID: newVehicleId,
-                alamat: formData.alamat,
-                biaya: formData.biaya,
-                tahunPembuatan: formData.tahunPembuatan,
-                silinder: formData.silinder,
-                warnaKB: formData.warnaKB,
-                noRangka: formData.noRangka,
-                noMesin: formData.noMesin,
-                noBPKB: formData.noBPKB,
-                warnaTNKB: formData.warnaTNKB,
-                bahanBakar: formData.bahanBakar,
-                tahunRegistrasi: formData.tahunRegistrasi,
-                berlakuSampai: formData.berlakuSampai,
-            };
-
-            await createTax(taxPayload);
             setIsSuccessModalOpen(true);
         } catch (err) {
-            setError(
+            const errorMessage =
                 err.response?.data?.message ||
-                    "Gagal menambahkan data. Pastikan semua field terisi dengan benar.",
-            );
+                "Gagal menambahkan data. Pastikan semua field terisi dengan benar.";
+            const validationErrors = err.response?.data?.errors;
+            if (validationErrors) {
+                // Menampilkan error validasi pertama dari backend
+                const firstErrorKey = Object.keys(validationErrors)[0];
+                setError(
+                    `${errorMessage} ${validationErrors[firstErrorKey][0]}`,
+                );
+            } else {
+                setError(errorMessage);
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -266,7 +245,7 @@ const TambahMotor = ({ isSidebarOpen }) => {
                 isOpen={isSuccessModalOpen}
                 onClose={handleModalClose}
                 title="Berhasil Disimpan!"
-                message="Data motor baru dan pajaknya telah berhasil ditambahkan."
+                message="Data Motor baru dan Pajaknya telah berhasil ditambahkan."
             />
         </div>
     );

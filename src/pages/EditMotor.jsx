@@ -3,64 +3,68 @@ import React, { useState, useEffect, useCallback } from "react";
 import Button from "../components/Button";
 import FormKendaraan from "../components/FormKendaraan";
 import SuccessModal from "../components/SuccessModal";
+import { getProfile } from "../services/authService";
 
 // 1. Impor semua fungsi service yang dibutuhkan
 import { getVehicleById, updateVehicle } from "../services/vehicleService";
 import { getTaxesByVehicleId, updateTax } from "../services/taxService";
 
-// --- DEFINISI FIELD UNTUK FORMULIR ---
-const dataMotorFields = [
-    { id: "namaKendaraan", label: "Nama Motor" },
-    { id: "plat", label: "Plat" },
-    { id: "pemilik", label: "Nama Pemilik" },
-    { id: "merk", label: "Merk / Tipe" },
-    { id: "jenisKendaraan", label: "Jenis", disabled: true },
-    { id: "kondisi", label: "Kondisi" },
-    { id: "penanggungjawab", label: "Penanggung Jawab" },
-    {
-        id: "unitKerja",
-        label: "Unit Kerja",
-        type: "select",
-        options: ["Balai", "Sekwil I", "Sekwil II", "Sekwil III"],
-    },
-    {
-        id: "lokasi",
-        label: "Lokasi Barang",
-        type: "select",
-        options: ["Palangka Raya", "Samarinda", "Pontianak"],
-    },
-    { id: "NUP", label: "NUP" },
-];
-
-const dataStnkFields = [
-    { id: "alamat", label: "Alamat STNK" },
-    { id: "tahunPembuatan", label: "Tahun Pembuatan" },
-    { id: "silinder", label: "Isi Silinder" },
-    { id: "warnaKB", label: "Warna KB" },
-    {
-        id: "bahanBakar",
-        label: "Bahan Bakar",
-        type: "select",
-        options: ["Bensin", "Solar"],
-    },
-    { id: "tahunRegistrasi", label: "Tahun Registrasi" },
-    { id: "noRangka", label: "Nomor Rangka" },
-    { id: "noMesin", label: "Nomor Mesin" },
-    { id: "noBPKB", label: "Nomor BPKB" },
-    { id: "warnaTNKB", label: "Warna TNKB" },
-    { id: "berlakuSampai", label: "Berlaku Sampai", type: "date" },
-    { id: "biaya", label: "Biaya Pajak" },
-];
-
 const EditMotor = ({ isSidebarOpen }) => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [user, setUser] = useState(null);
 
     const [formData, setFormData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+    // --- DEFINISI FIELD UNTUK FORMULIR ---
+    const dataMotorFields = [
+        { id: "namaKendaraan", label: "Nama Motor" },
+        { id: "plat", label: "Plat" },
+        { id: "pemilik", label: "Nama Pemilik" },
+        { id: "merk", label: "Merk / Tipe" },
+        { id: "jenisKendaraan", label: "Jenis", disabled: true },
+        { id: "kondisi", label: "Kondisi" },
+        { id: "penanggungjawab", label: "Penanggung Jawab" },
+        {
+            id: "unitKerja",
+            label: "Unit Kerja",
+            type: "select",
+            options: ["Balai", "Sekwil I", "Sekwil II", "Sekwil III"],
+            disabled: user?.role === "Admin", // Disable if user is Admin
+        },
+        {
+            id: "lokasi",
+            label: "Lokasi Barang",
+            type: "select",
+            options: ["Palangka Raya", "Samarinda", "Pontianak"],
+            disabled: user?.role === "Admin", // Disable if user is Admin
+        },
+        { id: "NUP", label: "NUP" },
+    ];
+
+    const dataStnkFields = [
+        { id: "alamat", label: "Alamat STNK" },
+        { id: "tahunPembuatan", label: "Tahun Pembuatan" },
+        { id: "silinder", label: "Isi Silinder" },
+        { id: "warnaKB", label: "Warna KB" },
+        {
+            id: "bahanBakar",
+            label: "Bahan Bakar",
+            type: "select",
+            options: ["Bensin", "Solar"],
+        },
+        { id: "tahunRegistrasi", label: "Tahun Registrasi" },
+        { id: "noRangka", label: "Nomor Rangka" },
+        { id: "noMesin", label: "Nomor Mesin" },
+        { id: "noBPKB", label: "Nomor BPKB" },
+        { id: "warnaTNKB", label: "Warna TNKB" },
+        { id: "berlakuSampai", label: "Berlaku Sampai", type: "date" },
+        { id: "biaya", label: "Biaya Pajak" },
+    ];
 
     // Fetch data awal saat komponen dimuat
     const fetchInitialData = useCallback(async () => {
@@ -101,8 +105,18 @@ const EditMotor = ({ isSidebarOpen }) => {
     }, [id]);
 
     useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await getProfile();
+                setUser(response.data);
+            } catch (err) {
+                console.error("Failed to fetch user profile:", err);
+            }
+        };
+        
+        fetchUserProfile();
         fetchInitialData();
-    }, [fetchInitialData]);
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -110,6 +124,29 @@ const EditMotor = ({ isSidebarOpen }) => {
     };
 
     const handleBack = () => navigate(-1);
+
+    const parseIndonesianDate = (dateString) => {
+        const months = {
+            Januari: "01",
+            Februari: "02",
+            Maret: "03",
+            April: "04",
+            Mei: "05",
+            Juni: "06",
+            Juli: "07",
+            Agustus: "08",
+            September: "09",
+            Oktober: "10",
+            November: "11",
+            Desember: "12",
+        };
+
+        // Split the date string ("10 Juli 2025" -> ["10", "Juli", "2025"])
+        const [day, month, year] = dateString.split(" ");
+
+        // Convert to YYYY-MM-DD
+        return `${year}-${months[month]}-${day.padStart(2, "0")}`;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -132,6 +169,10 @@ const EditMotor = ({ isSidebarOpen }) => {
                 NUP: formData.NUP,
             };
 
+            const formattedDate = formData.berlakuSampai
+                ? parseIndonesianDate(formData.berlakuSampai)
+                : null;
+
             const taxPayload = {
                 alamat: formData.alamat,
                 tahunPembuatan: formData.tahunPembuatan,
@@ -143,7 +184,7 @@ const EditMotor = ({ isSidebarOpen }) => {
                 noMesin: formData.noMesin,
                 noBPKB: formData.noBPKB,
                 warnaTNKB: formData.warnaTNKB,
-                berlakuSampai: formData.berlakuSampai,
+                berlakuSampai: formattedDate,
                 biaya: formData.biaya,
             };
 

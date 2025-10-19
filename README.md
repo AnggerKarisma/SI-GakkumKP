@@ -1,61 +1,259 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🧩 Fullstack Project — Laravel (Backend) & React (Frontend)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyek ini terdiri dari dua bagian utama:
+- **Backend** → Framework **Laravel** (PHP)
+- **Frontend** → Framework **React.js** (JavaScript)
 
-## About Laravel
+Dokumen ini menjelaskan **langkah-langkah lengkap** untuk men-setup, menjalankan, dan memahami struktur proyek ini.  
+Cocok untuk **developer junior** yang akan melanjutkan pengembangan proyek ini.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📁 Struktur Folder
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+project-root/
+│
+├── backend/         # Folder Laravel (API)
+│   ├── app/
+│   ├── routes/
+│   ├── config/
+│   ├── public/
+│   ├── composer.json
+│   └── ...
+│
+└── frontend/        # Folder React
+    ├── src/
+    ├── public/
+    ├── package.json
+    └── ...
+```
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ⚙️ Persiapan Awal
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1. Pastikan Sudah Terinstall
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Software | Versi Minimum | Cek dengan perintah |
+|-----------|----------------|---------------------|
+| PHP | 8.1+ | `php -v` |
+| Composer | 2.x | `composer -v` |
+| Node.js | 18+ | `node -v` |
+| NPM | 9+ | `npm -v` |
+| Git | - | `git --version` |
+| MySQL / MariaDB | - | - |
 
-## Laravel Sponsors
+> ⚠️ **Pastikan semua versi sesuai atau lebih tinggi.**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🧱 Setup Backend (Laravel)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Masuk ke folder backend:
 
-## Contributing
+```bash
+cd backend
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Install Dependencies
+```bash
+composer install
+```
 
-## Code of Conduct
+### 2. Setup File Environment
+Buat file `.env` berdasarkan `.env.example`:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+Edit file `.env` sesuai konfigurasi lokal Anda:
+```env
+APP_NAME=LaravelApp
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database
+DB_USERNAME=root
+DB_PASSWORD=
 
-## License
+# Jika API digunakan oleh React di localhost:5173
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 3. Generate Key Aplikasi
+```bash
+php artisan key:generate
+```
+
+### 4. Migrasi & Seeder Database
+```bash
+php artisan migrate --seed
+```
+
+> Jika database belum dibuat, buat dulu database kosong di phpMyAdmin atau MySQL sebelum menjalankan migrate.
+
+### 5. Jalankan Server Laravel
+```bash
+php artisan serve
+```
+
+Server default:  
+👉 **http://localhost:8000**
+
+---
+
+## 🖥️ Setup Frontend (React)
+
+Masuk ke folder frontend:
+
+```bash
+cd frontend
+```
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Konfigurasi File `.env`
+Buat file `.env` (jika belum ada) di folder `frontend` dan isi seperti ini:
+
+```env
+VITE_API_URL=http://localhost:8000/api
+```
+
+> Pastikan URL di atas mengarah ke backend Laravel yang sedang berjalan.
+
+### 3. Jalankan Server React
+```bash
+npm run dev
+```
+
+Server default:  
+👉 **http://localhost:5173**
+
+---
+
+## 🔗 Integrasi Backend dan Frontend
+
+Frontend React akan berkomunikasi dengan Backend Laravel melalui API endpoint.  
+Contoh penggunaan di React:
+
+```javascript
+// src/api/axios.js
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
+export default api;
+```
+
+Contoh request:
+```javascript
+// src/pages/Login.jsx
+import api from '../api/axios';
+
+async function loginUser(email, password) {
+  const res = await api.post('/login', { email, password });
+  console.log(res.data);
+}
+```
+
+---
+
+## 🧩 Build Production
+
+### Frontend
+Untuk membuat versi build production:
+```bash
+npm run build
+```
+Hasil build akan berada di folder `frontend/dist`.
+
+Biasanya hasil build ini dapat dipindahkan ke folder Laravel (`backend/public`) jika ingin disatukan.
+
+---
+
+## 🔍 Tips Pengembangan
+
+### Menjalankan Kedua Server Secara Bersamaan
+Gunakan dua terminal:
+- **Terminal 1 (Backend):**
+  ```bash
+  cd backend
+  php artisan serve
+  ```
+- **Terminal 2 (Frontend):**
+  ```bash
+  cd frontend
+  npm run dev
+  ```
+
+### Jika Menggunakan Postman
+Base URL:
+```
+http://localhost:8000/api
+```
+
+Contoh endpoint:
+```
+GET /api/users
+POST /api/login
+```
+
+---
+
+## 🧠 Struktur Folder Utama
+
+### Backend (Laravel)
+| Folder | Deskripsi |
+|--------|------------|
+| `app/Models` | Menyimpan model database |
+| `app/Http/Controllers` | Logic endpoint API |
+| `routes/api.php` | Routing API |
+| `database/migrations` | Struktur tabel database |
+| `database/seeders` | Data awal untuk testing |
+| `.env` | Konfigurasi environment |
+
+### Frontend (React)
+| Folder | Deskripsi |
+|--------|------------|
+| `src/components` | Komponen UI (reusable) |
+| `src/pages` | Halaman utama aplikasi |
+| `src/api` | Konfigurasi request API |
+| `src/context` | State management (opsional) |
+| `src/assets` | Gambar, ikon, dll |
+| `vite.config.js` | Konfigurasi build Vite |
+
+---
+
+## 🧩 Catatan Tambahan
+
+- Pastikan **port Laravel (8000)** dan **port React (5173)** tidak bentrok.
+- Jika ada error CORS, pastikan konfigurasi middleware Laravel `cors.php` mengizinkan origin `http://localhost:5173`.
+- Gunakan branch `dev` untuk pengembangan fitur baru, lalu merge ke `main` setelah testing.
+
+---
+
+## 🧑‍💻 Kontributor
+
+- **Lead Developer:** [Nama Kamu]
+- **Frontend Developer:** [Nama Developer Frontend]
+- **Backend Developer:** [Nama Developer Backend]
+
+---
+
+## 📄 Lisensi
+
+Proyek ini berada di bawah lisensi **MIT License** — bebas digunakan dan dimodifikasi dengan tetap mencantumkan atribusi.
+
+---

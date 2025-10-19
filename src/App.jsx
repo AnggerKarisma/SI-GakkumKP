@@ -49,7 +49,7 @@ const App = () => {
                         role={role}
                     />
                 )}
-                {role === "admin" && showNavbar && (
+                {showNavbar && (
                     <NavbarDashboard
                         toggleSidebar={toggleSidebar}
                         isSidebarOpen={isSidebarOpen}
@@ -103,7 +103,7 @@ const App = () => {
                         element={<TambahMobil isSidebarOpen={isSidebarOpen} />}
                     />
                     <Route
-                        path="  "
+                        path="mobil/:id"
                         element={<DetailMobil isSidebarOpen={isSidebarOpen} />}
                     />
                     <Route

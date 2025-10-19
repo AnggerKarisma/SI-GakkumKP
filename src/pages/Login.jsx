@@ -84,7 +84,9 @@ const Login = () => {
                                     <Mail className="text-white" />
                                     <input
                                         required
-                                        type="text"
+                                        minLength={18}
+                                        maxLength={18}
+                                        type="number"
                                         placeholder="NIP"
                                         className="text-sm text-white px-2 w-full outline-none bg-transparent"
                                         value={NIP}

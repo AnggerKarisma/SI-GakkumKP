@@ -17,7 +17,7 @@ class UpdateUserDetailRequest extends FormRequest
     {
         return [
             'jabatan' => 'sometimes|required|string|max:255',
-            'unitKerja' => ['sometimes', 'required', Rule::in(['Balai', 'Sekwil I / Palangka Raya', 'Sekwil II / Samarinda', 'Sekwil III / Pontianak'])],
+            // 'unitKerja' => ['sometimes', 'required', Rule::in(['Balai', 'Sekwil I / Palangka Raya', 'Sekwil II / Samarinda', 'Sekwil III / Pontianak'])],
             'role' => ['sometimes', 'required', Rule::in(['Admin', 'User'])]
         ];
     }

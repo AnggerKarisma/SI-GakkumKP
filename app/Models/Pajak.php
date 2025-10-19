@@ -50,6 +50,17 @@ class Pajak extends Model
         return null;
     }
 
+
+    public function setBiayaAttribute($value)
+    {
+        $this->attributes['biaya'] = is_numeric($value) ? $value : preg_replace('/[^\d]/', '', $value);
+    }
+
+    public function getBiayaAttribute($value)
+    {
+        return number_format($value, 0, ',', '.');
+    }
+
     // --- LOGIKA UNTUK JATUH TEMPO PAJAK ---
 
     public function isExpired(): bool

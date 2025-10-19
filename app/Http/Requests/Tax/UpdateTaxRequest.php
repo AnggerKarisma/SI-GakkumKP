@@ -19,7 +19,7 @@ class UpdateTaxRequest extends FormRequest
         return [
             'nostnk' => 'sometimes|required|string|max:255',
             'alamat' => 'sometimes|required|string|max:255',
-            'biaya' => 'sometimes|nullable|numeric|min:0',
+            'biaya' => 'sometimes|nullable|string|min:0',
             'berlakuSampai' => 'sometimes|required|date',
             'tahunPembuatan' => 'sometimes|nullable|integer|min:1900|max:' . date('Y'),
             'silinder' => 'sometimes|required|string|max:255',

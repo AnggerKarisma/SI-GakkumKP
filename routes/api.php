@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{kendaraan}', [VehicleController::class, 'update']);
         Route::delete('/{kendaraan}', [VehicleController::class, 'destroy']);
         Route::patch('/{kendaraan}/status', [VehicleController::class, 'updateStatus']);
+        Route::post('/with-tax', [VehicleController::class, 'storeWithTax']);
     });
 
     Route::prefix('pinjam')->group(function () {

@@ -34,6 +34,7 @@ class UserController extends Controller
     {
         $request->validate([
             'NIP' => 'required|string',
+            'NIP' => 'required|string|min:18|max:18',
             'password' => 'required|string|min:6'
         ]);
 

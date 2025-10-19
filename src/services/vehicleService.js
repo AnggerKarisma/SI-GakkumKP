@@ -29,6 +29,16 @@ export const createVehicle = async (vehicleData) => {
     }
 };
 
+export const createVehicleWithTax = async (payload) => {
+    try{
+        const response = await api.post(`${BASE_URL}/with-tax`, payload);
+        return response.data;
+    }
+    catch(error){
+        throw error;
+    }
+};
+
 export const updateVehicle = async (id, vehicleData) => {
     try {
         const response = await api.put(`${BASE_URL}/${id}`, vehicleData);

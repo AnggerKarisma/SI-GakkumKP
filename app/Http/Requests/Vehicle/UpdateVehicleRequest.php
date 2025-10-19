@@ -16,6 +16,12 @@ class UpdateVehicleRequest extends FormRequest
     public function rules(): array
     {
         $kendaraanId = $this->kendaraan->kendaraanID;
+        $validUnitKerja = [
+            'Balai',
+            'Sekwil I / Palangka Raya',
+            'Sekwil II / Samarinda', 
+            'Sekwil III / Pontianak'
+        ];
 
         return [
             'namaKendaraan' => 'sometimes|required|string|max:255',
@@ -26,7 +32,6 @@ class UpdateVehicleRequest extends FormRequest
             'jenisKendaraan' => ['sometimes', 'required', Rule::in(['mobil', 'motor'])],
             'penanggungjawab' => 'sometimes|required|string|max:255',
             'NUP' => 'sometimes|required|string|max:255',
-            'unitKerja' => ['sometimes', 'required', Rule::in(['Balai', 'Sekwil I / Palangka Raya', 'Sekwil II / Samarinda', 'Sekwil III / Pontianak'])],
             'kondisi' => 'sometimes|required|string|max:255',
             'statKendaraan' => ['sometimes', 'required', Rule::in(['Stand by', 'Not Available', 'Maintenance'])],
         ];

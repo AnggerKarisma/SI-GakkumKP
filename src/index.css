@@ -31,3 +31,16 @@
   scrollbar-width: thin;
   scrollbar-color: #1f4f27 #171717; /* Warna thumb dan track */
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox and standardized appearance */
+input[type="number"] {
+  -webkit-appearance: textfield;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}

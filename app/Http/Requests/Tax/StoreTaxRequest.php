@@ -16,7 +16,7 @@ class StoreTaxRequest extends FormRequest
         return [
             'kendaraanID' => 'required|integer|exists:kendaraan,kendaraanID|unique:pajak,kendaraanID',
             'alamat' => 'required|string|max:255',
-            'biaya' => 'nullable|numeric|min:0',
+            'biaya' => 'nullable|string|min:0',
             'berlakuSampai' => 'required|date',
             'tahunPembuatan' => 'nullable|integer|min:1900|max:' . date('Y'),
             'silinder' => 'required|string|max:255',
