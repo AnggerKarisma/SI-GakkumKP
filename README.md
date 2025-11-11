@@ -11,13 +11,10 @@ Proyek ini merupakan aplikasi fullstack modern yang menggabungkan kekuatan **Lar
 - [🖥️ Setup Frontend (React)](#️-setup-frontend-react)
 - [🔗 Integrasi Backend dan Frontend](#-integrasi-backend-dan-frontend)
 - [🚀 Menjalankan Aplikasi](#-menjalankan-aplikasi)
-- [🧪 Testing](#-testing)
 - [🏗️ Build Production](#-build-production)
 - [🧩 Struktur Folder Utama](#-struktur-folder-utama)
 - [🔧 Konfigurasi Penting](#-konfigurasi-penting)
-- [📚 Tips Pengembangan](#-tips-pengembangan)
 - [🐛 Troubleshooting](#-troubleshooting)
-- [📝 Catatan Tambahan](#-catatan-tambahan)
 
 ---
 
@@ -232,28 +229,6 @@ Command ini akan menjalankan ketiga proses bersamaan:
 
 ---
 
-## 🧪 Testing
-
-### Menjalankan Tests dengan Pest/PHPUnit
-
-```bash
-npm run test
-```
-
-Atau manual dengan artisan:
-
-```bash
-php artisan test
-```
-
-### Testing dengan Coverage
-
-```bash
-php artisan test --coverage
-```
-
----
-
 ## 🏗️ Build Production
 
 ### Build Frontend (React)
@@ -448,77 +423,6 @@ Daftarkan middleware custom:
 
 ---
 
-## 📚 Tips Pengembangan
-
-### 1. Gunakan Laravel Tinker untuk Debug
-
-```bash
-php artisan tinker
-```
-
-Ini membuka interactive shell untuk testing kode Laravel.
-
-### 2. Generate Model dengan Migration
-
-```bash
-php artisan make:model ModelName -m
-```
-
-### 3. Generate Controller dengan Resource Methods
-
-```bash
-php artisan make:controller ControllerName --resource
-```
-
-### 4. Setup IDE Helper untuk Autocomplete
-
-```bash
-composer require --dev barryvdh/laravel-ide-helper
-php artisan ide-helper:generate
-php artisan ide-helper:models
-```
-
-### 5. Hot Module Replacement (HMR) di React
-
-Development server Vite otomatis refresh ketika file berubah. Pastikan tidak ada error di console.
-
-### 6. Format Code dengan Prettier & ESLint
-
-```bash
-npm run lint      # Check ESLint
-npm run format    # Format dengan Prettier
-```
-
-### 7. Debugging dengan Laravel Pail
-
-```bash
-php artisan pail
-```
-
-Real-time log viewer untuk development.
-
-### 8. Monitoring Queue Jobs
-
-```bash
-php artisan queue:work --tries=1
-```
-
-Lihat status job di `storage/logs/laravel.log`.
-
-### 9. Database Rollback & Re-migrate
-
-```bash
-php artisan migrate:refresh          # Rollback & re-migrate
-php artisan migrate:refresh --seed   # + Seeder
-```
-
-### 10. API Testing dengan Postman/Thunder Client
-
-- Backend API: `http://localhost:8000/api`
-- Pastikan include CSRF token untuk POST requests jika diperlukan
-
----
-
 ## 🐛 Troubleshooting
 
 ### Error: "Class not found" atau "Model not found"
@@ -593,36 +497,6 @@ npm run dev -- --port 5174
 ```
 
 ---
-
-## 📝 Catatan Tambahan
-
-### Security Considerations
-
-1. **Environment Variables**: Jangan commit `.env` ke repository
-2. **API Keys**: Simpan di `.env`, jangan hardcode
-3. **CORS**: Batasi origin hanya domain yang diperlukan
-4. **SQL Injection**: Gunakan parameterized queries
-5. **XSS Prevention**: Sanitize output di Blade templates
-
-### Performance Optimization
-
-1. **Caching**: Gunakan `php artisan cache:*` commands
-2. **Database Indexing**: Tambahkan index pada kolom yang sering di-query
-3. **Lazy Loading**: Implementasikan pagination untuk query besar
-4. **Frontend Bundling**: Minify CSS/JS di production build
-5. **CDN**: Gunakan CDN untuk static assets
-
-### Version Control
-
-```bash
-# Setup gitignore
-git config core.excludesfile .gitignore
-
-# Commit guidelines
-# - Use conventional commits: feat: , fix: , docs: , etc.
-# - Keep commits atomic dan meaningful
-# - Pull sebelum push
-```
 
 ## 🔗 Useful Links
 
