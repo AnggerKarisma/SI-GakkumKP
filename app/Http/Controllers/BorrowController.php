@@ -253,7 +253,7 @@ class BorrowController extends Controller
                 ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
                 ->header('Pragma', 'no-cache')
                 ->header('Expires', '0');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Log::error('Generate Report Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,

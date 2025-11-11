@@ -163,40 +163,40 @@ const DaftarPeminjaman = ({ isSidebarOpen = false }) => {
         {
             header: "Plat",
             accessor: "plat",
-            sortable: true,
+            sortahble: false,
         },
         {
             header: "Nama Kendaraan",
             accessor: "namaKendaraan",
-            sortable: true,
+            sortahble: false,
         },
         {
             header: "Peminjam",
             accessor: "nama",
-            sortable: true,
+            sortahble: false,
         },
         {
             header: "Tanggal Pinjam",
             accessor: "tglPinjam",
-            sortable: true,
+            sortahble: false,
             cell: (row) => formatDate(row.tglPinjam),
         },
         {
             header: "Jatuh Tempo",
             accessor: "tglJatuhTempo",
-            sortable: true,
+            sortahble: false,
             cell: (row) => formatDate(row.tglJatuhTempo),
         },
         {
             header: "Tanggal Kembali",
             accessor: "tglKembaliAktual",
-            sortable: true,
+            sortahble: false,
             cell: (row) => formatDate(row.tglKembaliAktual),
         },
         {
             header: "Status",
             accessor: "is_returned",
-            sortable: true,
+            sortahble: false,
             cell: (row) => {
                 if (row.is_returned) return "Dikembalikan";
                 if (row.is_overdue) return "Terlambat";

@@ -1,41 +1,60 @@
 # 🧩 Fullstack Project — Laravel (Backend) & React (Frontend)
 
-Proyek ini terdiri dari dua bagian utama:
-- **Backend** → Framework **Laravel** (PHP)
-- **Frontend** → Framework **React.js** (JavaScript)
-
-Dokumen ini menjelaskan **langkah-langkah lengkap** untuk men-setup, menjalankan, dan memahami struktur proyek ini.  
-Cocok untuk **developer junior** yang akan melanjutkan pengembangan proyek ini.
+Proyek ini merupakan aplikasi fullstack modern yang menggabungkan kekuatan **Laravel** sebagai backend dan **React.js** sebagai frontend. Dokumentasi lengkap ini dirancang untuk memudahkan developer dalam setup, development, dan deployment.
 
 ---
+
+## 📋 Daftar Isi
+
+- [⚙️ Persiapan Awal](#️-persiapan-awal)
+- [🧱 Setup Backend (Laravel)](#-setup-backend-laravel)
+- [🖥️ Setup Frontend (React)](#️-setup-frontend-react)
+- [🔗 Integrasi Backend dan Frontend](#-integrasi-backend-dan-frontend)
+- [🚀 Menjalankan Aplikasi](#-menjalankan-aplikasi)
+- [🧪 Testing](#-testing)
+- [🏗️ Build Production](#-build-production)
+- [🧩 Struktur Folder Utama](#-struktur-folder-utama)
+- [🔧 Konfigurasi Penting](#-konfigurasi-penting)
+- [📚 Tips Pengembangan](#-tips-pengembangan)
+- [🐛 Troubleshooting](#-troubleshooting)
+- [📝 Catatan Tambahan](#-catatan-tambahan)
 
 ---
 
 ## ⚙️ Persiapan Awal
 
-### 1. Pastikan Sudah Terinstall
+Sebelum memulai, pastikan semua software berikut sudah terinstall di sistem Anda:
 
 | Software | Versi Minimum | Cek dengan perintah |
 |-----------|----------------|---------------------|
-| PHP | 8.1+ | `php -v` |
+| PHP | 8.2+ | `php -v` |
 | Composer | 2.x | `composer -v` |
 | Node.js | 18+ | `node -v` |
 | NPM | 9+ | `npm -v` |
 | Git | - | `git --version` |
-| MySQL / MariaDB | - | - |
+| MySQL / MariaDB | 5.7+ | Lihat phpMyAdmin |
 
-> ⚠️ **Pastikan semua versi sesuai atau lebih tinggi.**
+> ⚠️ **Pastikan semua versi sesuai atau lebih tinggi dari yang tertera.**
 
 ---
 
 ## 🧱 Setup Backend (Laravel)
 
-### 1. Install Dependencies
+### 1. Clone Repository & Masuk Folder Backend
+
+```bash
+git clone <url-repository>
+cd <nama-folder-project>
+```
+
+### 2. Install Dependencies Backend
+
 ```bash
 composer install
 ```
 
-### 2. Setup File Environment
+### 3. Setup File Environment
+
 Buat file `.env` berdasarkan `.env.example`:
 
 ```bash
@@ -43,178 +62,586 @@ cp .env.example .env
 ```
 
 Edit file `.env` sesuai konfigurasi lokal Anda:
+
 ```env
-APP_NAME=LaravelApp
+APP_NAME=LPPTD
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
 APP_URL=http://localhost:8000
 
+# Database Configuration
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=nama_database
+DB_DATABASE=lpptd_db
 DB_USERNAME=root
 DB_PASSWORD=
 
-# Jika API digunakan oleh React di localhost:5173
+# CORS Configuration (untuk React frontend)
 CORS_ALLOWED_ORIGINS=http://localhost:5173
+
+# Mail Configuration (opsional)
+MAIL_MAILER=smtp
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=no-reply@lpptd.local
+
+# Logging
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+# Session
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
 ```
 
-### 3. Generate Key Aplikasi
+### 4. Generate Application Key
+
 ```bash
 php artisan key:generate
 ```
 
-### 4. Migrasi & Seeder Database
+### 5. Setup Database
+
+#### a. Buat Database (di phpMyAdmin atau MySQL CLI)
+
+```sql
+CREATE DATABASE lpptd_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+#### b. Jalankan Migration
+
+```bash
+php artisan migrate
+```
+
+#### c. Jalankan Seeder (opsional, untuk data dummy)
+
 ```bash
 php artisan migrate --seed
 ```
 
-> Jika database belum dibuat, buat dulu database kosong di phpMyAdmin atau MySQL sebelum menjalankan migrate.
+### 6. Cache Konfigurasi (Development)
 
-### 5. Jalankan Server Laravel
 ```bash
-php artisan serve
+php artisan config:cache
 ```
 
-Server default:  
-👉 **http://localhost:8000**
+### 7. Buat Storage Link untuk Public Files
+
+```bash
+php artisan storage:link
+```
 
 ---
 
 ## 🖥️ Setup Frontend (React)
 
-### 1. Install Dependencies
+### 1. Install Dependencies Frontend
+
 ```bash
 npm install
 ```
 
-### 2. Konfigurasi File `.env`
-Buat file `.env` (jika belum ada) di folder `frontend` dan isi seperti ini:
+### 2. Setup File Environment
+
+Buat file `.env` di root folder project:
 
 ```env
 VITE_API_URL=http://localhost:8000/api
 ```
 
-> Pastikan URL di atas mengarah ke backend Laravel yang sedang berjalan.
+> Pastikan `VITE_API_URL` mengarah ke backend Laravel yang sedang berjalan.
 
-### 3. Jalankan Server React
-```bash
-npm run dev
+### 3. Verifikasi Konfigurasi
+
+Periksa file `vite.config.js` untuk memastikan konfigurasi sudah benar:
+
+```javascript
+// vite.config.js sudah dikonfigurasi dengan React plugin
 ```
-
-Server default:  
-👉 **http://localhost:5173**
 
 ---
 
 ## 🔗 Integrasi Backend dan Frontend
 
-Frontend React akan berkomunikasi dengan Backend Laravel melalui API endpoint.  
-Contoh penggunaan di React:
+### CORS Configuration
+
+Pastikan backend sudah dikonfigurasi untuk menerima request dari frontend:
+
+1. Edit `.env` backend:
+   ```env
+   CORS_ALLOWED_ORIGINS=http://localhost:5173
+   ```
+
+2. Middleware CORS sudah diatur di `bootstrap/app.php`
+
+### API URL di Frontend
+
+Frontend akan menggunakan `VITE_API_URL` dari `.env` untuk semua request API:
 
 ```javascript
-// src/api/axios.js
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-});
-
-export default api;
-```
-
-Contoh request:
-```javascript
-// src/pages/Login.jsx
-import api from '../api/axios';
-
-async function loginUser(email, password) {
-  const res = await api.post('/login', { email, password });
-  console.log(res.data);
-}
+const API_URL = import.meta.env.VITE_API_URL;
+const response = await fetch(`${API_URL}/endpoint`);
 ```
 
 ---
 
-## 🧩 Build Production
+## 🚀 Menjalankan Aplikasi
 
-### Frontend
-Untuk membuat versi build production:
+### Opsi 1: Jalankan Secara Manual (Recommended untuk Development)
+
+#### Terminal 1 - Backend (Laravel)
+
+```bash
+php artisan serve
+```
+
+Server Laravel berjalan di: **http://localhost:8000**
+
+#### Terminal 2 - Queue Worker (untuk background jobs)
+
+```bash
+php artisan queue:listen --tries=1
+```
+
+#### Terminal 3 - Frontend (React + Vite)
+
+```bash
+npm run dev
+```
+
+Server React berjalan di: **http://localhost:5173**
+
+### Opsi 2: Jalankan dengan Concurrently (Satu Command)
+
+```bash
+npm run dev
+```
+
+Command ini akan menjalankan ketiga proses bersamaan:
+- Laravel server
+- Queue worker
+- Vite dev server
+
+> ℹ️ Pastikan Anda sudah berada di root folder project.
+
+---
+
+## 🧪 Testing
+
+### Menjalankan Tests dengan Pest/PHPUnit
+
+```bash
+npm run test
+```
+
+Atau manual dengan artisan:
+
+```bash
+php artisan test
+```
+
+### Testing dengan Coverage
+
+```bash
+php artisan test --coverage
+```
+
+---
+
+## 🏗️ Build Production
+
+### Build Frontend (React)
+
 ```bash
 npm run build
 ```
-Hasil build akan berada di folder `frontend/dist`.
 
-Biasanya hasil build ini dapat dipindahkan ke folder Laravel (`backend/public`) jika ingin disatukan.
+Output akan tersimpan di folder `dist/`.
+
+### Optimasi Backend untuk Production
+
+```bash
+composer install --optimize-autoloader --no-dev
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
+```
+
+### Setup untuk Deployment
+
+1. Copy file `.env` ke server dan sesuaikan konfigurasi
+2. Generate APP_KEY baru jika belum ada
+3. Run migrations di server production
+4. Setup web server (Nginx/Apache) untuk mengarahkan ke `public/` folder
+5. Setup React build di folder public atau CDN terpisah
 
 ---
 
-## 🔍 Tips Pengembangan
+## 🧩 Struktur Folder Utama
 
-### Menjalankan Kedua Server Secara Bersamaan
-Gunakan dua terminal:
-- **Terminal 1 (Backend):**
-  ```bash
-  cd backend
-  php artisan serve
-  ```
-- **Terminal 2 (Frontend):**
-  ```bash
-  cd frontend
-  npm run dev
-  ```
-
-### Jika Menggunakan Postman
-Base URL:
 ```
-http://localhost:8000/api
-```
-
-Contoh endpoint:
-```
-GET /api/users
-POST /api/login
+project-root/
+├── app/                          # Kode aplikasi Laravel
+│   ├── Http/
+│   │   ├── Controllers/          # Request handlers
+│   │   ├── Middleware/           # Custom middleware
+│   │   └── Requests/             # Form request validation
+│   ├── Models/                   # Database models
+│   ├── Policies/                 # Authorization policies
+│   └── Providers/                # Service providers
+│
+├── bootstrap/                    # Bootstrap file Laravel
+│   ├── app.php                   # Konfigurasi aplikasi
+│   └── providers.php             # Provider registration
+│
+├── config/                       # Konfigurasi aplikasi
+│   ├── app.php                   # App configuration
+│   ├── auth.php                  # Authentication
+│   ├── database.php              # Database connection
+│   ├── filesystems.php           # Storage configuration
+│   ├── logging.php               # Log channels
+│   ├── mail.php                  # Mail configuration
+│   ├── sanctum.php               # API token auth
+│   └── session.php               # Session configuration
+│
+├── database/                     # Database files
+│   ├── migrations/               # Schema migrations
+│   ├── seeders/                  # Data seeders
+│   └── factories/                # Model factories for testing
+│
+├── public/                       # Web root (akses publik)
+│   ├── index.php                 # Entry point Laravel
+│   ├── storage/                  # Public storage files
+│   └── vendor/                   # Public assets
+│
+├── resources/                    # Resource files
+│   └── views/                    # Blade templates (jika ada)
+│
+├── routes/                       # Route definitions
+│   ├── api.php                   # API routes
+│   ├── web.php                   # Web routes
+│   └── console.php               # Console commands
+│
+├── src/                          # React source code
+│   ├── components/               # React components
+│   ├── pages/                    # Page components
+│   ├── hooks/                    # Custom React hooks
+│   ├── services/                 # API services
+│   ├── styles/                   # Global styles
+│   ├── App.jsx                   # Main App component
+│   └── main.jsx                  # React entry point
+│
+├── storage/                      # Generated files
+│   ├── app/                      # Application storage
+│   ├── logs/                     # Application logs
+│   └── framework/                # Framework files
+│
+├── tests/                        # Test files
+│   ├── Feature/                  # Feature tests
+│   ├── Unit/                     # Unit tests
+│   └── Pest.php                  # Pest configuration
+│
+├── vendor/                       # Composer dependencies
+├── node_modules/                 # NPM dependencies
+│
+├── .env                          # Environment variables (local)
+├── .env.example                  # Environment template
+├── .gitignore                    # Git ignore rules
+├── .editorconfig                 # Editor config
+├── .prettierrc.json              # Prettier config
+├── eslint.config.js              # ESLint rules
+├── vite.config.js                # Vite configuration
+├── tailwind.config.js            # Tailwind CSS config
+├── package.json                  # NPM dependencies & scripts
+├── composer.json                 # PHP dependencies
+├── phpunit.xml                   # PHPUnit configuration
+├── artisan                       # Laravel CLI
+├── README.md                     # Documentation (file ini)
+└── index.html                    # React entry HTML
 ```
 
 ---
 
-## 🧠 Struktur Folder Utama
+## 🔧 Konfigurasi Penting
 
-### Backend (Laravel)
-| Folder | Deskripsi |
-|--------|------------|
-| `app/Models` | Menyimpan model database |
-| `app/Http/Controllers` | Logic endpoint API |
-| `routes/api.php` | Routing API |
-| `database/migrations` | Struktur tabel database |
-| `database/seeders` | Data awal untuk testing |
-| `.env` | Konfigurasi environment |
+### Database Configuration (`config/database.php`)
 
-### Frontend (React)
-| Folder | Deskripsi |
-|--------|------------|
-| `src/components` | Komponen UI (reusable) |
-| `src/pages` | Halaman utama aplikasi |
-| `src/api` | Konfigurasi request API |
-| `src/context` | State management (opsional) |
-| `src/assets` | Gambar, ikon, dll |
-| `vite.config.js` | Konfigurasi build Vite |
+Pilih driver yang digunakan (MySQL, PostgreSQL, SQLite, dll):
+
+```php
+'default' => env('DB_CONNECTION', 'mysql'),
+```
+
+### Filesystem Configuration (`config/filesystems.php`)
+
+Konfigurasi storage untuk upload files:
+
+```php
+'default' => env('FILESYSTEM_DISK', 'local'),
+'disks' => [
+    'local' => [
+        'driver' => 'local',
+        'root' => storage_path('app/private'),
+    ],
+    'public' => [
+        'driver' => 'local',
+        'root' => storage_path('app/public'),
+        'url' => env('APP_URL').'/storage',
+    ],
+]
+```
+
+### Logging Configuration (`config/logging.php`)
+
+Pilih channel untuk logging:
+
+```php
+'default' => env('LOG_CHANNEL', 'stack'),
+'channels' => [
+    'stack' => [
+        'driver' => 'stack',
+        'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+    ],
+    'single' => [
+        'driver' => 'single',
+        'path' => storage_path('logs/laravel.log'),
+    ],
+]
+```
+
+### Mail Configuration (`config/mail.php`)
+
+Setup untuk mengirim email:
+
+```php
+'mailers' => [
+    'smtp' => [
+        'transport' => 'smtp',
+        'host' => env('MAIL_HOST'),
+        'port' => env('MAIL_PORT'),
+        'username' => env('MAIL_USERNAME'),
+        'password' => env('MAIL_PASSWORD'),
+    ],
+]
+```
+
+### Middleware (`bootstrap/app.php`)
+
+Daftarkan middleware custom:
+
+```php
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->alias([
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+    ]);
+})
+```
 
 ---
 
-## 🧩 Catatan Tambahan
+## 📚 Tips Pengembangan
 
-- Pastikan **port Laravel (8000)** dan **port React (5173)** tidak bentrok.
-- Jika ada error CORS, pastikan konfigurasi middleware Laravel `cors.php` mengizinkan origin `http://localhost:5173`.
-- Gunakan branch `dev` untuk pengembangan fitur baru, lalu merge ke `main` setelah testing.
+### 1. Gunakan Laravel Tinker untuk Debug
+
+```bash
+php artisan tinker
+```
+
+Ini membuka interactive shell untuk testing kode Laravel.
+
+### 2. Generate Model dengan Migration
+
+```bash
+php artisan make:model ModelName -m
+```
+
+### 3. Generate Controller dengan Resource Methods
+
+```bash
+php artisan make:controller ControllerName --resource
+```
+
+### 4. Setup IDE Helper untuk Autocomplete
+
+```bash
+composer require --dev barryvdh/laravel-ide-helper
+php artisan ide-helper:generate
+php artisan ide-helper:models
+```
+
+### 5. Hot Module Replacement (HMR) di React
+
+Development server Vite otomatis refresh ketika file berubah. Pastikan tidak ada error di console.
+
+### 6. Format Code dengan Prettier & ESLint
+
+```bash
+npm run lint      # Check ESLint
+npm run format    # Format dengan Prettier
+```
+
+### 7. Debugging dengan Laravel Pail
+
+```bash
+php artisan pail
+```
+
+Real-time log viewer untuk development.
+
+### 8. Monitoring Queue Jobs
+
+```bash
+php artisan queue:work --tries=1
+```
+
+Lihat status job di `storage/logs/laravel.log`.
+
+### 9. Database Rollback & Re-migrate
+
+```bash
+php artisan migrate:refresh          # Rollback & re-migrate
+php artisan migrate:refresh --seed   # + Seeder
+```
+
+### 10. API Testing dengan Postman/Thunder Client
+
+- Backend API: `http://localhost:8000/api`
+- Pastikan include CSRF token untuk POST requests jika diperlukan
 
 ---
 
-## 🧑‍💻 Kontributor
+## 🐛 Troubleshooting
 
-- **Frontend Developer:** [Muhammad Raihan Bramatama]
-- **Backend Developer:** [Angger Karisma Deotama]
+### Error: "Class not found" atau "Model not found"
+
+**Solusi:**
+
+```bash
+composer dump-autoload
+php artisan cache:clear
+php artisan config:clear
+```
+
+### Database Connection Error
+
+**Solusi:**
+
+1. Verifikasi `.env` - DB_HOST, DB_USERNAME, DB_PASSWORD
+2. Pastikan MySQL/MariaDB running
+3. Pastikan database sudah dibuat
+
+```bash
+mysql -u root -p
+CREATE DATABASE lpptd_db;
+```
+
+### CORS Error di Frontend
+
+**Solusi:**
+
+1. Verifikasi `CORS_ALLOWED_ORIGINS` di `.env` backend
+2. Pastikan URL frontend benar: `http://localhost:5173`
+3. Clear browser cache
+4. Restart Laravel server
+
+```env
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+```
+
+### 504 Gateway Timeout
+
+**Solusi:**
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+```
+
+### Node Modules Issues
+
+**Solusi:**
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Port Sudah Terpakai
+
+Ganti port default:
+
+**Laravel:**
+
+```bash
+php artisan serve --port=8001
+```
+
+**React/Vite:**
+
+```bash
+npm run dev -- --port 5174
+```
+
+---
+
+## 📝 Catatan Tambahan
+
+### Security Considerations
+
+1. **Environment Variables**: Jangan commit `.env` ke repository
+2. **API Keys**: Simpan di `.env`, jangan hardcode
+3. **CORS**: Batasi origin hanya domain yang diperlukan
+4. **SQL Injection**: Gunakan parameterized queries
+5. **XSS Prevention**: Sanitize output di Blade templates
+
+### Performance Optimization
+
+1. **Caching**: Gunakan `php artisan cache:*` commands
+2. **Database Indexing**: Tambahkan index pada kolom yang sering di-query
+3. **Lazy Loading**: Implementasikan pagination untuk query besar
+4. **Frontend Bundling**: Minify CSS/JS di production build
+5. **CDN**: Gunakan CDN untuk static assets
+
+### Version Control
+
+```bash
+# Setup gitignore
+git config core.excludesfile .gitignore
+
+# Commit guidelines
+# - Use conventional commits: feat: , fix: , docs: , etc.
+# - Keep commits atomic dan meaningful
+# - Pull sebelum push
+```
+
+## 🔗 Useful Links
+
+- [Laravel Documentation](https://laravel.com/docs)
+- [React Documentation](https://react.dev)
+- [Vite Documentation](https://vitejs.dev)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Pest PHP Testing](https://pestphp.com)
+- [ESLint Configuration](https://eslint.org)
+
+---
+
+## 🤝 Contributing
+
+Ketika berkontribusi pada project ini:
+
+1. Buat branch baru: `git checkout -b feature/nama-fitur`
+2. Commit changes: `git commit -m "feat: deskripsi fitur"`
+3. Push ke branch: `git push origin feature/nama-fitur`
+4. Buat Pull Request dengan deskripsi lengkap
 
 ---
