@@ -47,9 +47,31 @@ const DaftarPeminjaman = ({ isSidebarOpen = false }) => {
             const borrowArray = Array.isArray(borrowsResponse?.data)
                 ? borrowsResponse.data
                 : [];
-            setPeminjamanData(borrowArray);
+
+            // Flatten data sesuai struktur response backend
+            const flattenedData = borrowArray.map((item) => ({
+                ...item,
+                pinjamID: item.pinjamID,
+                plat: item.kendaraan?.plat || "-",
+                namaKendaraan: item.kendaraan?.namaKendaraan || "-",
+                nama: item.user?.nama || "-",
+                tglPinjam: item.tglPinjam,
+                tglJatuhTempo: item.tglJatuhTempo,
+                tglKembaliAktual: item.tglKembaliAktual,
+                // Status ditentukan dari tglKembaliAktual
+                is_returned: !!item.tglKembaliAktual,
+                is_overdue:
+                    !item.tglKembaliAktual &&
+                    new Date(item.tglJatuhTempo) < new Date(),
+                is_active:
+                    !item.tglKembaliAktual &&
+                    new Date(item.tglJatuhTempo) >= new Date(),
+            }));
+
+            setPeminjamanData(flattenedData);
         } catch (err) {
             setError("Gagal memuat data peminjaman.");
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
@@ -103,12 +125,11 @@ const DaftarPeminjaman = ({ isSidebarOpen = false }) => {
     // 4. Logika sorting sekarang berjalan langsung pada data yang diterima
     const sortedData = useMemo(() => {
         let sortableItems = [...peminjamanData];
-        if (sortConfig.key) {
+        if (sortConfig.key !== null) {
             sortableItems.sort((a, b) => {
-                const valA =
-                    sortConfig.key.split(".").reduce((o, i) => o?.[i], a) || "";
-                const valB =
-                    sortConfig.key.split(".").reduce((o, i) => o?.[i], b) || "";
+                const valA = a[sortConfig.key];
+                const valB = b[sortConfig.key];
+
                 if (valA < valB)
                     return sortConfig.direction === "ascending" ? -1 : 1;
                 if (valA > valB)
@@ -141,21 +162,18 @@ const DaftarPeminjaman = ({ isSidebarOpen = false }) => {
         },
         {
             header: "Plat",
-            accessor: "kendaraan.plat",
+            accessor: "plat",
             sortable: true,
-            cell: (row) => row.kendaraan?.plat || "-",
         },
         {
             header: "Nama Kendaraan",
-            accessor: "kendaraan.namaKendaraan",
+            accessor: "namaKendaraan",
             sortable: true,
-            cell: (row) => row.kendaraan?.namaKendaraan || "-",
         },
         {
             header: "Peminjam",
-            accessor: "user.nama",
+            accessor: "nama",
             sortable: true,
-            cell: (row) => row.user?.nama || "-",
         },
         {
             header: "Tanggal Pinjam",
@@ -177,12 +195,12 @@ const DaftarPeminjaman = ({ isSidebarOpen = false }) => {
         },
         {
             header: "Status",
-            accessor: "status_info.is_returned",
+            accessor: "is_returned",
             sortable: true,
             cell: (row) => {
-                if (row.status_info?.is_returned) return "Dikembalikan";
-                if (row.status_info?.is_overdue) return "Terlambat";
-                if (row.status_info?.is_active) return "Dipinjam";
+                if (row.is_returned) return "Dikembalikan";
+                if (row.is_overdue) return "Terlambat";
+                if (row.is_active) return "Dipinjam";
                 return "Status Tidak Dikenal";
             },
         },
@@ -190,8 +208,8 @@ const DaftarPeminjaman = ({ isSidebarOpen = false }) => {
             header: "Action",
             cell: (row) => {
                 // 5. Logika tombol disesuaikan, hanya aktif jika user ID cocok
-                const isOwner = currentUser?.userID === row.user?.userID;
-                const isReturned = row.status_info?.is_returned;
+                const isOwner = currentUser?.userID === row.userID;
+                const isReturned = row.is_returned;
                 const isDisabled = isReturned || isSubmitting || !isOwner;
 
                 return (

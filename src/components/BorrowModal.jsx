@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import { X, Calendar, FileText } from "lucide-react";
+import { div } from "framer-motion/client";
 
-const BorrowModal = ({ isOpen, onClose, onSubmit, vehicle, isLoading }) => {
+const BorrowModal = ({ isOpen, onClose, onSubmit, vehicle, isLoading, error }) => {
     const [formData, setFormData] = useState({
         tanggal_pinjam: "",
         rencana_kembali: "",
@@ -60,6 +61,12 @@ const BorrowModal = ({ isOpen, onClose, onSubmit, vehicle, isLoading }) => {
                         </span>
                         .
                     </p>
+
+                    {error && (
+                        <div className="mb-4 p-3 rounded bg-red-600 text-white">
+                            {error}
+                        </div>
+                    )}
 
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2">

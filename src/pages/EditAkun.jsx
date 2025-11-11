@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Button from "../components/Button";
 import FormAkun from "../components/FormAkun";
 import SuccessModal from "../components/SuccessModal";
+import { XCircle } from "lucide-react"; // <-- Ikon error ditambahkan
 
 import { getUserById, updateUserDetail } from "../services/userService";
 import { getProfile, updateProfile } from "../services/authService";
@@ -62,8 +63,7 @@ const EditAkun = ({ isSidebarOpen }) => {
                 .map((field) =>
                     field.id === "nama" ? { ...field, disabled: true } : field,
                 );
-        }
-        else {
+        } else {
             if (formData?.role === "Super Admin") {
                 return allFields.map((field) => {
                     if (field.id === "NIP" || field.id === "role") {
@@ -71,8 +71,7 @@ const EditAkun = ({ isSidebarOpen }) => {
                     }
                     return field;
                 });
-            }
-            else {
+            } else {
                 return allFields.filter(
                     (field) =>
                         field.id === "nama" ||
@@ -81,7 +80,7 @@ const EditAkun = ({ isSidebarOpen }) => {
                 );
             }
         }
-    }, [id, formData]); 
+    }, [id, formData]);
 
     const fetchInitialData = useCallback(async () => {
         setIsLoading(true);
@@ -184,7 +183,9 @@ const EditAkun = ({ isSidebarOpen }) => {
     return (
         <div className="transition-all flex duration-300">
             <div
-                className={`bg-[#242424] mt-16 p-4 w-full min-h-screen ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
+                className={`bg-[#242424] mt-16 p-4 w-full min-h-screen ${
+                    isSidebarOpen ? "md:ml-64" : "ml-0"
+                }`}
             >
                 <div className="flex flex-col h-full">
                     <header className="mb-4">
@@ -216,10 +217,12 @@ const EditAkun = ({ isSidebarOpen }) => {
                             </div>
                         </div>
 
+                        {/* --- BLOK ERROR YANG DIPERBARUI --- */}
                         {error && (
-                            <p className="text-red-500 text-sm text-center mt-2">
-                                {error}
-                            </p>
+                            <div className="flex w-full items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-lg mt-2">
+                                <XCircle className="w-5 h-5 flex-shrink-0" />
+                                <p className="text-sm">{error}</p>
+                            </div>
                         )}
 
                         {formData && (

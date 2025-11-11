@@ -31,6 +31,7 @@ const DaftarMobil = ({ isSidebarOpen = false }) => {
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [selectedVehicle, setSelectedVehicle] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [borrowError, setBorrowError] = useState(null);
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
@@ -81,7 +82,7 @@ const DaftarMobil = ({ isSidebarOpen = false }) => {
     const handleBorrowSubmit = async (borrowFormData) => {
         if (!selectedVehicle) return;
         setIsSubmitting(true);
-        setError(null);
+        setBorrowError(null);
         try {
             // PERUBAHAN: Menyesuaikan nama field agar cocok dengan backend
             const payload = {
@@ -95,9 +96,8 @@ const DaftarMobil = ({ isSidebarOpen = false }) => {
             setIsSuccessModalOpen(true); // Buka modal sukses
             fetchData(); // Muat ulang data untuk update status kendaraan
         } catch (err) {
-            alert(
-                "Gagal memproses peminjaman: " +
-                    (err.response?.data?.message || err.message),
+            setBorrowError(
+                `Peminjaman Gagal : ${err.response?.data?.message || err.message}`,
             );
         } finally {
             setIsSubmitting(false);
@@ -164,10 +164,12 @@ const DaftarMobil = ({ isSidebarOpen = false }) => {
                     >
                         Detail
                     </button>
-                    {/* 5. Update tombol pinjam untuk memanggil handlePinjamClick */}
                     <button
                         onClick={() => handlePinjamClick(row)}
-                        disabled={row.statKendaraan !== "Stand by"}
+                        disabled={
+                            row.statKendaraan !== "Stand by" ||
+                            row.kondisi !== "Baik"
+                        }
                         className="min-w-14 text-white bg-green-500 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-600"
                     >
                         Pinjam
@@ -245,6 +247,7 @@ const DaftarMobil = ({ isSidebarOpen = false }) => {
                     onSubmit={handleBorrowSubmit}
                     vehicle={selectedVehicle}
                     isLoading={isSubmitting}
+                    error = {borrowError}
                 />
             )}
             <SuccessModal

@@ -7,9 +7,7 @@ import Pagination from "../components/Pagination";
 import ExportReportModal from "../components/ExportReportModal";
 
 // Impor service yang relevan
-import {
-    getReports,
-} from "../services/reportService";
+import { getReports } from "../services/reportService";
 
 import { generateBorrowReport } from "../services/borrowService";
 
@@ -67,13 +65,19 @@ const DaftarLaporan = ({ isSidebarOpen = false }) => {
     const handleExportSubmit = async (dateRange) => {
         setIsSubmitting(true);
         try {
+            // Format dates to Y-m-d
+            const formatDateForAPI = (dateStr) => {
+                const date = new Date(dateStr);
+                return date.toISOString().split("T")[0];
+            };
+
             const payload = {
-                start_date: dateRange.startDate,
-                end_date: dateRange.endDate,
+                start_date: formatDateForAPI(dateRange.startDate),
+                end_date: formatDateForAPI(dateRange.endDate),
             };
             const response = await generateBorrowReport(payload);
 
-            const url = window.URL.createObjectURL(new Blob([response]));
+            const url = window.URL.createObjectURL(response);
             const link = document.createElement("a");
             link.href = url;
             link.setAttribute(
@@ -83,9 +87,11 @@ const DaftarLaporan = ({ isSidebarOpen = false }) => {
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
 
             setIsExportModalOpen(false);
         } catch (err) {
+            console.error("Export error:", err);
             alert(
                 "Gagal membuat laporan: " +
                     (err.response?.data?.message || err.message),
@@ -160,7 +166,6 @@ const DaftarLaporan = ({ isSidebarOpen = false }) => {
 
     return (
         <div className="flex">
-            
             <div
                 className={`bg-[#242424] min-h-screen pt-16 w-full transition-all duration-300 overflow-hidden ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
             >

@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserPlus, RefreshCw, User } from "lucide-react";
+import { UserPlus, RefreshCw, User, XCircle } from "lucide-react"; // <-- PERUBAHAN 1
 import Button from "../components/Button";
 import DataTable from "../components/DataTable";
 import Pagination from "../components/Pagination";
@@ -95,7 +95,7 @@ const DaftarAkun = ({ isSidebarOpen }) => {
     const currentTableData = useMemo(() => {
         const firstPageIndex = (currentPage - 1) * itemsPerPage;
         const lastPageIndex = firstPageIndex + itemsPerPage;
-        return sortedData.slice(firstPageIndex, lastPageIndex); 
+        return sortedData.slice(firstPageIndex, lastPageIndex);
     }, [currentPage, itemsPerPage, sortedData]);
 
     const columns = [
@@ -117,12 +117,12 @@ const DaftarAkun = ({ isSidebarOpen }) => {
             cell: (row) => {
                 const unitKerjaData = row.unitKerja || "";
                 const parts = unitKerjaData.split(" / ");
-                return parts[0] || ""; 
+                return parts[0] || "";
             },
         },
         {
             header: "Lokasi",
-            accessor: "lokasi", 
+            accessor: "lokasi",
             sortable: false,
             cell: (row) => {
                 const unitKerjaData = row.unitKerja || "";
@@ -151,9 +151,11 @@ const DaftarAkun = ({ isSidebarOpen }) => {
     return (
         <div className="flex">
             <div
-                className={`bg-[#242424] min-h-screen pt-16 w-full transition-all duration-300 overflow-hidden ${isSidebarOpen ? "md:ml-64" : "ml-0"}`}
+                className={`bg-[#242424] min-h-screen pt-16 w-full transition-all duration-300 overflow-hidden ${
+                    isSidebarOpen ? "md:ml-64" : "ml-0"
+                }`}
             >
-                <div className="flex flex-col gap-4 p-4">
+                <div className="flex flex-col gap-4 p-6">
                     <header>
                         <h1 className="text-white font-semibold text-3xl">
                             Daftar Akun
@@ -192,10 +194,23 @@ const DaftarAkun = ({ isSidebarOpen }) => {
                             Memuat data...
                         </div>
                     ) : error ? (
-                        <div className="text-red-500 text-center py-10">
-                            {error}
+                        // --- BLOK ERROR BARU ---  // <-- PERUBAHAN 2
+                        <div className="bg-[#171717] rounded-lg text-center p-10 flex flex-col items-center gap-4 border border-red-500/50">
+                            <XCircle className="w-16 h-16 text-red-500" />
+                            <h3 className="text-xl font-semibold text-white">
+                                Gagal Memuat Data
+                            </h3>
+                            <p className="text-gray-400 max-w-md">{error}</p>
+                            <Button
+                                text="Coba Lagi"
+                                icon={<RefreshCw className="w-4 h-4" />}
+                                bgColor="bg-gray-600"
+                                onClick={fetchData}
+                                disabled={isLoading}
+                            />
                         </div>
                     ) : (
+                        // --- AKHIR BLOK ERROR BARU ---
                         <>
                             <div className="bg-[#171717] rounded-lg overflow-x-auto custom-scrollbar">
                                 <DataTable

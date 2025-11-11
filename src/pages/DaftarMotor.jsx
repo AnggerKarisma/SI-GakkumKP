@@ -83,7 +83,6 @@ const DaftarMotor = ({ isSidebarOpen = false }) => {
         setIsSubmitting(true);
         setError(null);
         try {
-            // PERUBAHAN: Menyesuaikan nama field agar cocok dengan backend
             const payload = {
                 kendaraanID: selectedVehicle.kendaraanID,
                 keterangan: borrowFormData.keterangan,
@@ -95,9 +94,8 @@ const DaftarMotor = ({ isSidebarOpen = false }) => {
             setIsSuccessModalOpen(true); // Buka modal sukses
             fetchData(); // Muat ulang data untuk update status kendaraan
         } catch (err) {
-            alert(
-                "Gagal memproses peminjaman: " +
-                    (err.response?.data?.message || err.message),
+            setError(
+                `Peminjaman Gagal : ${err.response?.data?.message || err.message}`,
             );
         } finally {
             setIsSubmitting(false);
@@ -167,7 +165,10 @@ const DaftarMotor = ({ isSidebarOpen = false }) => {
                     {/* 5. Update tombol pinjam untuk memanggil handlePinjamClick */}
                     <button
                         onClick={() => handlePinjamClick(row)}
-                        disabled={row.statKendaraan !== "Stand by"}
+                        disabled={
+                            row.statKendaraan !== "Stand by" ||
+                            row.kondisi !== "Baik"
+                        }
                         className="min-w-14 text-white bg-green-500 px-2 py-1 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-600"
                     >
                         Pinjam

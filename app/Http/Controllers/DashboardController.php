@@ -47,6 +47,7 @@ class DashboardController extends Controller
 
         // 4. Kueri untuk data Pajak yang akan jatuh tempo
         $expiringTaxes = $this->getExpiringTaxes($unitKerjaFilter);
+        $expiredTaxes = $this->getExpiredTaxes($unitKerjaFilter);
 
         return response()->json([
             'success' => true,
@@ -55,6 +56,7 @@ class DashboardController extends Controller
                 'user_counts' => $this->formatCounts($userCounts, null, 'unitKerja'),
                 'status_counts' => $this->formatStatusCounts($statusCounts),
                 'expiring_taxes' => $expiringTaxes,
+                'expired_taxes' => $expiredTaxes,
             ]
         ]);
     }
@@ -96,10 +98,26 @@ class DashboardController extends Controller
     }
 
     // Helper untuk data pajak (tidak berubah)
-    private function getExpiringTaxes($unitKerjaFilter, $limit = 5)
+    private function getExpiringTaxes($unitKerjaFilter)
     {
         $query = Pajak::with('kendaraan:kendaraanID,merk,plat')
-                      ->where('berlakuSampai', '>=', now())
+                  ->where('berlakuSampai', '>=', now())
+                  ->where('berlakuSampai', '<=', now()->addDays(30))
+                  ->orderBy('berlakuSampai', 'asc');
+
+        if ($unitKerjaFilter) {
+            $query->whereHas('kendaraan', function($q) use ($unitKerjaFilter) {
+                $q->where('unitKerja', 'LIKE', $unitKerjaFilter . '%');
+            });
+        }
+        
+        return $query->get(['kendaraanID', 'berlakuSampai']);
+    }
+
+    private function getExpiredTaxes($unitKerjaFilter)
+    {
+        $query = Pajak::with('kendaraan:kendaraanID,merk,plat')
+                      ->where('berlakuSampai', '<', now())
                       ->orderBy('berlakuSampai', 'asc');
         
         if ($unitKerjaFilter) {
@@ -108,7 +126,7 @@ class DashboardController extends Controller
             });
         }
         
-        return $query->limit($limit)->get(['kendaraanID', 'berlakuSampai']);
+        return $query->get(['kendaraanID', 'berlakuSampai']);
     }
 }
 

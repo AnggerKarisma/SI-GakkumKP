@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, LockKeyhole, Eye, EyeOff } from "lucide-react";
-import Button from "./../components/Button";
+import { Mail, LockKeyhole, Eye, EyeOff, XCircle } from "lucide-react"; // <-- PERUBAHAN 1
+import Button from "../components/Button";
 
-import { login } from "../services/authService";
+import { login } from "../services/authService.js";
 
 const Login = () => {
     const [NIP, setNip] = useState("");
@@ -21,7 +21,11 @@ const Login = () => {
     const handleRegisterClick = () => {
         navigate("/register");
     };
-    const handleLoginClick = async () => {
+
+    const handleLogin = async (e) => {
+        // Tambahkan e.preventDefault() agar form tidak submit secara default
+        e.preventDefault();
+
         // Validasi sederhana
         if (!NIP || !password) {
             setError("NIP dan Password wajib diisi.");
@@ -65,7 +69,7 @@ const Login = () => {
                     </div>
                     <form
                         className="p-10 rounded-2xl md:w-1/2"
-                        onSubmit={handleLoginClick}
+                        onSubmit={handleLogin} // <-- Ganti onClick di Button menjadi onSubmit di Form
                     >
                         <div className="flex flex-col gap-10 items-center text-center rounded-2xl">
                             <div className="flex md:hidden w-full justify-center">
@@ -80,7 +84,10 @@ const Login = () => {
                             </h1>
 
                             <div className="flex w-full flex-col gap-3">
-                                <div className="flex items-center border-1 border-white py-1 px-2 outline-none rounded-lg">
+                                {/* --- PERUBAHAN 2: Border Input NIP --- */}
+                                <div
+                                    className={`flex items-center border-1 py-1 px-2 outline-none rounded-lg ${error ? "border-red-500" : "border-white"} transition-colors duration-200`}
+                                >
                                     <Mail className="text-white" />
                                     <input
                                         required
@@ -94,7 +101,10 @@ const Login = () => {
                                     />
                                 </div>
 
-                                <div className="flex items-center border-1 border-white py-1 px-2 outline-none rounded-lg">
+                                {/* --- PERUBAHAN 3: Border Input Password --- */}
+                                <div
+                                    className={`flex items-center border-1 py-1 px-2 outline-none rounded-lg ${error ? "border-red-500" : "border-white"} transition-colors duration-200`}
+                                >
                                     <LockKeyhole className="text-white" />
                                     <input
                                         required
@@ -129,22 +139,26 @@ const Login = () => {
                                 </div>
                             </div>
                         </div>
+                        {/* --- PERUBAHAN 4: Blok Error Baru --- */}
                         {error && (
-                            <p className="text-red-500 text-sm text-center mt-4 -mb-2">
-                                {error}
-                            </p>
+                            <div className="flex w-full items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-lg mt-4">
+                                <XCircle className="w-5 h-5 flex-shrink-0" />
+                                <p className="text-sm">{error}</p>
+                            </div>
                         )}
                         <div className="flex flex-col items-center text-center py-4 gap-3 w-full">
                             <Button
+                                type="submit" // <-- Tambahkan type="submit"
                                 text={isLoading ? "Memproses..." : "Login"}
                                 bgColor={"bg-[#1f4f27]"}
-                                onClick={handleLoginClick}
+                                // Hapus onClick, karena sudah ditangani onSubmit form
                                 disabled={isLoading}
                                 icon={null}
                                 shadow={"shadow-md"}
                                 customWidth={"w-full"}
                             />
                             <Button
+                                type="button" // <-- Tambahkan type="button"
                                 text={"Daftar"}
                                 bgColor={""}
                                 onClick={handleRegisterClick}

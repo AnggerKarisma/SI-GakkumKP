@@ -20,11 +20,27 @@ class GenerateReportRequest extends FormRequest
         $formattedDates = [];
 
         if ($startDate) {
-            $formattedDates['start_date'] = Carbon::createFromFormat('d-m-Y', $startDate)->format('Y-m-d');
+            try {
+                // Try multiple formats
+                $parsed = Carbon::createFromFormat('Y-m-d', $startDate) 
+                    ?: Carbon::createFromFormat('d-m-Y', $startDate)
+                    ?: Carbon::createFromFormat('m-d-Y', $startDate);
+                $formattedDates['start_date'] = $parsed->format('Y-m-d');
+            } catch (\Exception $e) {
+                $formattedDates['start_date'] = $startDate;
+            }
         }
 
         if ($endDate) {
-            $formattedDates['end_date'] = Carbon::createFromFormat('d-m-Y', $endDate)->format('Y-m-d');
+            try {
+                // Try multiple formats
+                $parsed = Carbon::createFromFormat('Y-m-d', $endDate)
+                    ?: Carbon::createFromFormat('d-m-Y', $endDate)
+                    ?: Carbon::createFromFormat('m-d-Y', $endDate);
+                $formattedDates['end_date'] = $parsed->format('Y-m-d');
+            } catch (\Exception $e) {
+                $formattedDates['end_date'] = $endDate;
+            }
         }
         $this->merge($formattedDates);
     }

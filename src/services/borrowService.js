@@ -47,16 +47,11 @@ export const getBorrowStatistics = async () => {
     }
 };
 
-export const generateBorrowReport = async (reportData) => {
-    try {
-        const response = await api.post(
-            `${BASE_URL}/generate-report`,
-            reportData,
-        );
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+export const generateBorrowReport = async (payload) => {
+    const response = await api.post(`${BASE_URL}/generate-report`, payload, {
+        responseType: "blob",
+    });
+    return response.data;
 };
 
 export const deleteBorrow = async (id) => {

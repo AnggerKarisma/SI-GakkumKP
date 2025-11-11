@@ -54,7 +54,11 @@ const Dashboard = ({ isSidebarOpen }) => {
         );
     }
 
-    const { status_counts = {}, expiring_taxes = [] } = dashboardData || {};
+    const {
+        status_counts = {},
+        expiring_taxes = [],
+        expired_taxes = [],
+    } = dashboardData || {};
 
     return (
         <div
@@ -70,10 +74,83 @@ const Dashboard = ({ isSidebarOpen }) => {
                     {/* --- Kolom Kiri (mengambil 2 bagian di layar besar) --- */}
                     <div className="lg:col-span-2">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
                             {/* Kartu Tabel Pajak (mengambil 2 bagian dari kolom kiri) */}
                             <div className="md:col-span-2 p-4 bg-[#171717] rounded-lg">
-                                <h3 className="font-bold text-white mb-4 text-lg">
+                                <h3 className="font-bold text-white m-4 text-lg">
+                                    Pajak Telah Lewat (
+                                    {new Date().getFullYear()})
+                                </h3>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm text-left text-gray-300">
+                                        <thead className="bg-[#4b1f1f] text-white">
+                                            <tr>
+                                                <th className="p-2 rounded-tl-lg">
+                                                    No
+                                                </th>
+                                                <th className="p-2">Merk</th>
+                                                <th className="p-2">Plat</th>
+                                                <th className="p-2 rounded-tr-lg">
+                                                    Tanggal
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {expired_taxes.length > 0 ? (
+                                                expired_taxes.map(
+                                                    (tax, index) => (
+                                                        <tr
+                                                            key={
+                                                                tax.kendaraanID
+                                                            }
+                                                            className="border-b border-gray-700"
+                                                        >
+                                                            <td className="p-2">
+                                                                {index + 1}
+                                                            </td>
+                                                            <td className="p-2">
+                                                                {
+                                                                    tax
+                                                                        .kendaraan
+                                                                        ?.merk
+                                                                }
+                                                            </td>
+                                                            <td className="p-2">
+                                                                {
+                                                                    tax
+                                                                        .kendaraan
+                                                                        ?.plat
+                                                                }
+                                                            </td>
+                                                            <td className="p-2">
+                                                                {new Date(
+                                                                    tax.berlakuSampai,
+                                                                ).toLocaleDateString(
+                                                                    "id-ID",
+                                                                    {
+                                                                        day: "2-digit",
+                                                                        month: "2-digit",
+                                                                        year: "numeric",
+                                                                    },
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    ),
+                                                )
+                                            ) : (
+                                                <tr>
+                                                    <td
+                                                        colSpan="4"
+                                                        className="text-center p-4 text-gray-400"
+                                                    >
+                                                        Tidak ada pajak yang
+                                                        telah lewat.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h3 className="font-bold text-white m-4 text-lg">
                                     Pajak Akan Datang (
                                     {new Date().getFullYear()})
                                 </h3>
@@ -156,7 +233,7 @@ const Dashboard = ({ isSidebarOpen }) => {
                         <StatusCard
                             title="Mobil Tersedia"
                             total={status_counts.mobil?.["Stand by"]}
-                            color="bg-green-600"
+                            color="bg-[#1f4f27]"
                         />
                         <StatusCard
                             title="Mobil Dipinjam"
@@ -166,12 +243,12 @@ const Dashboard = ({ isSidebarOpen }) => {
                         <StatusCard
                             title="Mobil Rusak"
                             total={status_counts.mobil?.["Maintenance"]}
-                            color="bg-red-600"
+                            color="bg-red-800"
                         />
                         <StatusCard
                             title="Motor Tersedia"
                             total={status_counts.motor?.["Stand by"]}
-                            color="bg-green-600"
+                            color="bg-[#1f4f27]"
                         />
                         <StatusCard
                             title="Motor Dipinjam"
@@ -181,7 +258,7 @@ const Dashboard = ({ isSidebarOpen }) => {
                         <StatusCard
                             title="Motor Rusak"
                             total={status_counts.motor?.["Maintenance"]}
-                            color="bg-red-600"
+                            color="bg-red-800"
                         />
                     </div>
                 </div>
